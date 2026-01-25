@@ -4,6 +4,15 @@ import Link from "next/link"
 import { OmIcon } from "@/components/icons/OmIcon"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Globe } from "lucide-react"
 
 export function Header() {
   return (
@@ -18,6 +27,23 @@ export function Header() {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
+           <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Globe className="h-5 w-5" />
+                <span className="sr-only">Select language</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Language</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>English</DropdownMenuItem>
+              <DropdownMenuItem>Telugu</DropdownMenuItem>
+              <DropdownMenuItem>Tamil</DropdownMenuItem>
+              <DropdownMenuItem>Kannada</DropdownMenuItem>
+              <DropdownMenuItem>Hindi</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button variant="ghost" size="icon">
             <Avatar>
               <AvatarImage src="https://picsum.photos/seed/user/100/100" data-ai-hint="user avatar" />
