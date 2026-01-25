@@ -15,6 +15,7 @@ import {
 import { Globe } from "lucide-react"
 import { useLanguage, type Language } from "@/context/language-context"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
+import { ThemeToggle } from "./ThemeToggle"
 
 export function Header() {
   const { t, setLanguage } = useLanguage();
@@ -34,10 +35,10 @@ export function Header() {
               <Image 
                 src={logo.imageUrl}
                 alt="VaidikaConnect Logo" 
-                width={48} 
+                width={40} 
                 height={40} 
                 data-ai-hint={logo.imageHint}
-                className="h-10 w-auto"
+                className="h-10 w-10 object-cover"
               />
             ) : (
               <div className="h-10 w-10 bg-primary rounded-sm" />
@@ -65,6 +66,7 @@ export function Header() {
               <DropdownMenuItem onSelect={() => handleLanguageSelect('hi')} disabled>{t('header.hindi')} (TBD)</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ThemeToggle />
           <Button variant="ghost" size="icon">
             <Avatar>
               <AvatarImage src="https://picsum.photos/seed/user/100/100" data-ai-hint="user avatar" />
