@@ -13,8 +13,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Globe } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export function Header() {
+  const { toast } = useToast()
+
+  const handleLanguageSelect = (language: string) => {
+    toast({
+      title: "Language switching coming soon!",
+      description: `Support for ${language} is under development.`,
+    })
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
@@ -37,11 +47,11 @@ export function Header() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Language</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>English</DropdownMenuItem>
-              <DropdownMenuItem>Telugu</DropdownMenuItem>
-              <DropdownMenuItem>Tamil</DropdownMenuItem>
-              <DropdownMenuItem>Kannada</DropdownMenuItem>
-              <DropdownMenuItem>Hindi</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('English')}>English</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('Telugu')}>Telugu</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('Tamil')}>Tamil</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('Kannada')}>Kannada</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('Hindi')}>Hindi</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="ghost" size="icon">
