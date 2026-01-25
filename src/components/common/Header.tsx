@@ -37,7 +37,7 @@ export function Header() {
                 width={40} 
                 height={40} 
                 data-ai-hint={logo.imageHint}
-                className="h-10 w-10"
+                className="h-10 w-10 rounded-full object-cover"
               />
             ) : (
               <div className="h-10 w-10 bg-primary rounded-sm" />
