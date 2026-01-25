@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { LogoIcon } from "@/components/icons/LogoIcon"
+import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Globe } from "lucide-react"
 import { useLanguage, type Language } from "@/context/language-context"
+import { PlaceHolderImages } from "@/lib/placeholder-images"
 
 export function Header() {
   const { t, setLanguage } = useLanguage();
@@ -21,13 +22,26 @@ export function Header() {
   const handleLanguageSelect = (language: Language) => {
     setLanguage(language);
   }
+  
+  const logo = PlaceHolderImages.find(p => p.id === 'app-logo');
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <LogoIcon className="h-8 w-8 text-primary" />
+            {logo ? (
+              <Image 
+                src={logo.imageUrl}
+                alt="VaidikaConnect Logo" 
+                width={40} 
+                height={40} 
+                data-ai-hint={logo.imageHint}
+                className="h-10 w-10"
+              />
+            ) : (
+              <div className="h-10 w-10 bg-primary rounded-sm" />
+            )}
             <span className="font-bold font-headline text-xl sm:inline-block">
               {t('header.vaidikaconnect')}
             </span>
