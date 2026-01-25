@@ -6,7 +6,7 @@ export interface Puja {
   description: string;
   image: string;
   imageHint: string;
-  category: 'Vratas' | 'Nomulu' | 'Homas' | 'Poojas' | 'Yagas' | 'Shanthi Pujas' | 'Festivals' | 'Abhishekamulu' | 'Shraddhalu';
+  category: 'వ్రతాలు' | 'నోములు' | 'హోమాలు' | 'పూజలు' | 'కళ్యాణములు' | 'దోష పరిహార పూజలు' | 'దీక్ష పూజలు';
 }
 
 export interface Pujari {
@@ -30,21 +30,35 @@ export interface Pujari {
 }
 
 const pujas: Puja[] = [
-  { id: 1, name: "Satyanarayana Vratham", description: "A ritual to honor Lord Vishnu for prosperity and well-being.", category: "Vratas", image: PlaceHolderImages.find(p => p.id === 'puja-1')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-1')?.imageHint || '' },
-  { id: 2, name: "Ganapathi Homam", description: "A fire ritual to remove obstacles and ensure success.", category: "Homas", image: PlaceHolderImages.find(p => p.id === 'puja-2')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-2')?.imageHint || '' },
-  { id: 3, name: "Griha Pravesham", description: "House warming ceremony to purify the new home and bring positive energy.", category: "Poojas", image: PlaceHolderImages.find(p => p.id === 'puja-3')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-3')?.imageHint || '' },
-  { id: 4, name: "Shraddha", description: "A ritual to pay homage to one's ancestors.", category: "Shraddhalu", image: PlaceHolderImages.find(p => p.id === 'puja-4')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-4')?.imageHint || '' },
-  { id: 5, name: "Abhishekam", description: "Ritualistic bathing of a deity's idol.", category: "Abhishekamulu", image: PlaceHolderImages.find(p => p.id === 'puja-5')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-5')?.imageHint || '' },
-  { id: 6, name: "Vivaham (Wedding)", description: "Vedic wedding ceremony uniting two souls.", category: "Poojas", image: PlaceHolderImages.find(p => p.id === 'puja-6')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-6')?.imageHint || '' },
-  { id: 7, name: "Varalakshmi Vratam", description: "A vrata to appease the goddess Lakshmi for prosperity.", category: "Vratas", image: "https://picsum.photos/seed/puja-7/600/400", imageHint: "goddess lakshmi" },
-  { id: 8, name: "Maha Mrityunjaya Homam", description: "A homa dedicated to Lord Shiva to overcome fear of death.", category: "Homas", image: "https://picsum.photos/seed/puja-8/600/400", imageHint: "shiva homam" },
-  { id: 9, name: "Namakaranam", description: "A sacred ceremony to name a newborn child.", category: "Poojas", image: "https://picsum.photos/seed/puja-9/600/400", imageHint: "naming ceremony" },
-  { id: 10, name: "Atlataddi Nomu", description: "A traditional nomu observed by women for a happy married life.", category: "Nomulu", image: "https://picsum.photos/seed/puja-10/600/400", imageHint: "telugu festival" },
-  { id: 11, name: "Kedareshwara Vratam", description: "A vrata dedicated to Lord Shiva, performed for health and prosperity.", category: "Vratas", image: "https://picsum.photos/seed/puja-11/600/400", imageHint: "shiva vrata" },
-  { id: 12, name: "Rudra Homam", description: "A powerful homa to appease Lord Rudra and remove negativities.", category: "Homas", image: "https://picsum.photos/seed/puja-12/600/400", imageHint: "vedic fire" },
-  { id: 13, name: "Navagraha Shanthi", description: "A puja to pacify the nine planets and remove their malefic effects.", category: "Shanthi Pujas", image: "https://picsum.photos/seed/puja-13/600/400", imageHint: "nine planets" },
-  { id: 14, name: "Sudarshana Yagam", description: "A yagna to remove evil forces and protect from harm.", category: "Yagas", image: "https://picsum.photos/seed/puja-14/600/400", imageHint: "yagna fire" },
-  { id: 15, name: "Diwali Puja", description: "Special puja performed during the festival of lights.", category: "Festivals", image: "https://picsum.photos/seed/puja-15/600/400", imageHint: "diwali lights" },
+  // వ్రతాలు
+  { id: 1, name: "సత్యనారాయణ వ్రతము", description: "A ritual to honor Lord Vishnu for prosperity and well-being.", category: "వ్రతాలు", image: "https://picsum.photos/seed/puja-satyanarayana/600/400", imageHint: 'hindu ritual' },
+  { id: 2, name: "వరలక్ష్మీ వ్రతము", description: "A vrata to appease the goddess Lakshmi for prosperity.", category: "వ్రతాలు", image: "https://picsum.photos/seed/puja-varalakshmi/600/400", imageHint: "goddess lakshmi" },
+  { id: 3, name: "కేదారేశ్వర వ్రతము", description: "A vrata dedicated to Lord Shiva, performed for health and prosperity.", category: "వ్రతాలు", image: "https://picsum.photos/seed/puja-kedareswara/600/400", imageHint: "shiva vrata" },
+
+  // నోములు
+  { id: 4, name: "అట్లతద్ది నోము", description: "A traditional nomu observed by women for a happy married life.", category: "నోములు", image: "https://picsum.photos/seed/puja-atlataddi/600/400", imageHint: "telugu festival" },
+  { id: 5, name: "నాగుల చవితి నోము", description: "A nomu to worship serpent gods.", category: "నోములు", image: "https://picsum.photos/seed/puja-nagula/600/400", imageHint: "serpent god" },
+
+  // హోమాలు
+  { id: 6, name: "మహాగణపతి హోమం", description: "A fire ritual to remove obstacles and ensure success.", category: "హోమాలు", image: "https://picsum.photos/seed/puja-ganapatihomam/600/400", imageHint: 'fire ceremony' },
+  { id: 7, name: "మహా మృత్యుంజయ హోమము", description: "A homa dedicated to Lord Shiva to overcome fear of death.", category: "హోమాలు", image: "https://picsum.photos/seed/puja-mrityunjaya/600/400", imageHint: "shiva homam" },
+  { id: 8, name: "సుదర్శన హోమము", description: "Homa to invoke the energy of Sudarshana Chakra for protection.", category: "హోమాలు", image: "https://picsum.photos/seed/puja-sudarshana/600/400", imageHint: "protection ritual" },
+
+  // పూజలు
+  { id: 9, name: "గృహప్రవేశము", description: "House warming ceremony to purify the new home.", category: "పూజలు", image: "https://picsum.photos/seed/puja-grihapravesham/600/400", imageHint: 'hindu ceremony' },
+  { id: 10, name: "నామకరణము", description: "A sacred ceremony to name a newborn child.", category: "పూజలు", image: "https://picsum.photos/seed/puja-namakaranam/600/400", imageHint: "naming ceremony" },
+  { id: 11, name: "అన్నప్రాసనము", description: "A child's first feeding ceremony.", category: "పూజలు", image: "https://picsum.photos/seed/puja-annaprasana/600/400", imageHint: "first food" },
+
+  // కళ్యాణములు
+  { id: 12, name: "శ్రీనివాస కళ్యాణం", description: "Celestial wedding of Lord Srinivasa and Goddess Padmavathi.", category: "కళ్యాణములు", image: "https://picsum.photos/seed/puja-srinivasakalyanam/600/400", imageHint: "lord venkateswara" },
+  { id: 13, name: "శివపార్వతుల కళ్యాణం", description: "Celestial wedding of Lord Shiva and Goddess Parvati.", category: "కళ్యాణములు", image: "https://picsum.photos/seed/puja-sivakalyanam/600/400", imageHint: "divine wedding" },
+
+  // దోష పరిహార పూజలు
+  { id: 14, name: "నవ గ్రహాల దోష పూజలు", description: "Pujas to pacify the nine planets and remove their malefic effects.", category: "దోష పరిహార పూజలు", image: "https://picsum.photos/seed/puja-navagraha/600/400", imageHint: "nine planets" },
+  { id: 15, name: "సర్ప దోష పూజ", description: "Puja to remedy astrological flaws related to serpents.", category: "దోష పరిహార పూజలు", image: "https://picsum.photos/seed/puja-sarpadosha/600/400", imageHint: "serpent worship" },
+
+  // దీక్ష పూజలు
+  { id: 16, name: "అయ్యప్ప స్వామి దీక్షలు", description: "Penance and pujas for devotees undertaking the Ayyappa Deeksha.", category: "దీక్ష పూజలు", image: "https://picsum.photos/seed/puja-ayyappa/600/400", imageHint: "lord ayyappa" },
 ];
 
 const pujaris: Pujari[] = [
@@ -59,7 +73,7 @@ const pujaris: Pujari[] = [
     qualifications: ["Veda Praveena", "Sama Veda Pandit"],
     languages: ["Telugu", "Sanskrit", "English"],
     experience: 20,
-    pujas: [1, 2, 3, 5, 6, 7, 11, 12, 13, 14],
+    pujas: [1, 2, 6, 9, 12, 14],
     maxParticipants: 50,
     location: { lat: 40.7128, lng: -74.0060 }, // NYC
     description: "A highly respected Pujari with two decades of experience in conducting a wide range of Vedic rituals. Specializes in wedding ceremonies and intricate homams. Known for his deep knowledge and patient explanations.",
@@ -85,7 +99,7 @@ const pujaris: Pujari[] = [
     qualifications: ["Yajur Veda Koumudi", "Jyotisha Acharya"],
     languages: ["Kannada", "Sanskrit", "Hindi"],
     experience: 15,
-    pujas: [1, 2, 4, 8, 13],
+    pujas: [4, 5, 7, 15],
     maxParticipants: 20,
     location: { lat: 40.81, lng: -73.96 }, // Upper Manhattan
     description: "Veda Prakash ji is an expert in Ganapathi Homam and Shraddha ceremonies. His calm demeanor and command over mantras create a divine atmosphere.",
@@ -111,7 +125,7 @@ const pujaris: Pujari[] = [
     qualifications: ["Rig Veda Ghana Pathi"],
     languages: ["Tamil", "Sanskrit", "English"],
     experience: 25,
-    pujas: [1, 2, 3, 5, 6, 9, 12, 14, 15],
+    pujas: [1, 3, 6, 9, 10, 11, 12, 13],
     maxParticipants: 100,
     location: { lat: 40.65, lng: -73.95 }, // Brooklyn
     description: "A veteran in the field, Krishna Sastry has performed over a thousand pujas. He is sought after for his expertise in large-scale events and weddings.",
@@ -136,7 +150,7 @@ const pujaris: Pujari[] = [
     qualifications: ["Atharva Veda Pandit"],
     languages: ["Hindi", "Sanskrit"],
     experience: 12,
-    pujas: [2, 3, 5, 8, 13],
+    pujas: [6, 7, 8, 9, 14, 15],
     maxParticipants: 30,
     location: { lat: 40.75, lng: -74.1 }, // New Jersey
     description: "Specializing in Abhishekam and Homams, Ganapathi Avadhani is known for his powerful chanting and adherence to traditional practices.",
@@ -161,7 +175,7 @@ const pujaris: Pujari[] = [
     qualifications: ["Veda Siromani"],
     languages: ["Telugu", "Sanskrit"],
     experience: 8,
-    pujas: [1, 5, 7, 10, 11, 15],
+    pujas: [1, 2, 3, 4, 5, 16],
     maxParticipants: 15,
     location: { lat: 40.7484, lng: -73.9857 }, // Midtown
     description: "A young and energetic pujari, Surya Narayana is praised for his dedication and ability to connect with all generations. Perfect for family pujas.",
