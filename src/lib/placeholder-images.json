@@ -1,3 +1,94 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "puja-1",
+      "description": "Satyanarayana Vratham setup",
+      "imageUrl": "https://images.unsplash.com/photo-1713958325165-07e1cefedd8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMHJpdHVhbHxlbnwwfHx8fDE3NjkzNTY5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hindu ritual"
+    },
+    {
+      "id": "puja-2",
+      "description": "Ganapathi Homam fire ritual",
+      "imageUrl": "https://images.unsplash.com/photo-1616940890446-c0e5d09f1bf4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmaXJlJTIwY2VyZW1vbnl8ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fire ceremony"
+    },
+    {
+      "id": "puja-3",
+      "description": "Griha Pravesham house warming ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1667132713853-e2824d6865cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMGNlcmVtb255fGVufDB8fHx8MTc2OTM1Njk4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hindu ceremony"
+    },
+    {
+      "id": "puja-4",
+      "description": "Shraddha ceremony offerings",
+      "imageUrl": "https://images.unsplash.com/photo-1762777125835-fb9833fb931e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhbmNlc3RvciUyMHdvcnNoaXB8ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ancestor worship"
+    },
+    {
+      "id": "puja-5",
+      "description": "Abhishekam ritual with milk",
+      "imageUrl": "https://images.unsplash.com/photo-1668265704678-aaff35fa7b22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMGRlaXR5fGVufDB8fHx8MTc2OTMwMDQ1OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hindu deity"
+    },
+    {
+      "id": "puja-6",
+      "description": "Vivaham (Wedding) ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1597157639073-69284dc0fdaf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjB3ZWRkaW5nfGVufDB8fHx8MTc2OTI0MzAwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian wedding"
+    },
+    {
+      "id": "pujari-1",
+      "description": "Portrait of Pujari Sri Anantha Sharma",
+      "imageUrl": "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBtYW58ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian man"
+    },
+    {
+      "id": "pujari-2",
+      "description": "Portrait of Pujari Veda Prakash",
+      "imageUrl": "https://images.unsplash.com/photo-1751576027784-63d6ea8a502c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwcmllc3QlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjkzMDgwMjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "priest portrait"
+    },
+    {
+      "id": "pujari-3",
+      "description": "Portrait of Pujari Krishna Sastry",
+      "imageUrl": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjkzNTIxNTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "pujari-4",
+      "description": "Portrait of Pujari Ganapathi Avadhani",
+      "imageUrl": "https://images.unsplash.com/photo-1523294928042-18ecb3df7fb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxlbGRlcmx5JTIwbWFufGVufDB8fHx8MTc2OTI3NTQ3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "elderly man"
+    },
+    {
+      "id": "pujari-5",
+      "description": "Portrait of Pujari Surya Narayana",
+      "imageUrl": "https://images.unsplash.com/photo-1646208505943-1a7ed7a62c1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxpbmRpYW4lMjBwcmllc3R8ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian priest"
+    },
+    {
+      "id": "map-background",
+      "description": "A stylized map of a city",
+      "imageUrl": "https://images.unsplash.com/photo-1717343824623-06293a62a70d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjaXR5JTIwbWFwfGVufDB8fHx8MTc2OTMzMTgxOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city map"
+    },
+    {
+      "id": "pujari-gallery-1",
+      "description": "Pujari performing a ritual",
+      "imageUrl": "https://images.unsplash.com/photo-1634693343333-9b6013c30d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxoaW5kdSUyMHJpdHVhbHxlbnwwfHx8fDE3NjkzNTY5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hindu ritual"
+    },
+    {
+      "id": "pujari-gallery-2",
+      "description": "Pujari chanting mantras",
+      "imageUrl": "https://images.unsplash.com/photo-1768590284101-10259fb60c45?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwcmllc3QlMjByZWFkaW5nfGVufDB8fHx8MTc2OTM1Njk4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "priest reading"
+    },
+    {
+      "id": "pujari-gallery-3",
+      "description": "Pujari with ceremonial items",
+      "imageUrl": "https://images.unsplash.com/photo-1607952848844-6b1f0ce7aabf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjZXJlbW9ueSUyMGl0ZW1zfGVufDB8fHx8MTc2OTM1Njk4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ceremony items"
+    }
+  ]
 }
