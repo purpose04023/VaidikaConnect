@@ -1,7 +1,7 @@
 "use client";
 
 import type { Puja } from "@/lib/data";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
@@ -21,6 +21,13 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
   const router = useRouter();
 
   const categories = useMemo(() => [...new Set(pujas.map(p => language === 'te' ? p.category : p.category_en))].sort(), [pujas, language]);
+  const [activeTab, setActiveTab] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (categories.length > 0 && (!activeTab || !categories.includes(activeTab))) {
+      setActiveTab(categories[0]);
+    }
+  }, [categories, activeTab]);
 
   const handleFindPujaris = () => {
     if (selectedPuja) {
@@ -109,35 +116,37 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
           )}
         </div>
       ) : (
-        <Tabs defaultValue={categories[0]} className="w-full">
-          <div className="flex justify-center mb-8">
-              <TabsList className="grid h-auto w-full max-w-4xl grid-cols-3 sm:grid-cols-5 lg:grid-cols-7">
-              {categories.map(category => (
-                  <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">{category}</TabsTrigger>
-              ))}
-              </TabsList>
-          </div>
+        activeTab && (
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="flex justify-center mb-8">
+                <TabsList className="grid h-auto w-full max-w-5xl grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
+                {categories.map(category => (
+                    <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">{category}</TabsTrigger>
+                ))}
+                </TabsList>
+            </div>
 
-          {categories.map(category => {
-              const categoryPujas = pujas.filter(puja => (language === 'te' ? puja.category : puja.category_en) === category);
-              
-              return (
-                <TabsContent key={category} value={category}>
-                    {categoryPujas.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {categoryPujas.map(puja => (
-                            <PujaCard key={puja.id} puja={puja} onSelect={setSelectedPuja} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center text-muted-foreground mt-8">
-                        <p>{t('home.no_pujas_in_category')}</p>
-                      </div>
-                    )}
-                </TabsContent>
-              )
-          })}
-        </Tabs>
+            {categories.map(category => {
+                const categoryPujas = pujas.filter(puja => (language === 'te' ? puja.category : puja.category_en) === category);
+                
+                return (
+                  <TabsContent key={category} value={category}>
+                      {categoryPujas.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                          {categoryPujas.map(puja => (
+                              <PujaCard key={puja.id} puja={puja} onSelect={setSelectedPuja} />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center text-muted-foreground mt-8">
+                          <p>{t('home.no_pujas_in_category')}</p>
+                        </div>
+                      )}
+                  </TabsContent>
+                )
+            })}
+          </Tabs>
+        )
       )}
 
       <Dialog open={!!selectedPuja} onOpenChange={() => setSelectedPuja(null)}>
