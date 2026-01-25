@@ -34,10 +34,10 @@ export function Header() {
               <Image 
                 src={logo.imageUrl}
                 alt="VaidikaConnect Logo" 
-                width={40} 
+                width={48} 
                 height={40} 
                 data-ai-hint={logo.imageHint}
-                className="h-10 w-10 rounded-full object-cover"
+                className="h-10 w-auto"
               />
             ) : (
               <div className="h-10 w-10 bg-primary rounded-sm" />
