@@ -11,14 +11,16 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/context/language-context";
 
 export function PujaListClient({ pujas }: { pujas: Puja[] }) {
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPuja, setSelectedPuja] = useState<Puja | null>(null);
   const [participants, setParticipants] = useState("5");
   const router = useRouter();
 
-  const categories = useMemo(() => [...new Set(pujas.map(p => p.category))].sort(), [pujas]);
+  const categories = useMemo(() => [...new Set(pujas.map(p => language === 'te' ? p.category : p.category_en))].sort(), [pujas, language]);
 
   const handleFindPujaris = () => {
     if (selectedPuja) {
@@ -33,20 +35,22 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
     return pujas.filter(
       (puja) =>
         puja.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        puja.description.toLowerCase().includes(searchQuery.toLowerCase())
+        puja.name_en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        puja.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        puja.description_te.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [pujas, searchQuery]);
   
   const searchResultsByCategory = useMemo(() => {
     return filteredPujas.reduce((acc, puja) => {
-        const category = puja.category;
+        const category = language === 'te' ? puja.category : puja.category_en;
         if (!acc[category]) {
             acc[category] = [];
         }
         acc[category].push(puja);
         return acc;
     }, {} as Record<string, Puja[]>);
-  }, [filteredPujas]);
+  }, [filteredPujas, language]);
 
   const PujaCard = ({ puja, onSelect }: { puja: Puja, onSelect: (puja: Puja) => void }) => (
     <Card key={puja.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
@@ -61,12 +65,12 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
         />
       </CardHeader>
       <CardContent className="p-6 flex-grow">
-        <CardTitle className="font-headline text-2xl mb-2">{puja.name}</CardTitle>
-        <p className="text-muted-foreground">{puja.description}</p>
+        <CardTitle className="font-headline text-2xl mb-2">{language === 'te' ? puja.name : puja.name_en}</CardTitle>
+        <p className="text-muted-foreground">{language === 'te' ? puja.description_te : puja.description}</p>
       </CardContent>
       <CardFooter>
         <Button className="w-full" onClick={() => onSelect(puja)}>
-            Select Program
+            {t('home.select_program')}
         </Button>
       </CardFooter>
     </Card>
@@ -78,7 +82,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search all pujas..."
+          placeholder={t('home.search_placeholder')}
           className="pl-10 h-12 text-lg rounded-full shadow-inner bg-card"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
@@ -100,14 +104,14 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
             ))
           ) : (
             <div className="text-center text-muted-foreground mt-8">
-              <p>No pujas found matching your search.</p>
+              <p>{t('home.no_pujas_found')}</p>
             </div>
           )}
         </div>
       ) : (
         <Tabs defaultValue={categories[0]} className="w-full">
           <div className="flex justify-center mb-8">
-              <TabsList className="grid h-auto w-full max-w-4xl grid-cols-3 sm:grid-cols-5 lg:grid-cols-9">
+              <TabsList className="grid h-auto w-full max-w-4xl grid-cols-3 sm:grid-cols-5 lg:grid-cols-7">
               {categories.map(category => (
                   <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">{category}</TabsTrigger>
               ))}
@@ -115,7 +119,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
           </div>
 
           {categories.map(category => {
-              const categoryPujas = pujas.filter(puja => puja.category === category);
+              const categoryPujas = pujas.filter(puja => (language === 'te' ? puja.category : puja.category_en) === category);
               
               return (
                 <TabsContent key={category} value={category}>
@@ -127,7 +131,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
                       </div>
                     ) : (
                       <div className="text-center text-muted-foreground mt-8">
-                        <p>No pujas found in this category.</p>
+                        <p>{t('home.no_pujas_in_category')}</p>
                       </div>
                     )}
                 </TabsContent>
@@ -139,15 +143,15 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
       <Dialog open={!!selectedPuja} onOpenChange={() => setSelectedPuja(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-headline text-2xl">Confirm Details for {selectedPuja?.name}</DialogTitle>
+            <DialogTitle className="font-headline text-2xl">{t('home.confirm_details_title').replace('{pujaName}', language === 'te' ? selectedPuja?.name || '' : selectedPuja?.name_en || '')}</DialogTitle>
             <DialogDescription>
-              Please specify the number of participants to find eligible Pujaris.
+              {t('home.confirm_details_desc')}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="participants" className="text-right">
-                Participants
+                {t('home.participants_label')}
               </Label>
               <Input
                 id="participants"
@@ -160,8 +164,8 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedPuja(null)}>Cancel</Button>
-            <Button onClick={handleFindPujaris}>Find Pujaris</Button>
+            <Button variant="outline" onClick={() => setSelectedPuja(null)}>{t('home.cancel')}</Button>
+            <Button onClick={handleFindPujaris}>{t('home.find_pujaris')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

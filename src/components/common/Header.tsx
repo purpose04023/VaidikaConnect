@@ -13,16 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Globe } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { useLanguage, type Language } from "@/context/language-context"
 
 export function Header() {
-  const { toast } = useToast()
+  const { t, setLanguage } = useLanguage();
 
-  const handleLanguageSelect = (language: string) => {
-    toast({
-      title: "Language switching coming soon!",
-      description: `Support for ${language} is under development.`,
-    })
+  const handleLanguageSelect = (language: Language) => {
+    setLanguage(language);
   }
 
   return (
@@ -32,7 +29,7 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <OmIcon className="h-6 w-6 text-primary" />
             <span className="font-bold font-headline text-xl sm:inline-block">
-              VaidikaConnect
+              {t('header.vaidikaconnect')}
             </span>
           </Link>
         </div>
@@ -41,17 +38,17 @@ export function Header() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Globe className="h-5 w-5" />
-                <span className="sr-only">Select language</span>
+                <span className="sr-only">{t('header.select_language')}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Language</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('header.language')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('English')}>English</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('Telugu')}>Telugu</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('Tamil')}>Tamil</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('Kannada')}>Kannada</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('Hindi')}>Hindi</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('en')}>{t('header.english')}</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('te')}>{t('header.telugu')}</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('ta')} disabled>{t('header.tamil')} (TBD)</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('ka')} disabled>{t('header.kannada')} (TBD)</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('hi')} disabled>{t('header.hindi')} (TBD)</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="ghost" size="icon">
@@ -59,6 +56,7 @@ export function Header() {
               <AvatarImage src="https://picsum.photos/seed/user/100/100" data-ai-hint="user avatar" />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
+            <span className="sr-only">{t('header.user_avatar')}</span>
           </Button>
         </div>
       </div>
