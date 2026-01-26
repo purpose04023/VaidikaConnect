@@ -3,8 +3,8 @@
     {
       "id": "app-logo",
       "description": "VaidikaConnect App Logo",
-      "imageUrl": "https://images.unsplash.com/photo-1634693343333-9b6013c30d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxoaW5kdSUyMHJpdHVhbHxlbnwwfHx8fDE3NjkzNTY5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "hindu ritual"
+      "imageUrl": "https://storage.googleapis.com/studiopaper-dev.appspot.com/users%2Fstudio-52151%2Fuploads%2F2024-07-29%2Fa2e97feb-5a3d-4e92-a1f9-f0f032252a1d.png",
+      "imageHint": "vaidika connect logo"
     },
     {
       "id": "puja-1",
@@ -33,7 +33,7 @@
     {
       "id": "puja-5",
       "description": "Abhishekam ritual with milk",
-      "imageUrl": "https://images.unsplash.com/photo-1668265704678-aaff35fa7b22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMGRlaXR5fGVufDB8fHx8MTc2OTMwMDQ1OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1668265704678-aaff35fa7b22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMGRlaXR5fGVufDB8fHx8MTc2OTMwMDQ1OXww&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "hindu deity"
     },
     {
@@ -69,7 +69,7 @@
     {
       "id": "pujari-5",
       "description": "Portrait of Pujari Surya Narayana",
-      "imageUrl": "https://images.unsplash.com/photo-1646208505943-1a7ed7a62c1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxpbmRpYW4lMjBwcmllc3R8ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1646208505943-1a7ed7a62c1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxpbmRpYW4lMjBwcmllc3R8ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "indian priest"
     },
     {
