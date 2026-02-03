@@ -20,5 +20,18 @@
   "home.cancel": "Cancel",
   "home.find_pujaris": "Find Pujaris",
   "pujari.coming_soon": "Coming Soon!",
-  "pujari.chat_coming_soon": "In-app chat functionality is under development."
+  "pujari.chat_coming_soon": "In-app chat functionality is under development.",
+  "home.hero_cta_explore": "Explore Pujas",
+  "home.hero_cta_login": "Login / Sign Up",
+  "home.how_it_works_title": "How It Works",
+  "home.how_it_works_step1_title": "1. Find Your Puja",
+  "home.how_it_works_step1_desc": "Browse our extensive library of Vedic pujas and rituals. Use our search and filters to find the perfect ceremony for your needs.",
+  "home.how_it_works_step2_title": "2. Connect with a Pujari",
+  "home.how_it_works_step2_desc": "We connect you with experienced and qualified Vaidika Pujaris who can perform the ceremony for you, either in-person or online.",
+  "home.how_it_works_step3_title": "3. Experience the Divine",
+  "home.how_it_works_step3_desc": "Receive blessings and experience the spiritual benefits of ancient Vedic traditions performed authentically and with devotion.",
+  "home.programs_title": "Explore Our Programs",
+  "home.programs_cta": "View Details",
+  "home.map_title": "Pujaris Across the Region",
+  "home.map_desc": "Explore our network of skilled pujaris. The map below shows a selection of our available experts."
 }
