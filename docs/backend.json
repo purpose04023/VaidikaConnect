@@ -1,0 +1,333 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user of the VaidikaConnect application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "User's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "User's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "User's phone number."
+        },
+        "location": {
+          "type": "string",
+          "description": "User's current location (e.g., city, state)."
+        },
+        "preferences": {
+          "type": "string",
+          "description": "User's preferences, stored as a serialized form, regarding pujas, pujaris, languages, etc."
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "phoneNumber",
+        "location"
+      ]
+    },
+    "PujariProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PujariProfile",
+      "type": "object",
+      "description": "Represents a Vaidika Pujari in the application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the PujariProfile entity."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Pujari's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Pujari's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "Pujari's email address.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Pujari's phone number."
+        },
+        "location": {
+          "type": "string",
+          "description": "Pujari's location (e.g., city, state)."
+        },
+        "vedicQualifications": {
+          "type": "string",
+          "description": "Pujari's Vedic qualifications and certifications."
+        },
+        "languagesSpoken": {
+          "type": "array",
+          "description": "Languages spoken by the Pujari.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "yearsOfExperience": {
+          "type": "number",
+          "description": "Pujari's years of experience."
+        },
+        "pujaIds": {
+          "type": "array",
+          "description": "References to Pujas performed by the Pujari. (Relationship: Pujari 1:N Puja)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pricingDetails": {
+          "type": "string",
+          "description": "Pujari's pricing details for different pujas."
+        },
+        "availability": {
+          "type": "string",
+          "description": "Pujari's availability schedule."
+        },
+        "rating": {
+          "type": "number",
+          "description": "Average rating of the Pujari based on reviews."
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "phoneNumber",
+        "location",
+        "vedicQualifications",
+        "yearsOfExperience",
+        "pricingDetails",
+        "availability"
+      ]
+    },
+    "Puja": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Puja",
+      "type": "object",
+      "description": "Represents a Vedic ritual or puja program.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Puja entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the puja (e.g., Satyanarayana Vratham)."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the puja."
+        },
+        "duration": {
+          "type": "string",
+          "description": "Estimated duration of the puja."
+        },
+        "suitableFor": {
+          "type": "string",
+          "description": "Who is this puja suitable for."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "duration"
+      ]
+    },
+    "Review": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Review",
+      "type": "object",
+      "description": "Represents a review given by a user for a Pujari.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Review entity."
+        },
+        "pujariId": {
+          "type": "string",
+          "description": "Reference to PujariProfile. (Relationship: Pujari 1:N Review)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: User 1:N Review)"
+        },
+        "rating": {
+          "type": "number",
+          "description": "Rating given by the user (e.g., 1 to 5 stars)."
+        },
+        "comment": {
+          "type": "string",
+          "description": "User's comments about the Pujari."
+        },
+        "reviewDate": {
+          "type": "string",
+          "description": "Date when the review was submitted.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "pujariId",
+        "userId",
+        "rating",
+        "reviewDate"
+      ]
+    },
+    "ChatMessage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ChatMessage",
+      "type": "object",
+      "description": "Represents a chat message between a user and a Pujari.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ChatMessage entity."
+        },
+        "senderId": {
+          "type": "string",
+          "description": "Reference to either UserProfile or PujariProfile, indicating the sender."
+        },
+        "receiverId": {
+          "type": "string",
+          "description": "Reference to either UserProfile or PujariProfile, indicating the receiver."
+        },
+        "messageText": {
+          "type": "string",
+          "description": "The content of the chat message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the message was sent.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "senderId",
+        "receiverId",
+        "messageText",
+        "timestamp"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/userProfiles/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profile information. Only the authenticated user can read/write their own profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/pujariProfiles/{pujariId}",
+        "definition": {
+          "entityName": "PujariProfile",
+          "schema": {
+            "$ref": "#/backend/entities/PujariProfile"
+          },
+          "description": "Stores pujari profile information. Only the authenticated pujari can read/write their own profile.",
+          "params": [
+            {
+              "name": "pujariId",
+              "description": "The unique identifier of the pujari."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/pujariProfiles/{pujariId}/reviews/{reviewId}",
+        "definition": {
+          "entityName": "Review",
+          "schema": {
+            "$ref": "#/backend/entities/Review"
+          },
+          "description": "Stores reviews for a pujari. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "pujariId",
+              "description": "The unique identifier of the pujari."
+            },
+            {
+              "name": "reviewId",
+              "description": "The unique identifier of the review."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/puja/{pujaId}",
+        "definition": {
+          "entityName": "Puja",
+          "schema": {
+            "$ref": "#/backend/entities/Puja"
+          },
+          "description": "Stores the details of the Puja",
+          "params": [
+            {
+              "name": "pujaId",
+              "description": "The unique identifier of the puja."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/chatMessages/{chatId}",
+        "definition": {
+          "entityName": "ChatMessage",
+          "schema": {
+            "$ref": "#/backend/entities/ChatMessage"
+          },
+          "description": "Stores chat messages between users and pujaris.  Access is controlled by senderId and receiverId in the document.",
+          "params": [
+            {
+              "name": "chatId",
+              "description": "The unique identifier for the chat message."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the VaidikaConnect application, focusing on performance, security, and scalability.  The design prioritizes authorization independence by denormalizing access control data, ensuring that security rules can be evaluated without relying on `get()` calls, which are known to break atomic operations.  Structural segregation is applied to ensure each collection has a homogeneous security posture.  Access modeling leverages path-based ownership for user-specific data and membership maps for collaborative scenarios.  The structure facilitates secure `list` operations. The architecture supports the application's core features, including puja program listings, pujari discovery, user-pujari communication, and review system.  The data model ensures the integrity of the data and relationships between users, pujaris, pujas, and reviews.\n\n**Authorization Independence (Denormalization):**\n\n*   `reviews` subcollection within `pujariProfiles` will include a denormalized `userId` field. This field allows direct association of the review with the user, enabling simpler security rules without needing to fetch user data.\n\n**Structural Segregation:**\n\n*   `userProfiles` and `pujariProfiles` are separated into distinct collections because they have different access requirements.\n\n**Access Modeling:**\n\n*   **User Profiles:** `/userProfiles/{userId}` - Path-based ownership ensures only the user can read/write their profile data.\n*   **Pujari Profiles:** `/pujariProfiles/{pujariId}` - Path-based ownership ensures only the pujari can read/write their profile data.\n*   **Reviews:** `/pujariProfiles/{pujariId}/reviews/{reviewId}` - While technically a subcollection, the denormalized `userId` achieves authorization independence.\n*   **Chat Messages:** `/chatMessages/{chatId}` - A top-level collection stores chat messages. Each message includes `senderId` and `receiverId` for authorization. This prevents unauthorized access to message content.\n\n**QAPs (Rules are not Filters):**\n\n*   The segregation of user and pujari profiles into separate collections allows for efficient and secure listing of either user profiles or pujari profiles, without needing to filter based on roles or types. The queries for lists of pujaris are based on the `pujas` performed by them, so this does not require any filtering in the security rules.\n\nThis structure adheres to the principles of Authorization Independence, Structural Segregation, and Access Modeling to create a secure and scalable backend for the VaidikaConnect application."
+  }
+}
