@@ -80,6 +80,17 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
     if (!isLoaded) {
       return <Skeleton className="w-full h-full" />;
     }
+
+    const googleMapsAvailable = typeof window !== 'undefined' && (window as any).google && (window as any).google.maps;
+    if (!googleMapsAvailable) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-destructive/10 text-destructive-foreground p-4 text-center">
+          <p className="font-bold">Could not initialize Google Maps.</p>
+          <p className="text-sm">Please check that your Google Maps API key is correct and valid.</p>
+        </div>
+      );
+    }
+
     return (
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
@@ -98,7 +109,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
               zIndex={isSelected ? 10 : 1}
               icon={{
                 url: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="%23${isSelected ? orangeColor : grayColor}" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" transform="scale(${isSelected ? 1.25 : 1})"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
-                scaledSize: new window.google.maps.Size(48, 48),
+                scaledSize: new (window as any).google.maps.Size(48, 48),
               }}
             />
           );
