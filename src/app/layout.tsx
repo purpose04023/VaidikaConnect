@@ -4,6 +4,7 @@ import { Header } from '@/components/common/Header';
 import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/context/language-context';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { GoogleMapsProvider } from '@/context/google-maps-context';
 
 export const metadata: Metadata = {
   title: 'VaidikaConnect',
@@ -26,9 +27,11 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <FirebaseClientProvider>
           <LanguageProvider>
-            <Header />
-            <main>{children}</main>
-            <Toaster />
+            <GoogleMapsProvider>
+              <Header />
+              <main>{children}</main>
+              <Toaster />
+            </GoogleMapsProvider>
           </LanguageProvider>
         </FirebaseClientProvider>
       </body>

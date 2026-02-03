@@ -1,10 +1,10 @@
 "use client";
 
 import type { Pujari } from "@/lib/data";
-import { GoogleMap, useLoadScript, MarkerF } from "@react-google-maps/api";
-import { useMemo } from 'react';
+import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGoogleMaps } from "@/context/google-maps-context";
 
 const mapContainerStyle = {
   width: '100%',
@@ -51,10 +51,7 @@ const mapOptions = {
 
 export function HomePujariMap({ pujaris }: { pujaris: Pujari[] }) {
   const router = useRouter();
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries: ['marker'],
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   const handleMarkerClick = (pujariId: number) => {
     router.push(`/pujari/${pujariId}`);

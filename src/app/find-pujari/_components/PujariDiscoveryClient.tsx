@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { PujariCard } from './PujariCard';
 import { Sparkles } from "lucide-react";
-import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
+import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGoogleMaps } from "@/context/google-maps-context";
 
 // Map settings
 const mapContainerStyle = {
@@ -30,10 +31,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
   const [selectedPujariId, setSelectedPujariId] = useState<number | null>(pujaris.length > 0 ? pujaris[0].id : null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
 
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries: ['marker'],
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   const handleMarkerClick = (id: number) => {
     setSelectedPujariId(id);
