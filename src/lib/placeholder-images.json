@@ -7,40 +7,412 @@
       "imageHint": "vaidika connect logo"
     },
     {
-      "id": "puja-1",
-      "description": "Satyanarayana Vratham setup",
+      "id": "puja-satyanarayana",
+      "description": "Satyanarayana Vratham ritual items",
       "imageUrl": "https://images.unsplash.com/photo-1713958325165-07e1cefedd8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMHJpdHVhbHxlbnwwfHx8fDE3NjkzNTY5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "hindu ritual"
     },
     {
-      "id": "puja-2",
-      "description": "Ganapathi Homam fire ritual",
-      "imageUrl": "https://images.unsplash.com/photo-1616940890446-c0e5d09f1bf4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmaXJlJTIwY2VyZW1vbnl8ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "puja-kedareswara",
+      "description": "Kedareshwara Vratam with Shiva Linga",
+      "imageUrl": "https://images.unsplash.com/photo-1628213895328-3a5c1b01a1c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzaGl2YSUyMGxpbmdfd29yc2hpcHxlbnwwfHx8fDE3MDExODcyNzF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "shiva lingam"
+    },
+    {
+      "id": "puja-ananta-padmanabha",
+      "description": "Ananta Padmanabha Swamy reclining on Sheshanaga",
+      "imageUrl": "https://images.unsplash.com/photo-1634913936410-a089066b5b63?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb3JkJTIwdmlzaG51JTIwcmVjbGluaW5nfGVufDB8fHx8MTcwMTE4NzQ0OXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "lord vishnu"
+    },
+    {
+      "id": "puja-varalakshmi",
+      "description": "Goddess Varalakshmi with gold coins",
+      "imageUrl": "https://images.unsplash.com/photo-1605333190885-3b1011311028?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnb2xkZW4lMjBjb2lucyUyMGxha3NobWl8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "goddess lakshmi"
+    },
+    {
+      "id": "puja-mangala-gowri",
+      "description": "Goddess Gowri (Parvati) idol",
+      "imageUrl": "https://images.unsplash.com/photo-1620766182962-6f24458ea8b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzaGl2YSUyMHBhcnZhdGl8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "shiva parvati"
+    },
+    {
+      "id": "puja-mahalakshmi",
+      "description": "Goddess Mahalakshmi depiction",
+      "imageUrl": "https://images.unsplash.com/photo-1622279457482-5d39e5b90680?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnoddGVzcyUyMGxha3NobWl8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "gold coins"
+    },
+    {
+      "id": "puja-aswaddha-narayana",
+      "description": "Sacred Peepal (Aswattha) tree",
+      "imageUrl": "https://images.unsplash.com/photo-1597554933928-a8335a916325?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZWVwYWwlMjB0cmVlfGVufDB8fHx8MTY5OTg3NTg4OXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "sacred tree"
+    },
+    {
+      "id": "puja-sankatahara-chaturthi",
+      "description": "Lord Ganesha idol for Sankatahara Chaturthi",
+      "imageUrl": "https://images.unsplash.com/photo-1603892576137-2a08a7f7b2d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsxJTIwZ2FuZXNoYXxlbnwwfHx8fDE2OTk4NzU4ODl8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "lord ganesha"
+    },
+    {
+      "id": "puja-sarva-devata",
+      "description": "A collection of various Hindu deities",
+      "imageUrl": "https://images.unsplash.com/photo-1634693343333-9b6013c30d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxoaW5kdSUyMHJpdHVhbHxlbnwwfHx8fDE3NjkzNTY5ODZ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "hindu gods"
+    },
+    {
+      "id": "puja-atlataddi",
+      "description": "Married women performing a traditional ritual",
+      "imageUrl": "https://images.unsplash.com/photo-1583337637841-3b32c6cc3a3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoaW5kdSUyMHdvbWVuJTIwcHJheWluZ3xlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "women praying"
+    },
+    {
+      "id": "puja-undralla",
+      "description": "Indian sweet balls (Undrallu/Modak)",
+      "imageUrl": "https://images.unsplash.com/photo-1615837192135-2c2a0d7f2675?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBzd2VldCUyMGJhbGxzfGVufDB8fHx8MTY5OTg3NTk2MXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "rice offering"
+    },
+    {
+      "id": "puja-gowri-nomu",
+      "description": "Idol of Goddess Gauri for puja",
+      "imageUrl": "https://images.unsplash.com/photo-1631242308696-650a31e4f9b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnb2RkZXNzJTIwZ2F1cml8ZW58MHx8fHwxNzAxMTg3NjE4fDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "goddess gauri"
+    },
+    {
+      "id": "puja-karthika",
+      "description": "Oil lamps lit during Karthika masam",
+      "imageUrl": "https://images.unsplash.com/photo-1604389086638-3c3583a6639c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxrYXJ0aWthJTIwbGlnaHRzfGVufDB8fHx8MTY5OTg3NTk2MXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "kartika month"
+    },
+    {
+      "id": "puja-nagula-chavithi",
+      "description": "Worship of a serpent god idol",
+      "imageUrl": "https://images.unsplash.com/photo-1618335914368-e6d8a3d5f308?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuYWdhJTIwc2VycGVudCUyMGdvZHxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "serpent god"
+    },
+    {
+      "id": "puja-maha-ganapathi-homam",
+      "description": "Sacred fire (homam) for Lord Ganesha",
+      "imageUrl": "https://images.unsplash.com/photo-1616940890446-c0e5d09f1bf4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoZ3JhaSUyMGNlcmVtb255fGVufDB8fHx8MTcwMTI0NjEzM3ww&ixlib=rb-4.0.3&q=80&w=1080",
       "imageHint": "fire ceremony"
     },
     {
-      "id": "puja-3",
-      "description": "Griha Pravesham house warming ceremony",
-      "imageUrl": "https://images.unsplash.com/photo-1667132713853-e2824d6865cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMGNlcmVtb255fGVufDB8fHx8MTc2OTM1Njk4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "hindu ceremony"
+      "id": "puja-rudrabhishekam",
+      "description": "Abhishekam being performed on a Shiva Linga",
+      "imageUrl": "https://images.unsplash.com/photo-1563869234851-3e1b129a434b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb3JkJTIwc2hpdmF8ZW58MHx8fHwxNjk5ODc1ODg5fDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "shiva homam"
     },
     {
-      "id": "puja-4",
-      "description": "Shraddha ceremony offerings",
-      "imageUrl": "https://images.unsplash.com/photo-1762777125835-fb9833fb931e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhbmNlc3RvciUyMHdvcnNoaXB8ZW58MHx8fHwxNzY5MzU2OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "ancestor worship"
+      "id": "puja-manyu-sukta",
+      "description": "A priest performing a yagna (homa)",
+      "imageUrl": "https://images.unsplash.com/photo-1542444538-a3d4923581b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx5YWduYSUyMGZpcmV8ZW58MHx8fHwxNzAxMjQ2MTMzfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "vedic ritual"
     },
     {
-      "id": "puja-5",
-      "description": "Abhishekam ritual with milk",
-      "imageUrl": "https://images.unsplash.com/photo-1668265704678-aaff35fa7b22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMGRlaXR5fGVufDB8fHx8MTc2OTMwMDQ1OXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "hindu deity"
+      "id": "puja-kanya-pasupata",
+      "description": "Bride during a Hindu wedding ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1597157639073-69284dc0fdaf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjB3ZWRkaW5nfGVufDB8fHx8MTc2OTI0MzAwN3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "marriage ritual"
     },
     {
-      "id": "puja-6",
-      "description": "Vivaham (Wedding) ceremony",
+      "id": "puja-maha-mrityunjaya",
+      "description": "A depiction of Lord Shiva in meditation",
+      "imageUrl": "https://images.unsplash.com/photo-1617992923985-7835a262d03a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb3JkJTIwc2hpdmElMjBtZWRpdGF0aW9ufGVufDB8fHx8MTcwMTE4NzQ0OXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "shiva worship"
+    },
+    {
+      "id": "puja-kubera",
+      "description": "Stacks of gold coins representing wealth",
+      "imageUrl": "https://images.unsplash.com/photo-1588796123733-a973c7859b8a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnb2xkZW4lMjBjb2luc3xlbnwwfHx8fDE3MDEyNDYxMzN8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "wealth ritual"
+    },
+    {
+      "id": "puja-runa-vimochana",
+      "description": "Person praying with folded hands for relief",
+      "imageUrl": "https://images.unsplash.com/photo-1609234848332-1a6c524b0a42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoaW5kdSUyMHByYXllcnxlbnwwfHx8fDE3MDEyNDYxMzN8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "financial freedom"
+    },
+    {
+      "id": "puja-dampatya",
+      "description": "A happy Indian couple together",
+      "imageUrl": "https://images.unsplash.com/photo-1620247298649-b131c7f4659f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoYXBweSUyMGluZGlhbiUyMGNvdXBsZXxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "couple ritual"
+    },
+    {
+      "id": "puja-rudra-gayatri",
+      "description": "A protective fire ritual in progress",
+      "imageUrl": "https://images.unsplash.com/photo-1713958325165-07e1cefedd8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMHJpdHVhbHxlbnwwfHx8fDE3NjkzNTY5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "protection homam"
+    },
+    {
+      "id": "puja-narayana-upanishad",
+      "description": "Ancient vedic scriptures on palm leaves",
+      "imageUrl": "https://images.unsplash.com/photo-1579785468735-8c679b360b94?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx2ZWRpYyUyMGJvb2tzfGVufDB8fHx8MTcwMTE4ODIyM3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "vedic chanting"
+    },
+    {
+      "id": "puja-purusha-sukta",
+      "description": "A sacred fire ceremony with offerings",
+      "imageUrl": "https://images.unsplash.com/photo-1607952848844-6b1f0ce7aabf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjZXJlbW9ueSUyMGl0ZW1zfGVufDB8fHx8MTc2OTM1Njk4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "purusha suktam"
+    },
+    {
+      "id": "puja-ganapati-sukta",
+      "description": "Offerings being made to Lord Ganesha",
+      "imageUrl": "https://images.unsplash.com/photo-1627492143431-0027636a0d24?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnYW5lc2hhJTIwcHVqYXxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "ganesha blessing"
+    },
+    {
+      "id": "puja-ganapati-upanishad",
+      "description": "A priest reading from a sacred text during a homa",
+      "imageUrl": "https://images.unsplash.com/photo-1768590284101-10259fb60c45?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwcmllc3QlMjByZWFkaW5nfGVufDB8fHx8MTc2OTM1Njk4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "upanishad ritual"
+    },
+    {
+      "id": "puja-vigneshwara-gayatri",
+      "description": "A close-up of a Ganesha idol, symbolizing obstacle removal",
+      "imageUrl": "https://images.unsplash.com/photo-1596721911422-b9135017e2c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnYW5lc2hhJTIwaWRvbHxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "obstacle removal"
+    },
+    {
+      "id": "puja-sri-sukta",
+      "description": "Lotus flower and kalash, symbols of Goddess Lakshmi",
+      "imageUrl": "https://images.unsplash.com/photo-1604389086638-3c3583a6639c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxrYXJ0aWthJTIwbGlnaHRzfGVufDB8fHx8MTY5OTg3NTk2MXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "lakshmi homam"
+    },
+    {
+      "id": "puja-maha-durga",
+      "description": "A powerful idol of Goddess Durga",
+      "imageUrl": "https://images.unsplash.com/photo-1580521852412-a1b57c6318e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnb2RkZXNzJTIwZHVyZ2F8ZW58MHx8fHwxNzAxMjQ2MTMzfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "goddess durga"
+    },
+    {
+      "id": "puja-devi-sukta",
+      "description": "A beautiful depiction of the Divine Mother (Devi)",
+      "imageUrl": "https://images.unsplash.com/photo-1621841289493-875d1b731818?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoaW5kdSUyMGdvZGRlc3N8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "divine mother"
+    },
+    {
+      "id": "puja-saraswati-sukta",
+      "description": "An idol of Goddess Saraswati with a veena",
+      "imageUrl": "https://images.unsplash.com/photo-1622384483786-9a295b9d3b03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnoddGVzcyUyMHNhcmFzd2F0aXxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "goddess saraswati"
+    },
+    {
+      "id": "puja-medha-sukta",
+      "description": "A student studying ancient texts, symbolizing intelligence",
+      "imageUrl": "https://images.unsplash.com/photo-1634913936410-a089066b5b63?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb3JkJTIwdmlzaG51JTIwcmVjbGluaW5nfGVufDB8fHx8MTcwMTE4NzQ0OXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "intelligence ritual"
+    },
+    {
+      "id": "puja-devi-gayatri",
+      "description": "A priest meditating during a fire ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1634693343333-9b6013c30d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxoaW5kdSUyMHJpdHVhbHxlbnwwfHx8fDE3NjkzNTY5ODZ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "spiritual homam"
+    },
+    {
+      "id": "puja-sudarshana",
+      "description": "An artistic depiction of Vishnu's Sudarshana Chakra",
+      "imageUrl": "https://images.unsplash.com/photo-1617992923985-7835a262d03a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb3JkJTIwdmlzaG51fGVufDB8fHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "lord vishnu"
+    },
+    {
+      "id": "puja-vigneshwara",
+      "description": "Ganesha idol decorated with flowers",
+      "imageUrl": "https://images.unsplash.com/photo-1603892576137-2a08a7f7b2d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsxJTIwZ2FuZXNoYXxlbnwwfHx8fDE2OTk4NzU4ODl8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "lord ganesha"
+    },
+    {
+      "id": "puja-varuna",
+      "description": "Holy water from the River Ganga",
+      "imageUrl": "https://images.unsplash.com/photo-1596627733490-8356c9b3e9a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyaXZlciUyMGdhbmdhJTIwdmFyYW5hc2l8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "water god"
+    },
+    {
+      "id": "puja-punyahavachanam",
+      "description": "A priest sprinkling holy water for purification",
+      "imageUrl": "https://images.unsplash.com/photo-1620138459427-33f7c1817154?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzYWNyZWQlMjB3YXRlciUyMHJpdHVhbHxlbnwwfHx8fDE3MDExODc1NTd8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "purification ritual"
+    },
+    {
+      "id": "puja-vivaham",
+      "description": "An Indian bride and groom during their wedding",
       "imageUrl": "https://images.unsplash.com/photo-1597157639073-69284dc0fdaf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjB3ZWRkaW5nfGVufDB8fHx8MTc2OTI0MzAwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "indian wedding"
+    },
+    {
+      "id": "puja-garbhadanam",
+      "description": "A happy Indian couple, symbolizing conception",
+      "imageUrl": "https://images.unsplash.com/photo-1598289410839-86927900b731?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoYXBweSUyMGluZGlhbiUyMGNvdXBsZXxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "conception ritual"
+    },
+    {
+      "id": "puja-pumsavanam",
+      "description": "A pregnant Indian woman during a traditional ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1515694590395-555ba9b4a184?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcmVnbmFudCUyMGluZGlhbiUyMHdvbWFufGVufDB8fHx8MTY5OTg3NTk2MXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "prenatal ceremony"
+    },
+    {
+      "id": "puja-seemantam",
+      "description": "A pregnant woman being blessed during a baby shower like ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1619839627721-a957d3410714?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBiYWJ5JTIwZWF0aW5nfGVufDB8fHx8MTcwMTE4Nzg5Nnww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "baby shower"
+    },
+    {
+      "id": "puja-jathakarma",
+      "description": "A newborn Hindu baby, symbolizing the birth ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1546015593-697c6725e242?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoaW5kdSUyMGJhYnl8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "birth ceremony"
+    },
+    {
+      "id": "puja-namakaranam",
+      "description": "A newborn baby for a naming ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1620302307137-170b020478b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBuZXdib3JufGVufDB8fHx8MTcwMTE4Nzg1OHww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "naming ceremony"
+    },
+    {
+      "id": "puja-annaprasana",
+      "description": "An Indian baby's first feeding ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1619839627721-a957d3410714?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBiYWJ5JTIwZWF0aW5nfGVufDB8fHx8MTcwMTE4Nzg5Nnww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "first food"
+    },
+    {
+      "id": "puja-chudakarma",
+      "description": "Head of an Indian baby before the first haircut",
+      "imageUrl": "https://images.unsplash.com/photo-1599544975858-c9233e72c836?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBiYWJ5JTIwaGVhZHxlbnwwfHx8fDE3MDExODc5ODh8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "haircut ceremony"
+    },
+    {
+      "id": "puja-karna-vedha",
+      "description": "Ears of a young Indian child, for the ear-piercing ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1519638831568-d9897f54ed69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxpbmRpYW4lMjBiYWJ5fGVufDB8fHx8MTcwMTE4ODAzMHww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "ear piercing"
+    },
+    {
+      "id": "puja-upanayanam",
+      "description": "A young boy during the sacred thread ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1620138459427-33f7c1817154?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzYWNyZWQlMjB0aHJlYWQlMjBjZXJlbW9ueXxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "thread ceremony"
+    },
+    {
+      "id": "puja-vedarambham",
+      "description": "Ancient vedic books, symbolizing the start of studies",
+      "imageUrl": "https://images.unsplash.com/photo-1579785468735-8c679b360b94?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx2ZWRpYyUyMGJvb2tzfGVufDB8fHx8MTcwMTE4ODIyM3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "vedic studies"
+    },
+    {
+      "id": "puja-sama-vartamu",
+      "description": "An Indian student graduating",
+      "imageUrl": "https://images.unsplash.com/photo-1529390079861-591de354faf5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBncmFkdWF0aW9ufGVufDB8fHx8MTcwMTE4ODMzMHww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "graduation ceremony"
+    },
+    {
+      "id": "puja-gruhapravesam",
+      "description": "A traditional house warming ceremony in India",
+      "imageUrl": "https://images.unsplash.com/photo-1667132713853-e2824d6865cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaW5kdSUyMGNlcmVtb255fGVufDB8fHx8MTc2OTM1Njk4Nnww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "house warming"
+    },
+    {
+      "id": "puja-vanaprastham",
+      "description": "An elderly person in a serene, natural setting",
+      "imageUrl": "https://images.unsplash.com/photo-1523294928042-18ecb3df7fb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxlbGRlcmx5JTIwbWFufGVufDB8fHx8MTc2OTI3NTQ3Nnww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "retirement ritual"
+    },
+    {
+      "id": "puja-sanyasam",
+      "description": "An Indian monk in saffron robes",
+      "imageUrl": "https://images.unsplash.com/photo-1594709419253-353f40e0604b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBtb25rfGVufDB8fHx8MTcwMTE4ODQyMnww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "renunciation"
+    },
+    {
+      "id": "puja-special-pujas",
+      "description": "A vibrant celebration during a Hindu festival",
+      "imageUrl": "https://images.unsplash.com/photo-1604389086638-3c3583a6639c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxrYXJ0aWthJTIwbGlnaHRzfGVufDB8fHx8MTY5OTg3NTk2MXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "festival puja"
+    },
+    {
+      "id": "puja-sivaparvathula-kalyanam",
+      "description": "Idols of Lord Shiva and Parvati together",
+      "imageUrl": "https://images.unsplash.com/photo-1620766182962-6f24458ea8b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzaGl2YSUyMHBhcnZhdGl8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "shiva parvati"
+    },
+    {
+      "id": "puja-sri-rama-kalyanam",
+      "description": "Idols of Lord Rama and Sita for their wedding ceremony",
+      "imageUrl": "https://images.unsplash.com/photo-1620022200882-2e55772279b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyYW1hJTIwc2l0YXxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "rama sita"
+    },
+    {
+      "id": "puja-tulasi-datri-kalyanam",
+      "description": "Sacred Tulasi (holy basil) plant used in rituals",
+      "imageUrl": "https://images.unsplash.com/photo-1622384483786-9a295b9d3b03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnoddGVzcyUyMHNhcmFzd2F0aXxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "tulasi wedding"
+    },
+    {
+      "id": "puja-go-vrushabha-kalyanam",
+      "description": "A decorated Indian cow, revered as holy",
+      "imageUrl": "https://images.unsplash.com/photo-1594468641934-21a4f77c2714?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxob2x5JTIwY293fGVufDB8fHx8MTY5OTg3NTk2MXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "cow worship"
+    },
+    {
+      "id": "puja-srinivasa-kalyanam",
+      "description": "The idol of Lord Srinivasa (Venkateswara)",
+      "imageUrl": "https://images.unsplash.com/photo-1610405221295-566b75f85b31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxs%73cmQlMjB2ZW5rYXRlc3dhcmF8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "lord venkateswara"
+    },
+    {
+      "id": "puja-navagraha-dosha",
+      "description": "Symbolic representation of the Navagrahas (nine planets)",
+      "imageUrl": "https://images.unsplash.com/photo-1629446411202-c9939c36c6a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuYXZhZ3JhaGF8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "navagraha planets"
+    },
+    {
+      "id": "puja-sarpa-dosha",
+      "description": "A stone carving of a serpent god for Sarpa Dosha Puja",
+      "imageUrl": "https://images.unsplash.com/photo-1618335914368-e6d8a3d5f308?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuYWdhJTIwc2VycGVudCUyMGdvZHxlbnwwfHx8fDE2OTk4NzU5NjF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "serpent god"
+    },
+    {
+      "id": "puja-vivaha-dosha",
+      "description": "Two hands joining during a wedding, symbolizing removal of obstacles",
+      "imageUrl": "https://images.unsplash.com/photo-1597157639073-69284dc0fdaf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjB3ZWRkaW5nfGVufDB8fHx8MTc2OTI0MzAwN3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "marriage obstacle"
+    },
+    {
+      "id": "puja-santana-dosha",
+      "description": "A newborn baby's feet, symbolizing the blessing of a child",
+      "imageUrl": "https://images.unsplash.com/photo-1546015593-697c6725e242?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoaW5kdSUyMGJhYnl8ZW58MHx8fHwxNjk5ODc1OTYxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "child blessing"
+    },
+    {
+      "id": "puja-ayyappa-deeksha",
+      "description": "A serene forest path, representing the journey to Sabarimala",
+      "imageUrl": "https://storage.googleapis.com/studiopaper-dev.appspot.com/users%2Fstudio-52151%2Fuploads%2F2024-07-31%2Ff9e578f2-89b5-4b06-b51c-0c1a93fd57f4.png",
+      "imageHint": "forest path"
+    },
+    {
+      "id": "puja-anjaneya-deeksha",
+      "description": "Lord Hanuman in a meditative pose",
+      "imageUrl": "https://storage.googleapis.com/studiopaper-dev.appspot.com/users%2Fstudio-52151%2Fuploads%2F2024-07-31%2F710712a7-68b3-469a-8c7c-17e923e100c5.png",
+      "imageHint": "lord hanuman"
+    },
+    {
+      "id": "puja-bhavani-deeksha",
+      "description": "Goddess Bhavani, a form of Durga, in a powerful stance",
+      "imageUrl": "https://storage.googleapis.com/studiopaper-dev.appspot.com/users%2Fstudio-52151%2Fuploads%2F2024-07-31%2Fe8251e60-4c17-48f8-aa75-c9c0f993d0f0.png",
+      "imageHint": "goddess bhavani"
+    },
+    {
+      "id": "puja-shiva-deeksha",
+      "description": "A Shiva Linga against the backdrop of Mount Kailash",
+      "imageUrl": "https://storage.googleapis.com/studiopaper-dev.appspot.com/users%2Fstudio-52151%2Fuploads%2F2024-07-31%2Fd03d4c06-1b44-4632-9c12-6f29633e6ea0.png",
+      "imageHint": "shiva lingam"
+    },
+    {
+      "id": "puja-srinivasa-deeksha",
+      "description": "An idol of Lord Venkateswara with a golden glow",
+      "imageUrl": "https://storage.googleapis.com/studiopaper-dev.appspot.com/users%2Fstudio-52151%2Fuploads%2F2024-07-31%2F7151e06f-6c1f-4fc4-a09c-e3f94677761c.png",
+      "imageHint": "lord venkateswara"
     },
     {
       "id": "pujari-1",
