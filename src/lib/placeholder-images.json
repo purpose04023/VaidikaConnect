@@ -291,7 +291,7 @@
     {
       "id": "puja-upanayanam",
       "description": "A young boy during the sacred thread ceremony",
-      "imageUrl": "https://images.unsplash.com/photo-1710449672711-3c33fd65dc3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0aHJlYWQlMjBjZXJlbW9ueXxlbnwwfHx8fDE3NzAwOTQyNDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-17104449672711-3c33fd65dc3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0aHJlYWQlMjBjZXJlbW9ueXxlbnwwfHx8fDE3NzAwOTQyNDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "thread ceremony"
     },
     {
@@ -387,32 +387,32 @@
     {
       "id": "puja-ayyappa-deeksha",
       "description": "A serene forest path, representing the journey to Sabarimala",
-      "imageUrl": "https://images.unsplash.com/photo-1542662562-744384a8493a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzZXJlbmUlMjBmb3Jlc3QlMjBwYXRofGVufDB8fHx8MTc3MDExNzU1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "forest path"
+      "imageUrl": "https://picsum.photos/seed/deeksha1/600/400",
+      "imageHint": "deeksha path"
     },
     {
       "id": "puja-anjaneya-deeksha",
       "description": "Lord Hanuman in a meditative pose",
-      "imageUrl": "https://images.unsplash.com/photo-1674171228236-0561553a19e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtZWRpdGF0aW5nJTIwaGFudW1hbnxlbnwwfHx8fDE3NzAxMTc2MjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "lord hanuman"
+      "imageUrl": "https://picsum.photos/seed/deeksha2/600/400",
+      "imageHint": "hanuman deeksha"
     },
     {
       "id": "puja-bhavani-deeksha",
       "description": "Goddess Bhavani, a form of Durga, in a powerful stance",
-      "imageUrl": "https://images.unsplash.com/photo-1621370211520-2c77f09315d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3dlcmZ1bCUyMGdvZGRlc3N8ZW58MHx8fHwxNzcwMTE3NzAxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "goddess bhavani"
+      "imageUrl": "https://picsum.photos/seed/deeksha3/600/400",
+      "imageHint": "bhavani deeksha"
     },
     {
       "id": "puja-shiva-deeksha",
       "description": "A Shiva Linga against the backdrop of Mount Kailash",
-      "imageUrl": "https://images.unsplash.com/photo-1610624976755-1f63c8e4210a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzaGl2YSUyMGxpbmdhJTIwbW91bnRhaW58ZW58MHx8fHwxNzcwMTE3NzQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "shiva lingam"
+      "imageUrl": "https://picsum.photos/seed/deeksha4/600/400",
+      "imageHint": "shiva deeksha"
     },
     {
       "id": "puja-srinivasa-deeksha",
       "description": "An idol of Lord Venkateswara with a golden glow",
-      "imageUrl": "https://images.unsplash.com/photo-1588616952674-8c433c29990a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnb2xäZW4lMjB0ZW1wbGUlMjBpZG9sfGVufDB8fHx8MTc3MDExNzgxNHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "lord venkateswara"
+      "imageUrl": "https://picsum.photos/seed/deeksha5/600/400",
+      "imageHint": "srinivasa deeksha"
     },
     {
       "id": "pujari-1",
