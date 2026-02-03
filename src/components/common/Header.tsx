@@ -12,16 +12,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Globe } from "lucide-react"
+import { Globe, LogOut } from "lucide-react"
 import { useLanguage, type Language } from "@/context/language-context"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { ThemeToggle } from "./ThemeToggle"
+import { useUser, useAuth } from "@/firebase"
+import { signOut } from "firebase/auth"
 
 export function Header() {
   const { t, setLanguage } = useLanguage();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
 
   const handleLanguageSelect = (language: Language) => {
     setLanguage(language);
+  }
+
+  const handleLogout = () => {
+    if (auth) {
+      signOut(auth);
+    }
   }
   
   const logo = PlaceHolderImages.find(p => p.id === 'app-logo');
@@ -32,14 +42,16 @@ export function Header() {
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             {logo ? (
-              <Image 
-                src={logo.imageUrl}
-                alt="VaidikaConnect Logo" 
-                width={40} 
-                height={40} 
-                data-ai-hint={logo.imageHint}
-                className="h-10 w-10 object-contain"
-              />
+              <div className="h-10 w-10 flex items-center justify-center">
+                <Image 
+                  src={logo.imageUrl}
+                  alt="VaidikaConnect Logo" 
+                  width={40} 
+                  height={40} 
+                  data-ai-hint={logo.imageHint}
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
             ) : (
               <div className="h-10 w-10 bg-primary rounded-sm" />
             )}
@@ -67,13 +79,34 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggle />
-          <Button variant="ghost" size="icon">
-            <Avatar>
-              <AvatarImage src="https://picsum.photos/seed/user/100/100" data-ai-hint="user avatar" />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-            <span className="sr-only">{t('header.user_avatar')}</span>
-          </Button>
+          {isUserLoading ? (
+            <div className="h-10 w-10 bg-muted rounded-full animate-pulse" />
+          ) : user ? (
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Avatar>
+                    <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} data-ai-hint="user avatar" />
+                    <AvatarFallback>{user.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                  </Avatar>
+                  <span className="sr-only">{t('header.user_avatar')}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>{user.displayName || user.email}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+             <Button asChild>
+                <Link href="/login">Login</Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>
