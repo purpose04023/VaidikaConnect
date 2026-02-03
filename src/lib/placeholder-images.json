@@ -446,9 +446,9 @@
     },
     {
       "id": "map-background",
-      "description": "A stylized map of a city",
-      "imageUrl": "https://images.unsplash.com/photo-1717700299581-c2fc3fad4ee8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjaXR5JTIwbWFwfGVufDB8fHx8MTc3MDA4OTQzNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "city map"
+      "description": "A realistic map view of a city, similar to Google Maps",
+      "imageUrl": "https://images.unsplash.com/photo-1594132336496-d84cf2ebe089?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuZXclMjB5b3JrJTIwbWFwfGVufDB8fHx8MTY5ODc2NzYwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "new york map"
     },
     {
       "id": "pujari-gallery-1",

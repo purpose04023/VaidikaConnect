@@ -245,6 +245,81 @@ const pujaris: Pujari[] = [
       { name: "Kavita J.", rating: 5, comment: "Surya Narayana garu was wonderful. The puja was conducted so well and he was very friendly." },
     ]
   },
+  {
+    id: 6,
+    name: "Shastri Ram Kumar",
+    photo: PlaceHolderImages.find(p => p.id === 'pujari-1')?.imageUrl || '',
+    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-1')?.imageHint || '',
+    rating: 4.8,
+    reviewCount: 88,
+    basePrice: 4800,
+    qualifications: ["Jyotish Praveena"],
+    languages: ["Telugu", "Hindi", "English"],
+    experience: 18,
+    pujas: [1, 15, 51, 60, 62, 36, 44],
+    maxParticipants: 40,
+    location: { lat: 40.74, lng: -73.93 }, // Queens
+    description: "Expert in astrology-based remedies and pujas. Provides insightful guidance and performs rituals with utmost precision.",
+    phone: "678-901-2345",
+    gallery: [
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
+    ],
+    reviews: [
+      { name: "Suresh V.", rating: 5, comment: "Shastri Ram Kumar's astrological advice was spot on. The puja he performed brought peace to our home." },
+    ]
+  },
+  {
+    id: 7,
+    name: "Acharya Vishnu Bhat",
+    photo: PlaceHolderImages.find(p => p.id === 'pujari-2')?.imageUrl || '',
+    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-2')?.imageHint || '',
+    rating: 4.9,
+    reviewCount: 120,
+    basePrice: 5200,
+    qualifications: ["Vastu Shastra Expert", "Sama Veda"],
+    languages: ["Kannada", "Sanskrit", "English"],
+    experience: 22,
+    pujas: [51, 38, 36, 15, 1, 4],
+    maxParticipants: 60,
+    location: { lat: 40.84, lng: -73.91 }, // The Bronx
+    description: "Specializes in Vastu Shastra consultations and Gruhapravesam ceremonies. His guidance ensures positive energy flow in new homes.",
+    phone: "789-012-3456",
+    gallery: [
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
+    ],
+    reviews: [
+      { name: "Meera N.", rating: 5, comment: "Vishnu Bhat's Vastu advice was invaluable for our new office. The Gruhapravesam was beautiful." },
+    ]
+  },
+  {
+    id: 8,
+    name: "Pandit Shiva Prasad",
+    photo: PlaceHolderImages.find(p => p.id === 'pujari-3')?.imageUrl || '',
+    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-3')?.imageHint || '',
+    rating: 4.7,
+    reviewCount: 65,
+    basePrice: 4200,
+    qualifications: ["Pancharatra Agama"],
+    languages: ["Telugu", "Sanskrit"],
+    experience: 10,
+    pujas: [59, 56, 1, 35, 16],
+    maxParticipants: 25,
+    location: { lat: 40.61, lng: -74.12 }, // Staten Island
+    description: "A young, devoted priest specializing in temple-style pujas and kalyanams. Known for his melodious chanting.",
+    phone: "890-123-4567",
+    gallery: [
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
+      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
+    ],
+    reviews: [
+      { name: "Rajesh G.", rating: 5, comment: "Pandit Shiva Prasad conducted our Srinivasa Kalyanam beautifully. His voice is divine." },
+    ]
+  }
 ];
 
 export async function getPujas(): Promise<Puja[]> {
