@@ -1,50 +1,99 @@
 "use client";
 
 import type { Pujari } from "@/lib/data";
+import { GoogleMap, useLoadScript, MarkerF } from "@react-google-maps/api";
 import { useMemo } from 'react';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { MapPin } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const MAP_BOUNDS = {
-  lat: { min: 40.60, max: 40.85 },
-  lng: { min: -74.15, max: -73.90 },
+const mapContainerStyle = {
+  width: '100%',
+  height: '100%',
+};
+
+const center = {
+  lat: 40.730610,
+  lng: -73.935242
+};
+
+const mapOptions = {
+  disableDefaultUI: true,
+  zoomControl: true,
+  styles: [ // Adding some styles to make it look nicer
+    {
+      "featureType": "poi",
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    },
+    {
+      "featureType": "transit",
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    },
+    {
+      "featureType": "road",
+      "elementType": "labels.icon",
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    },
+    {
+      "featureType": "administrative",
+      "elementType": "geometry",
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    }
+  ]
 };
 
 export function HomePujariMap({ pujaris }: { pujaris: Pujari[] }) {
-  const mapImageUrl = useMemo(() => PlaceHolderImages.find(p => p.id === 'map-background')?.imageUrl || '', []);
+  const router = useRouter();
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: ['marker'],
+  });
+
+  const handleMarkerClick = (pujariId: number) => {
+    router.push(`/pujari/${pujariId}`);
+  };
+
+  if (loadError) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-destructive/10 text-destructive-foreground p-4 text-center">
+        <p className="font-bold">Error loading maps.</p>
+        <p className="text-sm">Please ensure you have a valid Google Maps API key in your .env file and that the Google Maps JavaScript API is enabled for your project.</p>
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return <Skeleton className="w-full h-full" />;
+  }
+  
+  const orangeColor = "ff9933"; // Hex for hsl(36 100% 60%)
 
   return (
-    <div className="relative w-full h-full">
-      <Image
-        src={mapImageUrl}
-        alt="Map of available pujaris"
-        fill
-        className="object-cover"
-        data-ai-hint={PlaceHolderImages.find(p => p.id === 'map-background')?.imageHint || ''}
-        priority
-      />
-      {pujaris.map(pujari => {
-        const top = 100 - ((pujari.location.lat - MAP_BOUNDS.lat.min) / (MAP_BOUNDS.lat.max - MAP_BOUNDS.lat.min) * 100);
-        const left = (pujari.location.lng - MAP_BOUNDS.lng.min) / (MAP_BOUNDS.lng.max - MAP_BOUNDS.lng.min) * 100;
-
-        if (top < 0 || top > 100 || left < 0 || left > 100) return null;
-
-        return (
-            <Link 
-              key={pujari.id} 
-              href={`/pujari/${pujari.id}`} 
-              className="absolute transform -translate-x-1/2 -translate-y-full transition-all duration-300 group"
-              style={{ top: `${top}%`, left: `${left}%` }}
-            >
-                <MapPin className="w-10 h-10 text-card-foreground/70 drop-shadow-lg transition-all duration-300 group-hover:text-primary group-hover:scale-125" />
-                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-card group-hover:text-primary-foreground">
-                  {pujari.id}
-                </span>
-            </Link>
-        );
-      })}
-    </div>
+    <GoogleMap
+      mapContainerStyle={mapContainerStyle}
+      zoom={11}
+      center={center}
+      options={mapOptions}
+    >
+      {pujaris.map(pujari => (
+        <MarkerF
+          key={pujari.id}
+          position={pujari.location}
+          title={pujari.name}
+          onClick={() => handleMarkerClick(pujari.id)}
+          icon={{
+            url: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="%23${orangeColor}" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+            scaledSize: new window.google.maps.Size(40, 40),
+          }}
+        />
+      ))}
+    </GoogleMap>
   );
 }
