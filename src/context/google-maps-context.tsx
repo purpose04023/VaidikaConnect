@@ -8,18 +8,23 @@ const libraries: ("marker")[] = ['marker'];
 interface GoogleMapsContextType {
   isLoaded: boolean;
   loadError: Error | undefined;
+  apiKeyMissing: boolean;
 }
 
 const GoogleMapsContext = createContext<GoogleMapsContextType | undefined>(undefined);
 
 export function GoogleMapsProvider({ children }: { children: ReactNode }) {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+  const apiKeyMissing = !apiKey || apiKey === "YOUR_GOOGLE_MAPS_API_KEY_HERE";
+  
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: apiKey,
     libraries,
+    disabled: apiKeyMissing,
   });
 
   return (
-    <GoogleMapsContext.Provider value={{ isLoaded, loadError }}>
+    <GoogleMapsContext.Provider value={{ isLoaded, loadError, apiKeyMissing }}>
       {children}
     </GoogleMapsContext.Provider>
   );

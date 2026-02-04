@@ -49,36 +49,39 @@ const mapOptions = {
   ]
 };
 
+const ApiKeyErrorDisplay = () => (
+  <div className="w-full h-full flex flex-col items-center justify-center bg-destructive/10 text-destructive-foreground p-4 text-center">
+    <p className="font-bold">Google Maps API Key is missing or invalid.</p>
+    <p className="text-sm mt-2">To enable maps, please add your Google Maps API key to the <code className="bg-destructive/20 p-1 rounded">.env</code> file as <code className="bg-destructive/20 p-1 rounded">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
+    <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener noreferrer" className="text-xs mt-4 underline">How to get an API key</a>
+  </div>
+);
+
+
 export function HomePujariMap({ pujaris }: { pujaris: Pujari[] }) {
   const router = useRouter();
-  const { isLoaded, loadError } = useGoogleMaps();
+  const { isLoaded, loadError, apiKeyMissing } = useGoogleMaps();
 
   const handleMarkerClick = (pujariId: number) => {
     router.push(`/pujari/${pujariId}`);
   };
 
+  if (apiKeyMissing) {
+    return <ApiKeyErrorDisplay />;
+  }
+
   if (loadError) {
+    // This will now primarily catch other loading errors, as the key error is handled above.
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-destructive/10 text-destructive-foreground p-4 text-center">
-        <p className="font-bold">Error loading maps.</p>
-        <p className="text-sm">Please ensure you have a valid Google Maps API key in your .env file and that the Google Maps JavaScript API is enabled for your project.</p>
+        <p className="font-bold">Error loading Google Maps.</p>
+        <p className="text-sm">Something went wrong while trying to load the map script.</p>
       </div>
     );
   }
 
   if (!isLoaded) {
     return <Skeleton className="w-full h-full" />;
-  }
-
-  // This prevents crashes if the script loads but fails to initialize due to a bad API key.
-  const googleMapsAvailable = typeof window !== 'undefined' && (window as any).google && (window as any).google.maps;
-  if (!googleMapsAvailable) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-destructive/10 text-destructive-foreground p-4 text-center">
-        <p className="font-bold">Could not initialize Google Maps.</p>
-        <p className="text-sm">Please check that your Google Maps API key is correct and valid in your .env file.</p>
-      </div>
-    );
   }
   
   const orangeColor = "ff9933"; // Hex for hsl(36 100% 60%)
