@@ -73,7 +73,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
       return (
         <div className="w-full h-full flex flex-col items-center justify-center bg-destructive/10 text-destructive-foreground p-4 text-center">
           <p className="font-bold">Error loading maps.</p>
-          <p className="text-sm">Please ensure you have a valid Google Maps API key.</p>
+          <p className="text-sm">Please ensure you have a valid Google Maps API key in your .env file and that the Google Maps JavaScript API is enabled for your project.</p>
         </div>
       );
     }
@@ -86,7 +86,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
       return (
         <div className="w-full h-full flex flex-col items-center justify-center bg-destructive/10 text-destructive-foreground p-4 text-center">
           <p className="font-bold">Could not initialize Google Maps.</p>
-          <p className="text-sm">Please check that your Google Maps API key is correct and valid.</p>
+          <p className="text-sm">Please check that your Google Maps API key is correct and valid in your .env file.</p>
         </div>
       );
     }
