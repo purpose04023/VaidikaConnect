@@ -131,7 +131,7 @@ const pujaris: Pujari[] = [
     experience: 20,
     pujas: [1, 4, 15, 51, 59, 60, 39],
     maxParticipants: 50,
-    location: { lat: 40.7128, lng: -74.0060 }, // NYC
+    location: { lat: 16.30, lng: 80.44 }, // Guntur Area
     description: "A highly respected Pujari with two decades of experience in conducting a wide range of Vedic rituals. Specializes in wedding ceremonies and intricate homams. Known for his deep knowledge and patient explanations.",
     phone: "123-456-7890",
     gallery: [
@@ -157,7 +157,7 @@ const pujaris: Pujari[] = [
     experience: 15,
     pujas: [10, 14, 19, 61, 44, 45, 1, 15, 51],
     maxParticipants: 20,
-    location: { lat: 40.81, lng: -73.96 }, // Upper Manhattan
+    location: { lat: 16.32, lng: 80.45 }, // Guntur Area
     description: "Veda Prakash ji is an expert in various homams and dosha parihara pujas. His calm demeanor and command over mantras create a divine atmosphere.",
     phone: "234-567-8901",
     gallery: [
@@ -183,7 +183,7 @@ const pujaris: Pujari[] = [
     experience: 25,
     pujas: [2, 15, 51, 44, 45, 48, 55, 56, 59, 39],
     maxParticipants: 100,
-    location: { lat: 40.65, lng: -73.95 }, // Brooklyn
+    location: { lat: 16.28, lng: 80.42 }, // Guntur Area
     description: "A veteran in the field, Krishna Sastry has performed over a thousand pujas. He is sought after for his expertise in large-scale events and weddings.",
     phone: "345-678-9012",
     gallery: [
@@ -208,7 +208,7 @@ const pujaris: Pujari[] = [
     experience: 12,
     pujas: [15, 16, 19, 35, 60, 61, 62],
     maxParticipants: 30,
-    location: { lat: 40.75, lng: -74.1 }, // New Jersey
+    location: { lat: 16.31, lng: 80.40 }, // Guntur Area
     description: "Specializing in various Homams and Dosha remedies, Ganapathi Avadhani is known for his powerful chanting and adherence to traditional practices.",
     phone: "456-789-0123",
     gallery: [
@@ -233,7 +233,7 @@ const pujaris: Pujari[] = [
     experience: 8,
     pujas: [1, 4, 5, 10, 14, 64, 65, 66],
     maxParticipants: 15,
-    location: { lat: 40.7484, lng: -73.9857 }, // Midtown
+    location: { lat: 16.29, lng: 80.46 }, // Guntur Area
     description: "A young and energetic pujari, Surya Narayana is praised for his dedication and ability to connect with all generations. Perfect for family pujas and deekshas.",
     phone: "567-890-1234",
     gallery: [
@@ -258,7 +258,7 @@ const pujaris: Pujari[] = [
     experience: 18,
     pujas: [1, 15, 51, 60, 62, 36, 44],
     maxParticipants: 40,
-    location: { lat: 40.74, lng: -73.93 }, // Queens
+    location: { lat: 16.33, lng: 80.41 }, // Guntur Area
     description: "Expert in astrology-based remedies and pujas. Provides insightful guidance and performs rituals with utmost precision.",
     phone: "678-901-2345",
     gallery: [
@@ -283,7 +283,7 @@ const pujaris: Pujari[] = [
     experience: 22,
     pujas: [51, 38, 36, 15, 1, 4],
     maxParticipants: 60,
-    location: { lat: 40.84, lng: -73.91 }, // The Bronx
+    location: { lat: 16.27, lng: 80.47 }, // Guntur Area
     description: "Specializes in Vastu Shastra consultations and Gruhapravesam ceremonies. His guidance ensures positive energy flow in new homes.",
     phone: "789-012-3456",
     gallery: [
@@ -308,7 +308,7 @@ const pujaris: Pujari[] = [
     experience: 10,
     pujas: [59, 56, 1, 35, 16],
     maxParticipants: 25,
-    location: { lat: 40.61, lng: -74.12 }, // Staten Island
+    location: { lat: 16.35, lng: 80.48 }, // Guntur Area
     description: "A young, devoted priest specializing in temple-style pujas and kalyanams. Known for his melodious chanting.",
     phone: "890-123-4567",
     gallery: [

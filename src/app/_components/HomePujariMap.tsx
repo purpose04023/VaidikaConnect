@@ -12,7 +12,7 @@ const mapContainerStyle: React.CSSProperties = {
   height: '100%',
 };
 
-const center: L.LatLngExpression = [40.730610, -73.935242];
+const center: L.LatLngExpression = [16.3067, 80.4367]; // Guntur, AP
 
 export function HomePujariMap({ pujaris }: { pujaris: Pujari[] }) {
   const router = useRouter();
@@ -28,7 +28,7 @@ export function HomePujariMap({ pujaris }: { pujaris: Pujari[] }) {
     if (isClient && mapRef.current && !mapInstanceRef.current) {
         mapInstanceRef.current = L.map(mapRef.current!, {
             center: center,
-            zoom: 11,
+            zoom: 12,
             scrollWheelZoom: false,
         });
 

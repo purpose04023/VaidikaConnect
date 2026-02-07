@@ -1,7 +1,6 @@
 "use client";
 
 import type { Puja, Pujari } from '@/lib/data';
-import { HomePujariMap } from './HomePujariMap';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +8,17 @@ import Image from 'next/image';
 import { ArrowRight, Search, Users, CheckCircle } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useLanguage } from '@/context/language-context';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const HomePujariMap = dynamic(
+  () => import('./HomePujariMap').then(mod => mod.HomePujariMap),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[500px] w-full" />,
+  }
+);
+
 
 export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPujas: Puja[] }) {
   const { t, language } = useLanguage();
