@@ -116,208 +116,33 @@ const pujas: Puja[] = [
   { id: 67, name: "శివ దీక్షలు", name_en: "Shiva Deeksha", description: "Deeksha dedicated to Lord Shiva.", description_te: "శివునికి అంకితం చేయబడిన దీక్ష.", category: "దీక్ష పూజలు", category_en: "Deeksha Pujas", image: PlaceHolderImages.find(p => p.id === 'puja-shiva-deeksha')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-shiva-deeksha')?.imageHint || '' },
   { id: 68, name: "శ్రీనివాస దీక్షలు", name_en: "Srinivasa Deeksha", description: "Deeksha dedicated to Lord Srinivasa.", description_te: "శ్రీనివాసునికి అంకితం చేయబడిన దీక్ష.", category: "దీక్ష పూజలు", category_en: "Deeksha Pujas", image: PlaceHolderImages.find(p => p.id === 'puja-srinivasa-deeksha')?.imageUrl || '', imageHint: PlaceHolderImages.find(p => p.id === 'puja-srinivasa-deeksha')?.imageHint || '' },
 ];
+const allPujaIds = pujas.map(p => p.id);
 
 const pujaris: Pujari[] = [
   {
     id: 1,
-    name: "Sri Anantha Sharma",
+    name: "Soppa Subramanyam",
     photo: PlaceHolderImages.find(p => p.id === 'pujari-1')?.imageUrl || '',
     photoHint: PlaceHolderImages.find(p => p.id === 'pujari-1')?.imageHint || '',
-    rating: 4.9,
-    reviewCount: 152,
-    basePrice: 5000,
-    qualifications: ["Veda Praveena", "Sama Veda Pandit"],
-    languages: ["Telugu", "Sanskrit", "English"],
-    experience: 20,
-    pujas: [1, 4, 15, 51, 59, 60, 39],
-    maxParticipants: 50,
-    location: { lat: 16.30, lng: 80.44 }, // Guntur Area
-    description: "A highly respected Pujari with two decades of experience in conducting a wide range of Vedic rituals. Specializes in wedding ceremonies and intricate homams. Known for his deep knowledge and patient explanations.",
-    phone: "123-456-7890",
-    gallery: [
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
-    ],
-    reviews: [
-      { name: "Ramesh K.", rating: 5, comment: "Anantha Sharma garu performed our Griha Pravesham flawlessly. Very knowledgeable and professional." },
-      { name: "Sunita P.", rating: 5, comment: "Excellent Satyanarayana Vratham. He explained all the steps beautifully." },
-    ]
-  },
-  {
-    id: 2,
-    name: "Pujari Veda Prakash",
-    photo: PlaceHolderImages.find(p => p.id === 'pujari-2')?.imageUrl || '',
-    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-2')?.imageHint || '',
-    rating: 4.8,
-    reviewCount: 98,
-    basePrice: 4500,
-    qualifications: ["Yajur Veda Koumudi", "Jyotisha Acharya"],
-    languages: ["Kannada", "Sanskrit", "Hindi"],
-    experience: 15,
-    pujas: [10, 14, 19, 61, 44, 45, 1, 15, 51],
-    maxParticipants: 20,
-    location: { lat: 16.32, lng: 80.45 }, // Guntur Area
-    description: "Veda Prakash ji is an expert in various homams and dosha parihara pujas. His calm demeanor and command over mantras create a divine atmosphere.",
-    phone: "234-567-8901",
-    gallery: [
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
-    ],
-    reviews: [
-      { name: "Anand M.", rating: 5, comment: "Very satisfied with the Ganapathi Homam. Pujari ji was very patient." },
-      { name: "Priya S.", rating: 4, comment: "Good experience for the Sarpa Dosha puja." },
-    ]
-  },
-  {
-    id: 3,
-    name: "Pandit Krishna Sastry",
-    photo: PlaceHolderImages.find(p => p.id === 'pujari-3')?.imageUrl || '',
-    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-3')?.imageHint || '',
-    rating: 4.9,
-    reviewCount: 210,
-    basePrice: 6000,
-    qualifications: ["Rig Veda Ghana Pathi"],
-    languages: ["Tamil", "Sanskrit", "English"],
-    experience: 25,
-    pujas: [2, 15, 51, 44, 45, 48, 55, 56, 59, 39],
-    maxParticipants: 100,
-    location: { lat: 16.28, lng: 80.42 }, // Guntur Area
-    description: "A veteran in the field, Krishna Sastry has performed over a thousand pujas. He is sought after for his expertise in large-scale events and weddings.",
-    phone: "345-678-9012",
-    gallery: [
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
-    ],
-    reviews: [
-      { name: "Deepak R.", rating: 5, comment: "The best wedding ceremony we could have asked for. Sastry garu is a true master." },
-    ]
-  },
-  {
-    id: 4,
-    name: "Ganapathi Avadhani",
-    photo: PlaceHolderImages.find(p => p.id === 'pujari-4')?.imageUrl || '',
-    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-4')?.imageHint || '',
-    rating: 4.7,
-    reviewCount: 75,
-    basePrice: 3500,
-    qualifications: ["Atharva Veda Pandit"],
-    languages: ["Hindi", "Sanskrit"],
-    experience: 12,
-    pujas: [15, 16, 19, 35, 60, 61, 62],
-    maxParticipants: 30,
-    location: { lat: 16.31, lng: 80.40 }, // Guntur Area
-    description: "Specializing in various Homams and Dosha remedies, Ganapathi Avadhani is known for his powerful chanting and adherence to traditional practices.",
-    phone: "456-789-0123",
-    gallery: [
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
-    ],
-    reviews: [
-      { name: "Varun G.", rating: 5, comment: "We were very happy with the Griha Pravesham puja. Everything was perfect." },
-    ]
-  },
-  {
-    id: 5,
-    name: "Surya Narayana",
-    photo: PlaceHolderImages.find(p => p.id === 'pujari-5')?.imageUrl || '',
-    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-5')?.imageHint || '',
     rating: 5.0,
-    reviewCount: 55,
-    basePrice: 4000,
-    qualifications: ["Veda Siromani"],
-    languages: ["Telugu", "Sanskrit"],
-    experience: 8,
-    pujas: [1, 4, 5, 10, 14, 64, 65, 66],
-    maxParticipants: 15,
-    location: { lat: 16.29, lng: 80.46 }, // Guntur Area
-    description: "A young and energetic pujari, Surya Narayana is praised for his dedication and ability to connect with all generations. Perfect for family pujas and deekshas.",
-    phone: "567-890-1234",
-    gallery: [
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
-    ],
-    reviews: [
-      { name: "Kavita J.", rating: 5, comment: "Surya Narayana garu was wonderful. The puja was conducted so well and he was very friendly." },
-    ]
-  },
-  {
-    id: 6,
-    name: "Shastri Ram Kumar",
-    photo: PlaceHolderImages.find(p => p.id === 'pujari-1')?.imageUrl || '',
-    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-1')?.imageHint || '',
-    rating: 4.8,
-    reviewCount: 88,
-    basePrice: 4800,
-    qualifications: ["Jyotish Praveena"],
-    languages: ["Telugu", "Hindi", "English"],
-    experience: 18,
-    pujas: [1, 15, 51, 60, 62, 36, 44],
-    maxParticipants: 40,
-    location: { lat: 16.33, lng: 80.41 }, // Guntur Area
-    description: "Expert in astrology-based remedies and pujas. Provides insightful guidance and performs rituals with utmost precision.",
-    phone: "678-901-2345",
+    reviewCount: 250,
+    basePrice: 7500,
+    qualifications: ["Veda Praveena", "Sama Veda Pandit", "Jyotisha Acharya"],
+    languages: ["Telugu", "Sanskrit", "English", "Hindi"],
+    experience: 30,
+    pujas: allPujaIds,
+    maxParticipants: 150,
+    location: { lat: 16.313, lng: 80.458 }, // Chandramouli Nagar, Guntur
+    description: "Sri Soppa Subramanyam is a highly revered and experienced Pujari based in Guntur. With decades of practice, he is proficient in all major Vedic rituals and ceremonies offered on VaidikaConnect. His deep knowledge and devotion make every ceremony a truly divine experience.",
+    phone: "987-654-3210",
     gallery: [
       { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
       { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
       { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
     ],
     reviews: [
-      { name: "Suresh V.", rating: 5, comment: "Shastri Ram Kumar's astrological advice was spot on. The puja he performed brought peace to our home." },
-    ]
-  },
-  {
-    id: 7,
-    name: "Acharya Vishnu Bhat",
-    photo: PlaceHolderImages.find(p => p.id === 'pujari-2')?.imageUrl || '',
-    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-2')?.imageHint || '',
-    rating: 4.9,
-    reviewCount: 120,
-    basePrice: 5200,
-    qualifications: ["Vastu Shastra Expert", "Sama Veda"],
-    languages: ["Kannada", "Sanskrit", "English"],
-    experience: 22,
-    pujas: [51, 38, 36, 15, 1, 4],
-    maxParticipants: 60,
-    location: { lat: 16.27, lng: 80.47 }, // Guntur Area
-    description: "Specializes in Vastu Shastra consultations and Gruhapravesam ceremonies. His guidance ensures positive energy flow in new homes.",
-    phone: "789-012-3456",
-    gallery: [
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
-    ],
-    reviews: [
-      { name: "Meera N.", rating: 5, comment: "Vishnu Bhat's Vastu advice was invaluable for our new office. The Gruhapravesam was beautiful." },
-    ]
-  },
-  {
-    id: 8,
-    name: "Pandit Shiva Prasad",
-    photo: PlaceHolderImages.find(p => p.id === 'pujari-3')?.imageUrl || '',
-    photoHint: PlaceHolderImages.find(p => p.id === 'pujari-3')?.imageHint || '',
-    rating: 4.7,
-    reviewCount: 65,
-    basePrice: 4200,
-    qualifications: ["Pancharatra Agama"],
-    languages: ["Telugu", "Sanskrit"],
-    experience: 10,
-    pujas: [59, 56, 1, 35, 16],
-    maxParticipants: 25,
-    location: { lat: 16.35, lng: 80.48 }, // Guntur Area
-    description: "A young, devoted priest specializing in temple-style pujas and kalyanams. Known for his melodious chanting.",
-    phone: "890-123-4567",
-    gallery: [
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-3')?.imageUrl || '', hint: 'ceremony items' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-2')?.imageUrl || '', hint: 'priest reading' },
-      { url: PlaceHolderImages.find(p => p.id === 'pujari-gallery-1')?.imageUrl || '', hint: 'hindu ritual' },
-    ],
-    reviews: [
-      { name: "Rajesh G.", rating: 5, comment: "Pandit Shiva Prasad conducted our Srinivasa Kalyanam beautifully. His voice is divine." },
+      { name: "Srinivas R.", rating: 5, comment: "Subramanyam garu is a true gem. His performance of the Satyanarayana Vratham was exceptional." },
+      { name: "Lakshmi M.", rating: 5, comment: "We hired him for our housewarming. Extremely professional and created a very positive atmosphere." },
     ]
   }
 ];
