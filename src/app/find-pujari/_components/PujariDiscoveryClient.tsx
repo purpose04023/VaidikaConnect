@@ -35,7 +35,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
       return
     }
  
-    const onSelect = (api: CarouselApi) => {
+    const onSelect = (api: NonNullable<CarouselApi>) => {
       const selectedIndex = api.selectedScrollSnap();
       if (pujaris[selectedIndex]) {
         setSelectedPujariId(pujaris[selectedIndex].id);

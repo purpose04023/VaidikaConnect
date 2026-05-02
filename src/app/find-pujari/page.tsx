@@ -6,10 +6,11 @@ import { PujariDiscoveryClient } from "./_components/PujariDiscoveryClient";
 export default async function FindPujariPage({
   searchParams,
 }: {
-  searchParams: { puja?: string; participants?: string };
+  searchParams: Promise<{ puja?: string; participants?: string }>;
 }) {
-  const pujaId = searchParams.puja ? parseInt(searchParams.puja) : undefined;
-  const participants = searchParams.participants ? parseInt(searchParams.participants) : 1;
+  const resolvedSearchParams = await searchParams;
+  const pujaId = resolvedSearchParams.puja ? parseInt(resolvedSearchParams.puja) : undefined;
+  const participants = resolvedSearchParams.participants ? parseInt(resolvedSearchParams.participants) : 1;
 
   if (pujaId === undefined) {
     return <div className="text-center py-10">Please select a puja first.</div>;

@@ -20,7 +20,10 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
   const [participants, setParticipants] = useState("5");
   const router = useRouter();
 
-  const categories = useMemo(() => [...new Set(pujas.map(p => language === 'te' ? p.category : p.category_en))].sort(), [pujas, language]);
+  const categories = useMemo<string[]>(
+    () => [...new Set(pujas.map(p => language === 'te' ? p.category : p.category_en))].sort(),
+    [pujas, language]
+  );
   const [activeTab, setActiveTab] = useState<string | undefined>();
 
   useEffect(() => {

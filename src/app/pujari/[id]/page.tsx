@@ -10,8 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from 'next/link';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-export default async function PujariProfilePage({ params }: { params: { id: string } }) {
-  const pujariId = parseInt(params.id);
+export default async function PujariProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const pujariId = parseInt(id);
   const pujari = await getPujariById(pujariId);
   const allPujas = await getPujas();
 
