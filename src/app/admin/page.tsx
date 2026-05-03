@@ -287,7 +287,6 @@ export default function AdminPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Base Price"><Input type="number" value={pujariForm.basePrice} onChange={event => updatePujari("basePrice", Number(event.target.value))} /></Field>
                   <Field label="Experience"><Input type="number" value={pujariForm.experience} onChange={event => updatePujari("experience", Number(event.target.value))} /></Field>
-                  <Field label="Max Participants"><Input type="number" value={pujariForm.maxParticipants} onChange={event => updatePujari("maxParticipants", Number(event.target.value))} /></Field>
                   <Field label="Rating"><Input type="number" step="0.1" value={pujariForm.rating} onChange={event => updatePujari("rating", Number(event.target.value))} /></Field>
                 </div>
                 <Field label="Languages"><Input value={toCsv(pujariForm.languages)} onChange={event => updatePujari("languages", fromCsv(event.target.value))} /></Field>

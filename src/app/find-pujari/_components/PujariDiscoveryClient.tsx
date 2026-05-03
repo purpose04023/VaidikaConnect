@@ -23,17 +23,15 @@ export function PujariDiscoveryClient({
   pujaris,
   recommendation,
   pujaId,
-  participants,
 }: {
   pujaris: Pujari[];
   recommendation: string;
   pujaId?: number;
-  participants?: number;
 }) {
   const { pujaris: editablePujaris } = useContent();
   const sourcePujaris = editablePujaris.length ? editablePujaris : pujaris;
   const displayPujaris = pujaId
-    ? sourcePujaris.filter(pujari => pujari.pujas.includes(pujaId) && pujari.maxParticipants >= (participants ?? 1))
+    ? sourcePujaris.filter(pujari => pujari.pujas.includes(pujaId))
     : sourcePujaris;
   const [selectedPujariId, setSelectedPujariId] = useState<number | null>(displayPujaris.length > 0 ? displayPujaris[0].id : null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
@@ -133,7 +131,7 @@ export function PujariDiscoveryClient({
                 <Card className="flex items-center justify-center h-full">
                     <CardContent className="text-center text-muted-foreground p-6">
                         <p>No pujaris found for the selected criteria.</p>
-                        <p>Please try adjusting the number of participants or selecting a different program.</p>
+                        <p>Please try selecting a different program.</p>
                     </CardContent>
                 </Card>
             )}

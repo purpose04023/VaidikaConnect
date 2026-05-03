@@ -29,7 +29,6 @@ export default function JoinNetworkPage() {
     languages: "Telugu, Sanskrit",
     experience: "1",
     basePrice: "5000",
-    maxParticipants: "50",
     description: "",
   });
 
@@ -62,7 +61,7 @@ export default function JoinNetworkPage() {
       languages: csv(form.languages),
       experience: Number(form.experience),
       basePrice: Number(form.basePrice),
-      maxParticipants: Number(form.maxParticipants),
+      maxParticipants: 50,
       pujas: selectedPujas,
       description: form.description,
     });
@@ -76,7 +75,6 @@ export default function JoinNetworkPage() {
       languages: "Telugu, Sanskrit",
       experience: "1",
       basePrice: "5000",
-      maxParticipants: "50",
       description: "",
     });
     setSelectedPujas([]);
@@ -120,10 +118,9 @@ export default function JoinNetworkPage() {
             </Field>
             <Field label="Languages"><Input value={form.languages} onChange={event => update("languages", event.target.value)} /></Field>
             <Field label="Qualifications"><Input placeholder="Veda Praveena, Jyotisha Acharya" value={form.qualifications} onChange={event => update("qualifications", event.target.value)} /></Field>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <Field label="Experience"><Input required type="number" min="0" value={form.experience} onChange={event => update("experience", event.target.value)} /></Field>
               <Field label="Base Price"><Input required type="number" min="0" value={form.basePrice} onChange={event => update("basePrice", event.target.value)} /></Field>
-              <Field label="Capacity"><Input required type="number" min="1" value={form.maxParticipants} onChange={event => update("maxParticipants", event.target.value)} /></Field>
             </div>
             <div className="md:col-span-2">
               <Field label="About Your Practice">

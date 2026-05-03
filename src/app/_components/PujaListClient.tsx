@@ -5,8 +5,6 @@ import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,8 +14,6 @@ import { ManagedImage } from "@/components/common/ManagedImage";
 export function PujaListClient({ pujas }: { pujas: Puja[] }) {
   const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedPuja, setSelectedPuja] = useState<Puja | null>(null);
-  const [participants, setParticipants] = useState("5");
   const router = useRouter();
 
   const categories = useMemo<string[]>(
@@ -32,10 +28,8 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
     }
   }, [categories, activeTab]);
 
-  const handleFindPujaris = () => {
-    if (selectedPuja) {
-      router.push(`/find-pujari?puja=${selectedPuja.id}&participants=${participants}`);
-    }
+  const handleFindPujaris = (puja: Puja) => {
+    router.push(`/find-pujari?puja=${puja.id}`);
   };
 
   const filteredPujas = useMemo(() => {
@@ -62,7 +56,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
     }, {} as Record<string, Puja[]>);
   }, [filteredPujas, language]);
 
-  const PujaCard = ({ puja, onSelect }: { puja: Puja, onSelect: (puja: Puja) => void }) => (
+  const PujaCard = ({ puja }: { puja: Puja }) => (
     <Card key={puja.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
       <CardHeader className="p-0">
         <ManagedImage
@@ -79,7 +73,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
         <p className="text-muted-foreground">{language === 'te' ? puja.description_te : puja.description}</p>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" onClick={() => onSelect(puja)}>
+        <Button className="w-full" onClick={() => handleFindPujaris(puja)}>
             {t('home.select_program')}
         </Button>
       </CardFooter>
@@ -107,7 +101,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
                     <h2 className="font-headline text-2xl border-b pb-2 mb-6">{category} ({searchResultsByCategory[category].length})</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {searchResultsByCategory[category].map(puja => (
-                            <PujaCard key={puja.id} puja={puja} onSelect={setSelectedPuja} />
+                            <PujaCard key={puja.id} puja={puja} />
                         ))}
                     </div>
                 </div>
@@ -137,7 +131,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
                       {categoryPujas.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                           {categoryPujas.map(puja => (
-                              <PujaCard key={puja.id} puja={puja} onSelect={setSelectedPuja} />
+                              <PujaCard key={puja.id} puja={puja} />
                           ))}
                         </div>
                       ) : (
@@ -152,35 +146,6 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
         )
       )}
 
-      <Dialog open={!!selectedPuja} onOpenChange={() => setSelectedPuja(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="font-headline text-2xl">{t('home.confirm_details_title').replace('{pujaName}', language === 'te' ? selectedPuja?.name || '' : selectedPuja?.name_en || '')}</DialogTitle>
-            <DialogDescription>
-              {t('home.confirm_details_desc')}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="participants" className="text-right">
-                {t('home.participants_label')}
-              </Label>
-              <Input
-                id="participants"
-                type="number"
-                value={participants}
-                onChange={e => setParticipants(e.target.value)}
-                className="col-span-3"
-                min="1"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedPuja(null)}>{t('home.cancel')}</Button>
-            <Button onClick={handleFindPujaris}>{t('home.find_pujaris')}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

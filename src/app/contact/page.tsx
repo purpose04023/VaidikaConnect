@@ -29,7 +29,7 @@ export default function ContactPage() {
         <div className="flex min-h-[280px] flex-col justify-center rounded-md border bg-accent/10 p-6">
           <h2 className="font-headline text-2xl text-primary">Need help planning a ceremony?</h2>
           <p className="mt-3 text-muted-foreground">
-            Share your puja, date, participant count, and location. Our team can help match you with a verified pujari.
+            Share your puja, preferred date, and location. Our team can help match you with a verified pujari.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild>
