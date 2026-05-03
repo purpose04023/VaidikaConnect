@@ -21,6 +21,7 @@ import { doc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: 'First name is required' }),
@@ -50,6 +51,15 @@ export default function SignupPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isAdminEmail(values.email)) {
+      toast({
+        variant: 'destructive',
+        title: 'Reserved admin account',
+        description: `${ADMIN_EMAIL} is the only admin account and cannot be created from public signup.`,
+      });
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;

@@ -18,6 +18,9 @@ export interface Pujari {
   name: string;
   photo: string;
   photoHint: string;
+  verified?: boolean;
+  verifiedBy?: string;
+  verifiedAt?: string;
   rating: number;
   reviewCount: number;
   basePrice: number;
@@ -169,3 +172,5 @@ export async function getPujaById(id: number): Promise<Puja | undefined> {
   await new Promise(resolve => setTimeout(resolve, 50));
   return pujas.find(p => p.id === id);
 }
+
+export { pujas as defaultPujas, pujaris as defaultPujaris };

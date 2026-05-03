@@ -4,9 +4,11 @@ import { PujaListClient } from '@/app/_components/PujaListClient';
 import { getPujas } from '@/lib/data';
 import { Suspense, useEffect, useState } from 'react';
 import type { Puja } from '@/lib/data';
+import { useContent } from '@/lib/content-store';
 
 export default function ProgramsPage() {
   const [pujas, setPujas] = useState<Puja[]>([]);
+  const { pujas: editablePujas } = useContent();
 
   useEffect(() => {
     async function fetchPujas() {
@@ -25,7 +27,7 @@ export default function ProgramsPage() {
         Search and select from our comprehensive list of authentic Vedic rituals.
       </p>
       <Suspense fallback={<div className="text-center">Loading programs...</div>}>
-        <PujaListClient pujas={pujas} />
+        <PujaListClient pujas={editablePujas.length ? editablePujas : pujas} />
       </Suspense>
     </div>
   );

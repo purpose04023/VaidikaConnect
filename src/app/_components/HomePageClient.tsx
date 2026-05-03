@@ -4,12 +4,13 @@ import type { Puja, Pujari } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import Image from 'next/image';
 import { ArrowRight, Search, Users, CheckCircle } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useLanguage } from '@/context/language-context';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useContent } from '@/lib/content-store';
+import { ManagedImage } from '@/components/common/ManagedImage';
 
 const HomePujariMap = dynamic(
   () => import('./HomePujariMap').then(mod => mod.HomePujariMap),
@@ -22,6 +23,9 @@ const HomePujariMap = dynamic(
 
 export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPujas: Puja[] }) {
   const { t, language } = useLanguage();
+  const content = useContent();
+  const displayPujas = content.pujas.length ? content.pujas : allPujas;
+  const displayPujaris = content.pujaris.length ? content.pujaris : pujaris;
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -87,11 +91,11 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
             className="w-full"
           >
             <CarouselContent>
-              {allPujas.map(puja => (
+              {displayPujas.map(puja => (
                 <CarouselItem key={puja.id} className="md:basis-1/2 lg:basis-1/3">
                   <div className="p-1 h-full">
                     <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col text-left h-full">
-                      <Image
+                      <ManagedImage
                           src={puja.image}
                           alt={language === 'te' ? puja.name : puja.name_en}
                           width={600}
@@ -123,7 +127,7 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
           <h2 className="font-headline text-3xl md:text-4xl font-bold mb-4">{t('home.map_title')}</h2>
           <p className="text-muted-foreground mb-12 max-w-2xl mx-auto">{t('home.map_desc')}</p>
           <div className="h-[500px] w-full rounded-lg overflow-hidden border shadow-lg">
-            <HomePujariMap pujaris={pujaris} />
+            <HomePujariMap pujaris={displayPujaris} />
           </div>
         </div>
       </section>

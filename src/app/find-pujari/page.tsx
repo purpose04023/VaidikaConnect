@@ -44,6 +44,8 @@ export default async function FindPujariPage({
         <PujariDiscoveryClient 
           pujaris={eligiblePujaris} 
           recommendation={recommendation}
+          pujaId={pujaId}
+          participants={participants}
         />
       </Suspense>
     </div>

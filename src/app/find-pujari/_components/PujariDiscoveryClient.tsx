@@ -8,6 +8,7 @@ import { PujariCard } from './PujariCard';
 import { Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import dynamic from 'next/dynamic';
+import { useContent } from "@/lib/content-store";
 
 const PujariMap = dynamic(
     () => import('./PujariMap').then(mod => mod.PujariMap),
@@ -18,13 +19,39 @@ const PujariMap = dynamic(
 );
 
 
-export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pujari[], recommendation: string }) {
-  const [selectedPujariId, setSelectedPujariId] = useState<number | null>(pujaris.length > 0 ? pujaris[0].id : null);
+export function PujariDiscoveryClient({
+  pujaris,
+  recommendation,
+  pujaId,
+  participants,
+}: {
+  pujaris: Pujari[];
+  recommendation: string;
+  pujaId?: number;
+  participants?: number;
+}) {
+  const { pujaris: editablePujaris } = useContent();
+  const sourcePujaris = editablePujaris.length ? editablePujaris : pujaris;
+  const displayPujaris = pujaId
+    ? sourcePujaris.filter(pujari => pujari.pujas.includes(pujaId) && pujari.maxParticipants >= (participants ?? 1))
+    : sourcePujaris;
+  const [selectedPujariId, setSelectedPujariId] = useState<number | null>(displayPujaris.length > 0 ? displayPujaris[0].id : null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (displayPujaris.length === 0) {
+      setSelectedPujariId(null);
+      return;
+    }
+
+    if (!displayPujaris.some(pujari => pujari.id === selectedPujariId)) {
+      setSelectedPujariId(displayPujaris[0].id);
+    }
+  }, [displayPujaris, selectedPujariId]);
 
   const handleCardSelect = (id: number) => {
     setSelectedPujariId(id);
-    const index = pujaris.findIndex(p => p.id === id);
+    const index = displayPujaris.findIndex(p => p.id === id);
     if (index !== -1 && carouselApi) {
       carouselApi.scrollTo(index, true); // add true for jump
     }
@@ -37,8 +64,8 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
  
     const onSelect = (api: NonNullable<CarouselApi>) => {
       const selectedIndex = api.selectedScrollSnap();
-      if (pujaris[selectedIndex]) {
-        setSelectedPujariId(pujaris[selectedIndex].id);
+      if (displayPujaris[selectedIndex]) {
+        setSelectedPujariId(displayPujaris[selectedIndex].id);
       }
     }
  
@@ -47,7 +74,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
     return () => {
       carouselApi.off("select", onSelect)
     }
-  }, [carouselApi, pujaris]);
+  }, [carouselApi, displayPujaris]);
 
 
   return (
@@ -67,7 +94,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden shadow-lg border">
             <PujariMap 
-                pujaris={pujaris} 
+                pujaris={displayPujaris} 
                 selectedPujariId={selectedPujariId}
                 setSelectedPujariId={setSelectedPujariId}
                 carouselApi={carouselApi}
@@ -75,8 +102,8 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
         </div>
         
         <div className="flex flex-col">
-            <h2 className="font-headline text-2xl mb-4">Pujaris Found ({pujaris.length})</h2>
-            {pujaris.length > 0 ? (
+            <h2 className="font-headline text-2xl mb-4">Pujaris Found ({displayPujaris.length})</h2>
+            {displayPujaris.length > 0 ? (
                 <div className="w-full">
                 <Carousel 
                   opts={{ align: "start" }} 
@@ -84,7 +111,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
                   setApi={setCarouselApi}
                 >
                     <CarouselContent>
-                    {pujaris.map((pujari) => (
+                    {displayPujaris.map((pujari) => (
                         <CarouselItem key={pujari.id} className="md:basis-1/1 lg:basis-1/1">
                         <PujariCard
                             pujari={pujari}
@@ -94,7 +121,7 @@ export function PujariDiscoveryClient({ pujaris, recommendation }: { pujaris: Pu
                         </CarouselItem>
                     ))}
                     </CarouselContent>
-                    {pujaris.length > 1 && (
+                    {displayPujaris.length > 1 && (
                       <>
                         <CarouselPrevious className="hidden sm:flex" />
                         <CarouselNext className="hidden sm:flex" />

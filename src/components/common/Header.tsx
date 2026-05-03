@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,6 +17,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { ThemeToggle } from "./ThemeToggle"
 import { useUser, useAuth } from "@/firebase"
 import { signOut } from "firebase/auth"
+import { ManagedImage } from "./ManagedImage"
 
 export function Header() {
   const { t, setLanguage } = useLanguage();
@@ -43,7 +43,7 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             {logo ? (
               <div className="h-10 w-10 flex items-center justify-center">
-                <Image 
+                <ManagedImage 
                   src={logo.imageUrl}
                   alt="VaidikaConnect Logo" 
                   width={40} 
@@ -62,6 +62,15 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             <Link href="/programs" className="text-foreground/60 transition-colors hover:text-foreground/80">
               Programs
+            </Link>
+            <Link href="/join-network" className="text-foreground/60 transition-colors hover:text-foreground/80">
+              Join Network
+            </Link>
+            <Link href="/contact" className="text-foreground/60 transition-colors hover:text-foreground/80">
+              Contact
+            </Link>
+            <Link href="/admin" className="text-foreground/60 transition-colors hover:text-foreground/80">
+              Admin
             </Link>
           </nav>
         </div>

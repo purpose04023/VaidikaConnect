@@ -4,7 +4,6 @@ import type { Puja } from "@/lib/data";
 import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -12,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/context/language-context";
+import { ManagedImage } from "@/components/common/ManagedImage";
 
 export function PujaListClient({ pujas }: { pujas: Puja[] }) {
   const { t, language } = useLanguage();
@@ -65,7 +65,7 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
   const PujaCard = ({ puja, onSelect }: { puja: Puja, onSelect: (puja: Puja) => void }) => (
     <Card key={puja.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
       <CardHeader className="p-0">
-        <Image
+        <ManagedImage
             src={puja.image}
             alt={puja.name}
             width={600}

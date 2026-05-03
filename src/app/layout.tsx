@@ -4,6 +4,7 @@ import { Header } from '@/components/common/Header';
 import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/context/language-context';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { ContentProvider } from '@/lib/content-store';
 
 export const metadata: Metadata = {
   title: 'VaidikaConnect',
@@ -27,9 +28,11 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <FirebaseClientProvider>
           <LanguageProvider>
+            <ContentProvider>
               <Header />
               <main>{children}</main>
               <Toaster />
+            </ContentProvider>
           </LanguageProvider>
         </FirebaseClientProvider>
       </body>
