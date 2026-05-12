@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Puja, Pujari } from "@/lib/data";
 import { useContent, type ContactContent } from "@/lib/content-store";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useUser } from "@/firebase";
 import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
 import { ManagedImage } from "@/components/common/ManagedImage";
+import { useToast } from "@/hooks/use-toast";
 
 type PujaForm = Puja;
 type PujariForm = Pujari;
@@ -79,6 +80,7 @@ function readUploadedImage(file: File) {
 
 export default function AdminPage() {
   const { user, isUserLoading } = useUser();
+  const { toast } = useToast();
   const {
     pujas,
     pujaris,
@@ -96,8 +98,30 @@ export default function AdminPage() {
   const [pujaForm, setPujaForm] = useState<PujaForm>(() => emptyPuja(nextId(pujas)));
   const [pujariForm, setPujariForm] = useState<PujariForm>(() => emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)));
   const [contactForm, setContactForm] = useState<ContactContent>(contact);
+  const [isSaving, setIsSaving] = useState(false);
 
   const categoryOptions = useMemo(() => [...new Set(pujas.map(puja => puja.category_en))], [pujas]);
+
+  useEffect(() => {
+    setContactForm(contact);
+  }, [contact]);
+
+  const runAdminAction = async (action: () => Promise<void>, successTitle: string) => {
+    setIsSaving(true);
+    try {
+      await action();
+      toast({ title: successTitle, description: "Changes were saved to the shared database." });
+    } catch (error) {
+      console.error("Admin action failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Admin update failed",
+        description: error instanceof Error ? error.message : "Check Firebase auth and database rules.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   if (isUserLoading) {
     return (
@@ -145,16 +169,25 @@ export default function AdminPage() {
   };
 
   const saveCurrentPuja = () => {
-    savePuja(pujaForm);
-    setPujaForm(emptyPuja(nextId(pujas)));
+    void runAdminAction(async () => {
+      const savedPuja = pujaForm.id ? pujaForm : { ...pujaForm, id: nextId(pujas) };
+      await savePuja(savedPuja);
+      const projectedPujas = pujas.some(puja => puja.id === savedPuja.id) ? pujas : [...pujas, savedPuja];
+      setPujaForm(emptyPuja(nextId(projectedPujas)));
+    }, "Puja saved");
   };
 
   const saveCurrentPujari = () => {
-    savePujari({
-      ...pujariForm,
-      verifiedAt: pujariForm.verified ? pujariForm.verifiedAt || new Date().toISOString().slice(0, 10) : "",
-    });
-    setPujariForm(emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)));
+    void runAdminAction(async () => {
+      const savedPujari = {
+        ...pujariForm,
+        id: pujariForm.id || nextId(pujaris),
+        verifiedAt: pujariForm.verified ? pujariForm.verifiedAt || new Date().toISOString().slice(0, 10) : "",
+      };
+      await savePujari(savedPujari);
+      const projectedPujaris = pujaris.some(pujari => pujari.id === savedPujari.id) ? pujaris : [...pujaris, savedPujari];
+      setPujariForm(emptyPujari(nextId(projectedPujaris), pujas.map(puja => puja.id)));
+    }, "Pujari saved");
   };
 
   return (
@@ -164,7 +197,7 @@ export default function AdminPage() {
           <h1 className="font-headline text-4xl text-primary">Admin Portal</h1>
           <p className="text-muted-foreground">Manage programs, pujaris, contact content, and onboarding requests.</p>
         </div>
-        <Button variant="outline" onClick={resetContent}>
+        <Button variant="outline" onClick={() => void runAdminAction(resetContent, "Demo data reset")} disabled={isSaving}>
           <RotateCcw className="mr-2 h-4 w-4" />
           Reset Demo Data
         </Button>
@@ -194,7 +227,7 @@ export default function AdminPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={() => setPujaForm(puja)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="destructive" size="sm" onClick={() => window.confirm("Delete this puja?") && deletePuja(puja.id)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this puja?") && void runAdminAction(() => deletePuja(puja.id), "Puja deleted")}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -231,7 +264,7 @@ export default function AdminPage() {
                 <Field label="English Description"><Textarea value={pujaForm.description} onChange={event => updatePuja("description", event.target.value)} /></Field>
                 <Field label="Telugu Description"><Textarea value={pujaForm.description_te} onChange={event => updatePuja("description_te", event.target.value)} /></Field>
                 <div className="flex gap-2">
-                  <Button onClick={saveCurrentPuja}><Plus className="mr-2 h-4 w-4" />Save Puja</Button>
+                  <Button onClick={saveCurrentPuja} disabled={isSaving}><Plus className="mr-2 h-4 w-4" />Save Puja</Button>
                   <Button variant="outline" onClick={() => setPujaForm(emptyPuja(nextId(pujas)))}>New</Button>
                 </div>
               </CardContent>
@@ -256,7 +289,7 @@ export default function AdminPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={() => setPujariForm(pujari)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="destructive" size="sm" onClick={() => window.confirm("Delete this pujari?") && deletePujari(pujari.id)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this pujari?") && void runAdminAction(() => deletePujari(pujari.id), "Pujari deleted")}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -315,7 +348,7 @@ export default function AdminPage() {
                   <Field label="Verified By"><Input value={pujariForm.verifiedBy || ""} onChange={event => updatePujari("verifiedBy", event.target.value)} /></Field>
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={saveCurrentPujari}><Plus className="mr-2 h-4 w-4" />Save Pujari</Button>
+                  <Button onClick={saveCurrentPujari} disabled={isSaving}><Plus className="mr-2 h-4 w-4" />Save Pujari</Button>
                   <Button variant="outline" onClick={() => setPujariForm(emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)))}>New</Button>
                 </div>
               </CardContent>
@@ -340,8 +373,8 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <div className="flex gap-2 md:flex-col">
-                  <Button onClick={() => approveJoinRequest(request.id)}><Check className="mr-2 h-4 w-4" />Add</Button>
-                  <Button variant="outline" onClick={() => rejectJoinRequest(request.id)}><X className="mr-2 h-4 w-4" />Reject</Button>
+                  <Button disabled={isSaving} onClick={() => void runAdminAction(() => approveJoinRequest(request.id), "Request approved")}><Check className="mr-2 h-4 w-4" />Add</Button>
+                  <Button variant="outline" disabled={isSaving} onClick={() => void runAdminAction(() => rejectJoinRequest(request.id), "Request rejected")}><X className="mr-2 h-4 w-4" />Reject</Button>
                 </div>
               </CardContent>
             </Card>
@@ -360,7 +393,7 @@ export default function AdminPage() {
               <Field label="Hours"><Input value={contactForm.hours} onChange={event => setContactForm(current => ({ ...current, hours: event.target.value }))} /></Field>
               <Field label="WhatsApp"><Input value={contactForm.whatsapp} onChange={event => setContactForm(current => ({ ...current, whatsapp: event.target.value }))} /></Field>
               <Field label="Map URL"><Input value={contactForm.mapUrl} onChange={event => setContactForm(current => ({ ...current, mapUrl: event.target.value }))} /></Field>
-              <Button onClick={() => saveContact(contactForm)}>Save Contact Page</Button>
+              <Button disabled={isSaving} onClick={() => void runAdminAction(() => saveContact(contactForm), "Contact page saved")}>Save Contact Page</Button>
             </CardContent>
           </Card>
         </TabsContent>

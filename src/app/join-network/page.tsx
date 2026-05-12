@@ -49,39 +49,48 @@ export default function JoinNetworkPage() {
     setSelectedPujas(current => current.includes(id) ? current.filter(pujaId => pujaId !== id) : [...current, id]);
   };
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    submitJoinRequest({
-      name: form.name,
-      phone: form.phone,
-      email: form.email,
-      city: form.city,
-      photo: form.photo || defaultPhoto,
-      qualifications: csv(form.qualifications),
-      languages: csv(form.languages),
-      experience: Number(form.experience),
-      basePrice: Number(form.basePrice),
-      maxParticipants: 50,
-      pujas: selectedPujas,
-      description: form.description,
-    });
-    setForm({
-      name: "",
-      phone: "",
-      email: "",
-      city: "",
-      photo: "",
-      qualifications: "",
-      languages: "Telugu, Sanskrit",
-      experience: "1",
-      basePrice: "5000",
-      description: "",
-    });
-    setSelectedPujas([]);
-    toast({
-      title: "Request submitted",
-      description: "Your profile is now pending review in the admin requests section.",
-    });
+    try {
+      await submitJoinRequest({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        city: form.city,
+        photo: form.photo || defaultPhoto,
+        qualifications: csv(form.qualifications),
+        languages: csv(form.languages),
+        experience: Number(form.experience),
+        basePrice: Number(form.basePrice),
+        maxParticipants: 50,
+        pujas: selectedPujas,
+        description: form.description,
+      });
+      setForm({
+        name: "",
+        phone: "",
+        email: "",
+        city: "",
+        photo: "",
+        qualifications: "",
+        languages: "Telugu, Sanskrit",
+        experience: "1",
+        basePrice: "5000",
+        description: "",
+      });
+      setSelectedPujas([]);
+      toast({
+        title: "Request submitted",
+        description: "Your profile is now pending review in the admin requests section.",
+      });
+    } catch (error) {
+      console.error("Join request submission failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Request not submitted",
+        description: error instanceof Error ? error.message : "Please try again.",
+      });
+    }
   };
 
   return (

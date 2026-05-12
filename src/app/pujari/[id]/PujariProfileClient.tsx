@@ -13,15 +13,30 @@ import { BadgeCheck, Briefcase, Calendar, Languages, MessageCircle, Phone, Star 
 import { ManagedImage } from "@/components/common/ManagedImage";
 
 export function PujariProfileClient({
+  pujariId,
   initialPujari,
   initialPujas,
 }: {
-  initialPujari: Pujari;
+  pujariId: number;
+  initialPujari: Pujari | null;
   initialPujas: Puja[];
 }) {
-  const { pujaris, pujas } = useContent();
-  const pujari = pujaris.find(item => item.id === initialPujari.id) ?? initialPujari;
+  const { pujaris, pujas, isLoading } = useContent();
+  const pujari = pujaris.find(item => item.id === pujariId) ?? initialPujari;
   const allPujas = pujas.length ? pujas : initialPujas;
+
+  if (!pujari) {
+    return (
+      <div className="container mx-auto px-4 py-10">
+        <Card className="max-w-xl">
+          <CardContent className="p-6 text-muted-foreground">
+            {isLoading ? "Loading pujari profile..." : "This pujari profile could not be found."}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const pujasOffered = allPujas.filter(puja => pujari.pujas.includes(puja.id));
 
   return (

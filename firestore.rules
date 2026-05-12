@@ -38,6 +38,16 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // The admin portal is restricted to the same Firebase Auth email used by the app.
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == "purpose04023@gmail.com";
+    }
+
+    // Admins can inspect and repair any application data from the portal.
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
     // Checks if the requesting user's UID matches the provided userId.
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
@@ -80,6 +90,29 @@ service cloud.firestore {
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && areRelationalIdsImmutableForUser(userId);
       allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Shared content managed by the admin portal.
+     * @path /appData/{document}
+     * @allow (read) Public pages can read shared puja, pujari, and contact content.
+     * @allow (write) Only the configured admin account can change shared content.
+     */
+    match /appData/{document} {
+      allow get: if true;
+      allow list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Pujari onboarding requests submitted from the public join form.
+     * @path /joinRequests/{requestId}
+     * @allow (create) Visitors can submit a request for admin review.
+     * @allow (read/write) Only admins can list, approve, reject, or clean up requests.
+     */
+    match /joinRequests/{requestId} {
+      allow create: if true;
+      allow get, list, update, delete: if isAdmin();
     }
 
     /**

@@ -1,5 +1,4 @@
 import { getPujariById, getPujas } from "@/lib/data";
-import { notFound } from "next/navigation";
 import { PujariProfileClient } from "./PujariProfileClient";
 
 export default async function PujariProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -8,9 +7,5 @@ export default async function PujariProfilePage({ params }: { params: Promise<{ 
   const pujari = await getPujariById(pujariId);
   const allPujas = await getPujas();
 
-  if (!pujari) {
-    notFound();
-  }
-
-  return <PujariProfileClient initialPujari={pujari} initialPujas={allPujas} />;
+  return <PujariProfileClient pujariId={pujariId} initialPujari={pujari ?? null} initialPujas={allPujas} />;
 }

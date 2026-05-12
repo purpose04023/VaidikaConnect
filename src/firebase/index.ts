@@ -5,6 +5,10 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'
 
+function hasFirebaseConfigFallback() {
+  return Boolean(firebaseConfig.apiKey && firebaseConfig.appId && firebaseConfig.projectId);
+}
+
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
   if (!getApps().length) {
@@ -17,9 +21,9 @@ export function initializeFirebase() {
       // Attempt to initialize via Firebase App Hosting environment variables
       firebaseApp = initializeApp();
     } catch (e) {
-      // Only warn in production because it's normal to use the firebaseConfig to initialize
-      // during development
-      if (process.env.NODE_ENV === "production") {
+      // Local production builds do not have App Hosting auto-options, but the checked-in
+      // Firebase config is a valid fallback.
+      if (process.env.NODE_ENV === "production" && !hasFirebaseConfigFallback()) {
         console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
       }
       firebaseApp = initializeApp(firebaseConfig);
