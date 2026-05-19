@@ -130,7 +130,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   );
   const [contact, setContact] = useState<ContactContent>(defaultContact);
   const [requests, setRequests] = useState<PujariJoinRequest[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedContent, setLoadedContent] = useState({
+    pujas: false,
+    pujaris: false,
+    contact: false,
+  });
+  const isLoading =
+    !loadedContent.pujas || !loadedContent.pujaris || !loadedContent.contact;
 
   const ensureAdmin = useCallback(() => {
     if (!isAdmin || isUserLoading) {
@@ -155,12 +161,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           }
           setPujas(defaultPujas);
         }
-        setIsLoading(false);
+        setLoadedContent((current) => ({ ...current, pujas: true }));
       },
       (err) => {
         console.error("Firestore pujas listener error:", err);
         setPujas(defaultPujas);
-        setIsLoading(false);
+        setLoadedContent((current) => ({ ...current, pujas: true }));
       }
     );
     return unsub;
@@ -186,10 +192,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           }
           setPujaris(defaultPujaris.map(withDefaultVerification));
         }
+        setLoadedContent((current) => ({ ...current, pujaris: true }));
       },
       (err) => {
         console.error("Firestore pujaris listener error:", err);
         setPujaris(defaultPujaris.map(withDefaultVerification));
+        setLoadedContent((current) => ({ ...current, pujaris: true }));
       }
     );
     return unsub;
@@ -210,10 +218,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           }
           setContact(defaultContact);
         }
+        setLoadedContent((current) => ({ ...current, contact: true }));
       },
       (err) => {
         console.error("Firestore contact listener error:", err);
         setContact(defaultContact);
+        setLoadedContent((current) => ({ ...current, contact: true }));
       }
     );
     return unsub;
