@@ -30,21 +30,42 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
   return (
     <div className="flex flex-col items-center text-center">
       {/* Hero Section */}
-      <section className="w-full bg-gradient-to-b from-background to-accent/10 py-20 md:py-32">
-        <div className="container mx-auto px-4">
-          <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary">
+      <section className="w-full divine-bg py-20 md:py-32 relative overflow-hidden">
+        {/* Background Om watermarks */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
+          <span className="absolute top-4 left-[5%] text-primary/5 text-[200px] font-serif leading-none">ॐ</span>
+          <span className="absolute bottom-0 right-[5%] text-primary/5 text-[160px] font-serif leading-none">ॐ</span>
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-medium mb-6">
+            ✦ Trusted by 500+ families across Andhra Pradesh
+          </div>
+          <h1 className="font-headline text-4xl md:text-6xl font-bold gold-gradient-text">
             {t('home.title')}
           </h1>
           <p className="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground">
             {t('home.subtitle')}
           </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Button asChild size="lg">
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Button asChild size="lg" className="divine-button px-8 py-6 text-base">
               <Link href="/programs">{t('home.hero_cta_explore')} <ArrowRight className="ml-2" /></Link>
             </Button>
-            <Button asChild size="lg" variant="outline">
+            <Button asChild size="lg" variant="outline" className="border-primary/40 hover:bg-primary/10 px-8 py-6 text-base">
               <Link href="/login">{t('home.hero_cta_login')}</Link>
             </Button>
+          </div>
+          {/* Quick stats */}
+          <div className="mt-14 grid grid-cols-3 gap-4 max-w-lg mx-auto">
+            {[
+              { num: "68+", label: "Sacred Programs" },
+              { num: "500+", label: "Happy Families" },
+              { num: "30+", label: "Expert Pujaris" },
+            ].map((stat) => (
+              <div key={stat.label} className="glass-card rounded-xl py-4 px-3">
+                <p className="font-headline text-2xl font-bold text-primary">{stat.num}</p>
+                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
