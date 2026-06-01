@@ -11,8 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import { Globe, LogOut } from "lucide-react"
 import { useLanguage, type Language } from "@/context/language-context"
+import { useState } from "react"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { ThemeToggle } from "./ThemeToggle"
 import { useUser, useAuth } from "@/firebase"
@@ -24,6 +30,7 @@ export function Header() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
 
+  const [isOpen, setIsOpen] = useState(false);
   const handleLanguageSelect = (language: Language) => {
     setLanguage(language);
   }
@@ -38,8 +45,57 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center">
+      <div className="container mx-auto flex h-14 max-w-screen-2xl items-center px-4">
         <div className="mr-4 flex items-center">
+          {/* Mobile Navigation Hamburger */}
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="mr-2 md:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+              <div className="flex flex-col space-y-6 pt-4">
+                <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
+                  {logo ? (
+                    <div className="h-8 w-8 flex items-center justify-center">
+                      <ManagedImage 
+                        src={logo.imageUrl}
+                        alt="VaidikaConnect Logo" 
+                        width={32} 
+                        height={32} 
+                        data-ai-hint={logo.imageHint}
+                        className="object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-8 w-8 bg-primary rounded-sm" />
+                  )}
+                  <span className="font-bold font-headline text-lg">
+                    {t('header.vaidikaconnect')}
+                  </span>
+                </Link>
+                <nav className="flex flex-col space-y-4 text-sm font-medium">
+                  <Link href="/programs" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5 border-b border-border/40" onClick={() => setIsOpen(false)}>
+                    Programs
+                  </Link>
+                  <Link href="/join-network" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5 border-b border-border/40" onClick={() => setIsOpen(false)}>
+                    Join Network
+                  </Link>
+                  <Link href="/contact" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5 border-b border-border/40" onClick={() => setIsOpen(false)}>
+                    Contact
+                  </Link>
+                  <Link href="/admin" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5" onClick={() => setIsOpen(false)}>
+                    Admin
+                  </Link>
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
+
           <Link href="/" className="mr-6 flex items-center space-x-2">
             {logo ? (
               <div className="h-10 w-10 flex items-center justify-center">
@@ -55,7 +111,7 @@ export function Header() {
             ) : (
               <div className="h-10 w-10 bg-primary rounded-sm" />
             )}
-            <span className="font-bold font-headline text-xl sm:inline-block">
+            <span className="font-bold font-headline text-xl hidden sm:inline-block">
               {t('header.vaidikaconnect')}
             </span>
           </Link>
