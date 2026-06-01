@@ -21,6 +21,8 @@ import {
 } from "firebase/firestore";
 import { useFirebase } from "@/firebase";
 import { isAdminEmail } from "@/lib/admin";
+import { compressImage } from "@/lib/utils";
+
 
 export interface ContactContent {
   title: string;
@@ -107,11 +109,37 @@ function nextId(items: { id: number }[]) {
 // Firestore helpers
 
 async function writePujas(db: Firestore, pujas: Puja[]) {
-  await setDoc(doc(db, APP_DATA_COLLECTION, PUJAS_DOC), { items: pujas });
+  const cleaned = await Promise.all(
+    pujas.map(async (item) => {
+      if (item.image && item.image.startsWith("data:image/") && item.image.length > 100000) {
+        try {
+          const compressed = await compressImage(item.image);
+          return { ...item, image: compressed };
+        } catch (e) {
+          console.error("Failed to compress bloated puja image:", e);
+        }
+      }
+      return item;
+    })
+  );
+  await setDoc(doc(db, APP_DATA_COLLECTION, PUJAS_DOC), { items: cleaned });
 }
 
 async function writePujaris(db: Firestore, pujaris: Pujari[]) {
-  await setDoc(doc(db, APP_DATA_COLLECTION, PUJARIS_DOC), { items: pujaris });
+  const cleaned = await Promise.all(
+    pujaris.map(async (item) => {
+      if (item.photo && item.photo.startsWith("data:image/") && item.photo.length > 100000) {
+        try {
+          const compressed = await compressImage(item.photo);
+          return { ...item, photo: compressed };
+        } catch (e) {
+          console.error("Failed to compress bloated pujari photo:", e);
+        }
+      }
+      return item;
+    })
+  );
+  await setDoc(doc(db, APP_DATA_COLLECTION, PUJARIS_DOC), { items: cleaned });
 }
 
 // Context

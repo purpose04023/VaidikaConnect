@@ -5,10 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function compressImage(file: File, maxDimension = 800, quality = 0.7): Promise<string> {
+export function compressImage(source: File | string, maxDimension = 800, quality = 0.7): Promise<string> {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
+    const processImageSrc = (src: string) => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -45,10 +44,19 @@ export function compressImage(file: File, maxDimension = 800, quality = 0.7): Pr
         resolve(dataUrl);
       };
       img.onerror = () => reject(new Error("Failed to load image"));
-      img.src = e.target?.result as string;
+      img.src = src;
     };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
+
+    if (typeof source === "string") {
+      processImageSrc(source);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        processImageSrc(e.target?.result as string);
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(source);
+    }
   });
 }
 
