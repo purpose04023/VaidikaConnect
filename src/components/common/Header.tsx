@@ -87,9 +87,10 @@ export function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => handleLanguageSelect('en')}>{t('header.english')}</DropdownMenuItem>
               <DropdownMenuItem onSelect={() => handleLanguageSelect('te')}>{t('header.telugu')}</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('ta')} disabled>{t('header.tamil')} (TBD)</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('ka')} disabled>{t('header.kannada')} (TBD)</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleLanguageSelect('hi')} disabled>{t('header.hindi')} (TBD)</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('ta')}>{t('header.tamil')}</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('ka')}>{t('header.kannada')}</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleLanguageSelect('hi')}>{t('header.hindi')}</DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggle />
