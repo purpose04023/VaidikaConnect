@@ -1,8 +1,9 @@
 export const firebaseConfig = {
-  "projectId": "studio-4967399350-28365",
-  "appId": "1:1093161793057:web:c616ad12030c3d6e5b9560",
-  "apiKey": "AIzaSyCAbhAVgQKxhOh6OM7sTtX0Amh-cbxifbk",
-  "authDomain": "studio-4967399350-28365.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "1093161793057"
+  "projectId": "vaidikaconnect-54421",
+  "appId": "1:47652733105:web:567ed95271b3332d0e9070",
+  "apiKey": "AIzaSyC1ZHayqGkGrbWoSlzIwi9CGvYRu2L6oDU",
+  "authDomain": "vaidikaconnect-54421.firebaseapp.com",
+  "measurementId": "G-SDR8W6TV0E",
+  "messagingSenderId": "47652733105"
 };
+
