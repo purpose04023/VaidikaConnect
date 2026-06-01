@@ -10,8 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useContent } from "@/lib/content-store";
-import { CheckCircle2, Send, Star, Users, Award, ChevronRight, Sparkles, FlameKindling } from "lucide-react";
+import { BadgeCheck, Send, Star, Users, ChevronRight, Sparkles } from "lucide-react";
 import { ManagedImage } from "@/components/common/ManagedImage";
+
+import { compressImage } from "@/lib/utils";
 
 const defaultPhoto =
   "https://images.unsplash.com/photo-1570839753356-6bc05ceea49a?auto=format&fit=crop&w=1200&q=80";
@@ -19,8 +21,8 @@ const defaultPhoto =
 const benefits = [
   { icon: Users, title: "Join 500+ Pujaris", desc: "Be part of our sacred growing network of qualified priests." },
   { icon: Star, title: "Verified Badge", desc: "Get a VaidikaConnect verified badge boosting your credibility." },
-  { icon: Award, title: "Direct Bookings", desc: "Receive puja requests directly from devotees in your region." },
-  { icon: FlameKindling, title: "Support & Training", desc: "Ongoing guidance and support from our experienced team." },
+  { icon: BadgeCheck, title: "Direct Bookings", desc: "Receive puja requests directly from devotees in your region." },
+  { icon: Sparkles, title: "Support & Training", desc: "Ongoing guidance and support from our experienced team." },
 ];
 
 export default function JoinNetworkPage() {
@@ -47,12 +49,7 @@ export default function JoinNetworkPage() {
   };
 
   const readUploadedImage = (file: File) => {
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
+    return compressImage(file);
   };
 
   const togglePuja = (id: number) => {
@@ -101,7 +98,7 @@ export default function JoinNetworkPage() {
       <div className="min-h-screen flex items-center justify-center px-4 py-20 divine-bg">
         <div className="text-center max-w-md mx-auto">
           <div className="w-24 h-24 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center mx-auto mb-6 animate-pulse-slow">
-            <CheckCircle2 className="h-12 w-12 text-primary" />
+            <BadgeCheck className="h-12 w-12 text-primary" />
           </div>
           <h1 className="font-headline text-4xl text-primary mb-4">🙏 Namaste!</h1>
           <p className="text-xl font-semibold mb-2">Your Application is Received</p>

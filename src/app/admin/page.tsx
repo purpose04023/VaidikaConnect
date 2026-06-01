@@ -18,6 +18,7 @@ import { useUser } from "@/firebase";
 import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
 import { ManagedImage } from "@/components/common/ManagedImage";
 import { useToast } from "@/hooks/use-toast";
+import { compressImage } from "@/lib/utils";
 
 type PujaForm = Puja;
 type PujariForm = Pujari;
@@ -70,12 +71,7 @@ function nextId(items: { id: number }[]) {
 }
 
 function readUploadedImage(file: File) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
+  return compressImage(file);
 }
 
 export default function AdminPage() {
