@@ -33,7 +33,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="mx-auto my-4 w-[95%] max-w-7xl rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl sticky top-16 z-40 transition-all duration-300">
+    <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl z-50 transition-all duration-300">
       <div className="w-full px-6">
         <div className="flex h-12 items-center justify-between">
           
@@ -51,7 +51,7 @@ export default function Navbar() {
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-80 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
+              <div className="absolute left-0 top-full w-80 rounded-3xl border border-white/[0.06] bg-white/[0.02] p-4 shadow-2xl backdrop-blur-2xl transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50 hover:shadow-[inset_0_0_15px_rgba(228,179,99,0.12)]">
                 <div className="grid grid-cols-2 gap-3">
                   <Link href="/programs/deeksha-pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
                     <Sun className="h-4 w-4 text-amber-500 shrink-0" />
@@ -110,7 +110,7 @@ export default function Navbar() {
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-72 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
+              <div className="absolute left-0 top-full w-72 rounded-3xl border border-white/[0.06] bg-white/[0.02] p-4 shadow-2xl backdrop-blur-2xl transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50 hover:shadow-[inset_0_0_15px_rgba(228,179,99,0.12)]">
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5">
                     {language === "te" ? "జీవిత చక్ర దశలు" : "Samskara Stages"}
@@ -165,7 +165,7 @@ export default function Navbar() {
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-72 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
+              <div className="absolute left-0 top-full w-72 rounded-3xl border border-white/[0.06] bg-white/[0.02] p-4 shadow-2xl backdrop-blur-2xl transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50 hover:shadow-[inset_0_0_15px_rgba(228,179,99,0.12)]">
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5">
                     {language === "te" ? "ఆధ్యాత్మిక పఠనం" : "Readings & Chanting"}
@@ -202,7 +202,7 @@ export default function Navbar() {
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-80 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
+              <div className="absolute left-0 top-full w-80 rounded-3xl border border-white/[0.06] bg-white/[0.02] p-4 shadow-2xl backdrop-blur-2xl transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50 hover:shadow-[inset_0_0_15px_rgba(228,179,99,0.12)]">
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5">
                     {language === "te" ? "తీర్థయాత్రలు" : "Temple Services"}
@@ -257,7 +257,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border/40 bg-background px-4 py-3 space-y-4 shadow-lg absolute w-full left-0 z-50">
+        <div className="md:hidden border border-white/[0.08] bg-black/80 backdrop-blur-2xl px-4 py-4 space-y-4 shadow-2xl absolute w-full left-0 z-50 rounded-3xl mt-4">
           <div className="space-y-3">
             
             {/* Mobile Block 0: Vaidika Poojas */}

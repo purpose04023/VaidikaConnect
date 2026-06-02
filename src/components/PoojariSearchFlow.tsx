@@ -220,7 +220,7 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
     <div className="w-full space-y-6">
       
       {/* Step 1: Location Collection Bar */}
-      <Card className="bg-card/45 backdrop-blur-md border-border/50 rounded-2xl shadow-lg p-5">
+      <Card className="p-5">
         <form onSubmit={handleLocationSubmit} className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
           <div className="flex-1 relative">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#c8a261]" />
@@ -293,8 +293,8 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
                   <Card 
                     key={poojari.id}
                     onClick={() => setSelectedPoojariId(poojari.id)}
-                    className={`bg-card/45 hover:bg-card border-border/50 transition-all duration-300 rounded-2xl overflow-hidden shadow-sm hover:shadow-md cursor-pointer ${
-                      isActive ? "border-amber-500/40 bg-card/90 ring-1 ring-amber-500/20" : ""
+                    className={`transition-all duration-300 cursor-pointer overflow-hidden ${
+                      isActive ? "border-[#FF8C00]/45 bg-white/[0.08] ring-1 ring-amber-500/20" : ""
                     }`}
                   >
                     <div className="p-4 sm:p-5 flex gap-4 items-start">

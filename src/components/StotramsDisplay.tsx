@@ -430,7 +430,7 @@ function DeityCard({ deity, language }: { deity: Deity; language: string }) {
   return (
     <div className="group relative h-full">
       <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none blur-sm" />
-      <Card className="bg-white/5 backdrop-blur-md hover:bg-white/10 border-white/10 hover:border-amber-500/30 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 h-full flex flex-col overflow-hidden rounded-2xl relative">
+      <Card className="h-full flex flex-col overflow-hidden relative border-none bg-transparent">
         <div className="absolute top-3 right-3 opacity-30 group-hover:opacity-80 transition-opacity z-20">
           <Flower className="h-4 w-4 text-amber-500 animate-spin-slow" />
         </div>
@@ -488,7 +488,7 @@ function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: 
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-amber-500/30 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
+      className="glass-card flex flex-col overflow-hidden border-none bg-transparent"
     >
       <div className="p-5 flex-1 flex gap-4 items-start">
         <div className="p-2.5 rounded-xl bg-white/5 text-muted-foreground group-hover:bg-gradient-to-br group-hover:from-amber-500 group-hover:to-orange-500 group-hover:text-white transition-all duration-300 group-hover:scale-110 shadow-sm shrink-0">
