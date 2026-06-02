@@ -6,7 +6,7 @@ import { stotramsData, getDeitiesByGender, Deity } from "@/lib/data/stotrams";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/context/language-context";
-import { Flower2, Moon, Sparkles } from "lucide-react";
+import { Flower, Moon, Sparkles } from "lucide-react";
 import { ManagedImage } from "./common/ManagedImage";
 
 export default function StotramsDisplay() {
@@ -69,14 +69,17 @@ function DeityGrid({ deities, language }: { deities: Deity[], language: string }
       {deities.map((deity) => (
         <Link href={`/spiritual/reading/${deity.id}`} key={deity.id}>
           <Card className="glass-card hover:-translate-y-1 transition-all duration-300 h-full flex flex-col items-center justify-center text-center p-6 border border-primary/10 hover:border-primary/30 group relative overflow-hidden cursor-pointer">
+            <div className="absolute top-2 right-2 p-2 bg-background/50 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+              <Flower className="h-5 w-5 text-primary" />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
             <CardHeader className="p-0 mb-4 z-10 w-full flex flex-col items-center">
-              <div className="h-20 w-20 md:h-24 md:w-24 mx-auto rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 overflow-hidden border-2 border-primary/30 shadow-lg relative">
+              <div className="h-24 w-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg relative group-hover:scale-105 transition-transform duration-300">
                 <ManagedImage 
-                  src={deity.imageUrl}
+                  src={deity.imageUrl || "https://placehold.co/200x200/png"} 
                   alt={deity.nameEn}
-                  imageHint={deity.imageHint}
+                  data-ai-hint={deity.imageHint}
                   className="object-cover w-full h-full"
                 />
               </div>

@@ -23,7 +23,7 @@ export default function LifeCycleSamskaras() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [loadingPoojaId, setLoadingPoojaId] = useState<number | null>(null);
+  const [loadingPoojaId, setLoadingPoojaId] = useState<string | null>(null);
 
   // Helper to filter poojas by life stage
   const getPoojasByStage = (stage: LifeCycleStage): PoojaItem[] => {

@@ -43,9 +43,9 @@ export default async function DeityStotramPage({ params }: { params: Promise<{ i
       <div className="flex flex-col items-center text-center mb-10">
         <div className="h-32 w-32 md:h-40 md:w-40 rounded-full overflow-hidden border-4 border-primary/20 shadow-2xl mb-6 relative">
           <ManagedImage 
-            src={deity.imageUrl}
+            src={deity.imageUrl || "https://placehold.co/400x400/png"}
             alt={deity.nameEn}
-            imageHint={deity.imageHint}
+            data-ai-hint={deity.imageHint}
             className="object-cover w-full h-full"
           />
         </div>
