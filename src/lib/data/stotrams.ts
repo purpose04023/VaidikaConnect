@@ -17,6 +17,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Ganesha',
     gender: 'male',
     imageHint: 'A premium, divine, and elegant digital painting of Lord Ganesha, warm glowing colors, gold accents, high resolution',
+    imageUrl: '/images/deities/ganesha.png',
     ashtotharam: `Content not found`,
     sahasranamam: `Content not found`
   },
@@ -26,6 +27,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Shiva',
     gender: 'male',
     imageHint: 'A premium, majestic digital painting of Lord Shiva in meditation, cosmic background, crescent moon, glowing aura',
+    imageUrl: '/images/deities/shiva.png',
     ashtotharam: `ఓం శివాయ నమః
 ఓం మహేశ్వరాయ నమః
 ఓం శంభవే నమః
@@ -50,6 +52,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Vishnu',
     gender: 'male',
     imageHint: 'A premium, divine painting of Lord Vishnu, blue skin, yellow garments, holding chakra and conch, divine golden glow',
+    imageUrl: '/images/deities/vishnu.png',
     ashtotharam: `ఓం విష్ణవే నమః
 ఓం జిష్ణవే నమః
 ఓం వషట్కారాయ నమః
@@ -74,6 +77,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Rama',
     gender: 'male',
     imageHint: 'A premium, serene painting of Lord Sri Rama holding his bow, royal garments, divine halo, warm lighting',
+    imageUrl: '/images/deities/rama.png',
     ashtotharam: `ఓం శ్రీరామాయ నమః
 ఓం రామభద్రాయ నమః
 ఓం రామచంద్రాయ నమః
@@ -98,6 +102,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Hanuman',
     gender: 'male',
     imageHint: 'A premium, powerful painting of Lord Hanuman in devotion, glowing orange and gold, muscular, divine aura',
+    imageUrl: '/images/deities/hanuman.png',
     ashtotharam: `ఓం ఆంజనేయాయ నమః
 ఓం మహావీరాయ నమః
 ఓం హనుమతే నమః
@@ -124,6 +129,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Lalitha Devi',
     gender: 'female',
     imageHint: 'A premium, beautiful painting of Goddess Lalitha Tripura Sundari, red garments, holding sugarcane bow, extremely divine',
+    imageUrl: '/images/deities/lalitha.png',
     ashtotharam: `ఓం రజతాచలశృంగాగ్ర మధ్యస్థాయై నమః
 ఓం హిమాచల మహావంశ పావనాయై నమః
 ఓం శంకరార్ధాంగ సౌందర్య శరీరాయై నమః
@@ -149,6 +155,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Lakshmi Devi',
     gender: 'female',
     imageHint: 'A premium, radiant painting of Goddess Lakshmi sitting on a pink lotus, showering gold coins, elegant and wealthy aura',
+    imageUrl: '/images/deities/lakshmi.png',
     ashtotharam: `ఓం ప్రకృత్యై నమః
 ఓం వికృత్యై నమః
 ఓం విద్యాయై నమః
@@ -173,6 +180,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Saraswati Devi',
     gender: 'female',
     imageHint: 'A premium, pure painting of Goddess Saraswati sitting on a white lotus, playing veena, white garments, serene glow',
+    imageUrl: '/images/deities/saraswati.png',
     ashtotharam: `ఓం సరస్వత్యై నమః
 ఓం మహాభద్రాయై నమః
 ఓం మహామాయాయై నమః
@@ -196,6 +204,7 @@ export const stotramsData: Deity[] = [
     nameEn: 'Durga Devi',
     gender: 'female',
     imageHint: 'A premium, fierce and beautiful painting of Goddess Durga riding a lion, multiple arms holding weapons, red and gold',
+    imageUrl: '/images/deities/durga.png',
     ashtotharam: `ఓం సత్యై నమః
 ఓం సాధ్వ్యై నమః
 ఓం భవప్రీతాయై నమః
