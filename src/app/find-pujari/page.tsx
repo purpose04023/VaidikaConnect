@@ -9,7 +9,7 @@ export default async function FindPujariPage({
   searchParams: Promise<{ puja?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const pujaId = resolvedSearchParams.puja ? parseInt(resolvedSearchParams.puja) : undefined;
+  const pujaId = resolvedSearchParams.puja || undefined;
 
   if (pujaId === undefined) {
     return <div className="text-center py-10">Please select a puja first.</div>;

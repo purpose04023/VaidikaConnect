@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen, Settings } from "lucide-react";
 import Link from "next/link";
-import { useUser } from "@/firebase";
+import { useUser } from "@/hooks/use-auth";
 import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
 import { ManagedImage } from "@/components/common/ManagedImage";
 import { useToast } from "@/hooks/use-toast";
@@ -32,11 +32,11 @@ const emptyDeity = (): DeityForm => ({
   gender: "female",
   imageHint: "beautiful deity painting",
   imageUrl: "",
-  ashtotharam: "",
-  sahasranamam: "",
+  ashtotharamUrl: "",
+  sahasranamamUrl: "",
 });
 
-const emptyPuja = (nextId: number): PujaForm => ({
+const emptyPuja = (nextId: string | number): PujaForm => ({
   id: nextId,
   name: "",
   name_en: "",
@@ -52,7 +52,7 @@ const emptyPuja = (nextId: number): PujaForm => ({
   categories: [],
 });
 
-const emptyPujari = (nextId: number, pujaIds: number[]): PujariForm => ({
+const emptyPujari = (nextId: string | number, pujaIds: (string | number)[]): PujariForm => ({
   id: nextId,
   name: "",
   photo: "https://images.unsplash.com/photo-1570839753356-6bc05ceea49a?auto=format&fit=crop&w=1200&q=80",
@@ -83,8 +83,11 @@ function fromCsv(value: string) {
   return value.split(",").map(item => item.trim()).filter(Boolean);
 }
 
-function nextId(items: { id: number }[]) {
-  return items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+function nextId(items: { id: string | number }[]) {
+  return items.reduce((max, item) => {
+    const num = typeof item.id === 'number' ? item.id : parseInt(item.id);
+    return isNaN(num) ? max : Math.max(max, num);
+  }, 0) + 1;
 }
 
 function readUploadedImage(file: File) {
@@ -240,7 +243,7 @@ export default function AdminPage() {
     setDeityForm(current => ({ ...current, [key]: value }));
   };
 
-  const togglePujariPuja = (id: number) => {
+  const togglePujariPuja = (id: string | number) => {
     setPujariForm(current => ({
       ...current,
       pujas: current.pujas.includes(id) ? current.pujas.filter(pujaId => pujaId !== id) : [...current.pujas, id],
@@ -595,8 +598,8 @@ export default function AdminPage() {
                     {deityForm.imageUrl && <ManagedImage src={deityForm.imageUrl} alt="Deity preview" width={96} height={96} className="mt-2 h-24 w-24 rounded-full object-cover" />}
                   </Field>
                   <Field label="Image Hint"><Input value={deityForm.imageHint} onChange={event => updateDeity("imageHint", event.target.value)} /></Field>
-                  <Field label="Ashtotharam"><Textarea className="font-telugu" value={deityForm.ashtotharam} onChange={event => updateDeity("ashtotharam", event.target.value)} /></Field>
-                  <Field label="Sahasranamam"><Textarea className="font-telugu" value={deityForm.sahasranamam} onChange={event => updateDeity("sahasranamam", event.target.value)} /></Field>
+                  <Field label="Ashtotharam URL"><Input value={deityForm.ashtotharamUrl} onChange={event => updateDeity("ashtotharamUrl", event.target.value)} /></Field>
+                  <Field label="Sahasranamam URL"><Input value={deityForm.sahasranamamUrl} onChange={event => updateDeity("sahasranamamUrl", event.target.value)} /></Field>
                   <div className="flex gap-2">
                     <Button onClick={saveCurrentDeity} disabled={isSaving}>
                       {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}

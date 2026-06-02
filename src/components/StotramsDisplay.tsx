@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import Link from "next/link";
 import { useContent } from "@/lib/content-store";
 import type { Deity } from "@/lib/data/stotrams";
 import { useLanguage } from "@/context/language-context";
@@ -400,7 +399,7 @@ export default function StotramsDisplay() {
                 {/* 1. Special Deity Grid render */}
                 {activeCategory.isSpecial ? (
                   <div className="flex flex-col gap-6 pb-12">
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                       {deities.map((deity) => (
                         <DeityCard key={deity.id} deity={deity} language={language} />
                       ))}
@@ -429,20 +428,15 @@ export default function StotramsDisplay() {
 
 function DeityCard({ deity, language }: { deity: Deity; language: string }) {
   return (
-    <Link href={`/spiritual/reading/${deity.id}`} className="block group">
-      <Card className="bg-card/40 backdrop-blur-sm hover:bg-card/80 border-border/50 hover:border-amber-500/40 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 h-full flex flex-col overflow-hidden rounded-2xl relative cursor-pointer group">
-        
-        {/* Subtle hover background glow */}
-        <div className="absolute inset-0 bg-gradient-to-b from-amber-500/0 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
-        {/* Small flower accent on hover */}
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+    <div className="group relative h-full">
+      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none blur-sm" />
+      <Card className="bg-white/5 backdrop-blur-md hover:bg-white/10 border-white/10 hover:border-amber-500/30 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 h-full flex flex-col overflow-hidden rounded-2xl relative">
+        <div className="absolute top-3 right-3 opacity-30 group-hover:opacity-80 transition-opacity z-20">
           <Flower className="h-4 w-4 text-amber-500 animate-spin-slow" />
         </div>
 
         <div className="p-5 flex flex-col items-center text-center flex-1">
-          {/* Avatar round picture */}
-          <div className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-full overflow-hidden border border-border/60 shadow-sm relative group-hover:scale-105 transition-transform duration-500 bg-muted">
+          <div className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-full overflow-hidden border border-white/10 shadow-lg relative group-hover:scale-105 transition-transform duration-500 bg-muted">
             <ManagedImage 
               src={deity.imageUrl || "https://placehold.co/400x400/png"} 
               alt={deity.nameEn}
@@ -452,7 +446,7 @@ function DeityCard({ deity, language }: { deity: Deity; language: string }) {
           </div>
           
           <div className="mt-4 flex-1">
-            <h4 className="font-headline text-base sm:text-lg md:text-xl font-bold group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed">
+            <h4 className="font-headline text-base sm:text-lg md:text-xl font-bold text-foreground leading-relaxed break-words whitespace-normal">
               {deity.name}
             </h4>
             <p className="text-[10px] sm:text-xs text-muted-foreground tracking-widest uppercase mt-1">
@@ -461,46 +455,49 @@ function DeityCard({ deity, language }: { deity: Deity; language: string }) {
           </div>
         </div>
 
-        {/* Quick action footer */}
-        <div className="border-t border-border/20 px-4 py-2.5 bg-muted/10 flex items-center justify-between">
-          <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase tracking-wider">
-            {language === 'te' ? 'పఠించండి' : 'Read Now'}
-          </span>
-          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+        <div className="border-t border-white/5 p-3 bg-white/5 flex flex-col gap-2">
+          <a
+            href={deity.ashtotharamUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl bg-white/5 hover:bg-amber-500/20 border border-white/5 hover:border-amber-500/30 text-foreground transition-all duration-300"
+          >
+            <span className="font-semibold">{language === 'te' ? 'అష్టోత్తర శతనామావళి' : '108 Names (Ashtotharam)'}</span>
+            <ExternalLink className="w-3.5 h-3.5 opacity-60 shrink-0" />
+          </a>
+          <a
+            href={deity.sahasranamamUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl bg-white/5 hover:bg-amber-500/20 border border-white/5 hover:border-amber-500/30 text-foreground transition-all duration-300"
+          >
+            <span className="font-semibold">{language === 'te' ? 'సహస్రనామ స్తోత్రం' : '1000 Names (Sahasranamam)'}</span>
+            <ExternalLink className="w-3.5 h-3.5 opacity-60 shrink-0" />
+          </a>
         </div>
       </Card>
-    </Link>
+    </div>
   );
 }
 
 function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: string }) {
   const { language } = useLanguage();
   
-  // Extract slug from URL (e.g. "https://www.vignanam.org/telugu/ganapati-prarthana-ghanapatham.html" -> "ganapati-prarthana-ghanapatham")
-  const slug = useMemo(() => {
-    try {
-      const parts = item.url.split("/");
-      const filename = parts[parts.length - 1];
-      return filename.replace(".html", "") || "unknown-stotram";
-    } catch (e) {
-      return "unknown-stotram";
-    }
-  }, [item.url]);
-  
   return (
-    <Link
-      href={`/readings/${slug}`}
-      className="flex flex-col rounded-2xl border border-border/40 bg-card/45 hover:bg-card/90 dark:bg-black/10 dark:hover:bg-muted/10 shadow-sm hover:shadow-md hover:border-amber-500/30 transition-all duration-300 group overflow-hidden"
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex flex-col rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 hover:border-amber-500/30 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
     >
       <div className="p-5 flex-1 flex gap-4 items-start">
-        {/* Divine scripture icon with hover animation */}
-        <div className="p-2.5 rounded-xl bg-muted/60 text-muted-foreground group-hover:bg-gradient-to-br group-hover:from-amber-500 group-hover:to-orange-500 group-hover:text-white transition-all duration-300 group-hover:scale-110 shadow-sm shrink-0">
-          <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+        <div className="p-2.5 rounded-xl bg-white/5 text-muted-foreground group-hover:bg-gradient-to-br group-hover:from-amber-500 group-hover:to-orange-500 group-hover:text-white transition-all duration-300 group-hover:scale-110 shadow-sm shrink-0">
+          <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500/70" />
         </div>
         
         <div className="min-w-0 flex-1">
           {categoryTag && (
-            <span className="inline-block text-[9px] font-bold uppercase tracking-wide bg-muted px-2 py-0.5 rounded-full text-muted-foreground mb-2">
+            <span className="inline-block text-[9px] font-bold uppercase tracking-wide bg-white/10 px-2 py-0.5 rounded-full text-amber-400 mb-2">
               {categoryTag}
             </span>
           )}
@@ -510,13 +507,12 @@ function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: 
         </div>
       </div>
 
-      {/* Scripture card bottom drawer */}
-      <div className="border-t border-border/20 px-4 py-2.5 bg-muted/5 flex items-center justify-between text-muted-foreground group-hover:text-foreground transition-colors">
+      <div className="border-t border-white/5 px-4 py-2.5 bg-white/5 flex items-center justify-between text-muted-foreground group-hover:text-foreground transition-colors">
         <span className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-          {language === "te" ? "శ్లోకం చదవండి ➔" : "Read Sloka ➔"}
+          {language === "te" ? "విజ్ఞానంలో చదవండి ↗" : "Read on Vignanam ↗"}
         </span>
-        <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:scale-110 group-hover:translate-x-0.5 transition-all shrink-0" />
+        <ExternalLink className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all shrink-0" />
       </div>
-    </Link>
+    </a>
   );
 }

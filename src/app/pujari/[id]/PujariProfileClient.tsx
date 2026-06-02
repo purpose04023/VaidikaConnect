@@ -17,7 +17,7 @@ export function PujariProfileClient({
   initialPujari,
   initialPujas,
 }: {
-  pujariId: number;
+  pujariId: string | number;
   initialPujari: Pujari | null;
   initialPujas: Puja[];
 }) {

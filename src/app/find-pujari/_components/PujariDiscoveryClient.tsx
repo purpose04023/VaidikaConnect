@@ -13,7 +13,7 @@ export function PujariDiscoveryClient({
 }: {
   pujaris: Pujari[];
   recommendation: string;
-  pujaId?: number;
+  pujaId?: string | number;
 }) {
   return (
     <div className="space-y-8">

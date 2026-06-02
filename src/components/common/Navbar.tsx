@@ -33,8 +33,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-14 z-40">
-      <div className="container mx-auto px-4 max-w-screen-2xl">
+    <nav className="mx-auto my-4 w-[95%] max-w-7xl rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl sticky top-16 z-40 transition-all duration-300">
+      <div className="w-full px-6">
         <div className="flex h-12 items-center justify-between">
           
           {/* Main Desktop Navigation Items */}
@@ -46,53 +46,53 @@ export default function Navbar() {
               onMouseEnter={() => setActiveDropdown("sacredPrograms")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 py-3 text-foreground/75 transition-colors hover:text-primary focus:outline-none">
+              <button className="flex items-center gap-1 py-3 text-foreground/80 transition-colors hover:text-[#d4af37] focus:outline-none font-medium">
                 <span>{language === "te" ? "వైదిక పూజలు" : "Vaidika Poojas"}</span>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-80 rounded-lg border border-primary/20 bg-background/95 p-4 shadow-xl backdrop-blur-md transition-all duration-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0">
+              <div className="absolute left-0 top-full w-80 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
                 <div className="grid grid-cols-2 gap-3">
-                  <Link href="/programs/deeksha-pujas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Sun className="h-4 w-4 text-amber-500" />
+                  <Link href="/programs/deeksha-pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Sun className="h-4 w-4 text-amber-500 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "దీక్షా పూజలు" : "Deeksha Pujas"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "దీక్షా పూజలు" : "Deeksha Pujas"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/dosha-parihara-pujas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Star className="h-4 w-4 text-indigo-500" />
+                  <Link href="/programs/dosha-parihara-pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Star className="h-4 w-4 text-amber-400 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "దోష పరిహార పూజలు" : "Dosha Parihara"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "దోష పరిహార పూజలు" : "Dosha Parihara"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/homams" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Flame className="h-4 w-4 text-orange-500" />
+                  <Link href="/programs/homams" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Flame className="h-4 w-4 text-[#b89045] shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "హోమాలు" : "Homams"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "హోమాలు" : "Homams"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/kalyanams" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Heart className="h-4 w-4 text-rose-500" />
+                  <Link href="/programs/kalyanams" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Heart className="h-4 w-4 text-rose-500/80 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "కల్యాణాలు" : "Kalyanams"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "కల్యాణాలు" : "Kalyanams"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/nomulu" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Users className="h-4 w-4 text-pink-500" />
+                  <Link href="/programs/nomulu" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Users className="h-4 w-4 text-[#c8a261] shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "నోములు" : "Nomulu"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "నోములు" : "Nomulu"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/pujas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Flower className="h-4 w-4 text-emerald-500" />
+                  <Link href="/programs/pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Flower className="h-4 w-4 text-emerald-500/80 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "పూజలు" : "Pujas"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "పూజలు" : "Pujas"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/vratas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10 col-span-2">
-                    <Sparkles className="h-4 w-4 text-blue-500" />
+                  <Link href="/programs/vratas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400 col-span-2">
+                    <Sparkles className="h-4 w-4 text-amber-300 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "వ్రతాలు" : "Vratas"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "వ్రతాలు" : "Vratas"}</p>
                     </div>
                   </Link>
                 </div>
@@ -105,49 +105,49 @@ export default function Navbar() {
               onMouseEnter={() => setActiveDropdown("samskaras")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 py-3 text-foreground/75 transition-colors hover:text-primary focus:outline-none">
+              <button className="flex items-center gap-1 py-3 text-foreground/80 transition-colors hover:text-[#d4af37] focus:outline-none font-medium">
                 <span>{language === "te" ? "జీవిత చక్ర సంస్కారాలు" : "Life Cycle Poojas"}</span>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-72 rounded-lg border border-primary/20 bg-background/95 p-4 shadow-xl backdrop-blur-md transition-all duration-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0">
+              <div className="absolute left-0 top-full w-72 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
                 <div className="space-y-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b pb-1 border-border/40">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5">
                     {language === "te" ? "జీవిత చక్ర దశలు" : "Samskara Stages"}
                   </p>
-                  <Link href="/life-cycle-poojas?stage=prenatal" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Sparkles className="h-5 w-5 text-amber-500" />
+                  <Link href="/life-cycle-poojas?stage=prenatal" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Sparkles className="h-5 w-5 text-amber-400 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "జననానికి ముందు" : "Prenatal"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "గర్భధారణ క్రియలు" : "Before birth rituals"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "జననానికి ముందు" : "Prenatal"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "గర్భధారణ క్రియలు" : "Before birth rituals"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=childhood" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Baby className="h-5 w-5 text-blue-500" />
+                  <Link href="/life-cycle-poojas?stage=childhood" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Baby className="h-5 w-5 text-[#c8a261] shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "బాల్యం" : "Childhood"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "నామకరణము, అన్నప్రాసనము" : "Naming & feeding rituals"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "బాల్యం" : "Childhood"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "నామకరణము, అన్నప్రాసనము" : "Naming & feeding rituals"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=youth" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <BookOpen className="h-5 w-5 text-emerald-500" />
+                  <Link href="/life-cycle-poojas?stage=youth" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <BookOpen className="h-5 w-5 text-amber-500/80 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "విద్య & యవ్వనం" : "Youth & Education"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "ఉపనయనము, వేదారంభము" : "Thread ceremony & studies"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "విద్య & యవ్వనం" : "Youth & Education"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "ఉపనయనము, వేదారంభము" : "Thread ceremony & studies"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=adulthood" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Heart className="h-5 w-5 text-rose-500" />
+                  <Link href="/life-cycle-poojas?stage=adulthood" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Heart className="h-5 w-5 text-rose-500/80 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "గృహస్థాశ్రమం" : "Adulthood & Marriage"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "వివాహము, శుభకార్యాలు" : "Hindu wedding ceremonies"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "గృహస్థాశ్రమం" : "Adulthood & Marriage"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "వివాహము, శుభకార్యాలు" : "Hindu wedding ceremonies"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=general" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Flame className="h-5 w-5 text-orange-500" />
+                  <Link href="/life-cycle-poojas?stage=general" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Flame className="h-5 w-5 text-[#b89045] shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "శుభకార్యాలు & నిత్య పూజలు" : "General / Auspicious"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "నిత్య హోమాలు, విఘ్నేశ్వర పూజ" : "Beginnings & Daily homam"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "శుభకార్యాలు & నిత్య పూజలు" : "General / Auspicious"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "నిత్య హోమాలు, విఘ్నేశ్వర పూజ" : "Beginnings & Daily homam"}</p>
                     </div>
                   </Link>
                 </div>
@@ -160,31 +160,31 @@ export default function Navbar() {
               onMouseEnter={() => setActiveDropdown("spiritual")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 py-3 text-foreground/75 transition-colors hover:text-primary focus:outline-none">
+              <button className="flex items-center gap-1 py-3 text-foreground/80 transition-colors hover:text-[#d4af37] focus:outline-none font-medium">
                 <span>{language === "te" ? "మంత్రాలు & సేవలు" : "Spiritual & Services"}</span>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-72 rounded-lg border border-primary/20 bg-background/95 p-4 shadow-xl backdrop-blur-md transition-all duration-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0">
+              <div className="absolute left-0 top-full w-72 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
                 <div className="space-y-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b pb-1 border-border/40">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5">
                     {language === "te" ? "ఆధ్యాత్మిక పఠనం" : "Readings & Chanting"}
                   </p>
-                  <Link href="/spiritual/reading" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <FileText className="h-5 w-5 text-amber-600" />
+                  <Link href="/spiritual/reading" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <FileText className="h-5 w-5 text-amber-500/80 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "అష్టోత్తరాలు & సహస్రనామాలు" : "Stotram & Ashtotharam"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "స్తోత్రాలు, పూజా విధానాలు" : "Divine stotras & guides"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "అష్టోత్తరాలు & సహస్రనామాలు" : "Stotram & Ashtotharam"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "స్తోత్రాలు, పూజా విధానాలు" : "Divine stotras & guides"}</p>
                     </div>
                   </Link>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b pb-1 border-border/40 pt-2">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5 pt-2">
                     {language === "te" ? "ప్రత్యేక సేవలు" : "Special Online Services"}
                   </p>
-                  <Link href="/find-pujari" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Video className="h-5 w-5 text-red-500" />
+                  <Link href="/find-pujari" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Video className="h-5 w-5 text-rose-500 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "జాతకాలు & లైవ్ పూజ" : "Astrology & Live Pujas"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "వేదాధ్యయనం ఆన్‌లైన్ క్లాసులు" : "Interactive virtual booking"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "జాతకాలు & లైవ్ పూజ" : "Astrology & Live Pujas"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "వేదాధ్యయనం ఆన్‌లైన్ క్లాసులు" : "Interactive virtual booking"}</p>
                     </div>
                   </Link>
                 </div>
@@ -197,38 +197,38 @@ export default function Navbar() {
               onMouseEnter={() => setActiveDropdown("pilgrimage")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 py-3 text-foreground/75 transition-colors hover:text-primary focus:outline-none">
+              <button className="flex items-center gap-1 py-3 text-foreground/80 transition-colors hover:text-[#d4af37] focus:outline-none font-medium">
                 <span>{language === "te" ? "యాత్రలు & దర్శనాలు" : "Pilgrimage & Temples"}</span>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180 text-amber-500/80" />
               </button>
               
-              <div className="absolute left-0 top-full w-80 rounded-lg border border-primary/20 bg-background/95 p-4 shadow-xl backdrop-blur-md transition-all duration-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0">
+              <div className="absolute left-0 top-full w-80 rounded-2xl border border-white/10 bg-[#161312]/95 p-4 shadow-2xl backdrop-blur-lg transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
                 <div className="space-y-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b pb-1 border-border/40">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5">
                     {language === "te" ? "తీర్థయాత్రలు" : "Temple Services"}
                   </p>
-                  <Link href="/pilgrimage/darshan" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Ticket className="h-5 w-5 text-amber-500" />
+                  <Link href="/pilgrimage/darshan" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Ticket className="h-5 w-5 text-amber-500 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "ఆలయాల దర్శనాలు బుకింగ్" : "Temple Darshan Tickets"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "విజయవాడ, మంగళగిరి ప్రత్యేక సేవలు" : "Vijayawada & special entry"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "ఆలయాల దర్శనాలు బుకింగ్" : "Temple Darshan Tickets"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "విజయవాడ, మంగళగిరి ప్రత్యేక సేవలు" : "Vijayawada & special entry"}</p>
                     </div>
                   </Link>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b pb-1 border-border/40 pt-2">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5 pt-2">
                     {language === "te" ? "ప్రయాణం & వసతులు" : "Travel & Stays"}
                   </p>
-                  <Link href="/pilgrimage/accommodations" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Hotel className="h-5 w-5 text-indigo-500" />
+                  <Link href="/pilgrimage/accommodations" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Hotel className="h-5 w-5 text-[#c8a261] shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "వసతి గృహాల బుకింగ్" : "Haritha Hotel & Stays"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "వైజాగ్, అరకు రూమ్ బుకింగ్" : "Vizag resorts & cottages"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "వసతి గృహాల బుకింగ్" : "Haritha Hotel & Stays"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "వైజాగ్, అరకు రూమ్ బుకింగ్" : "Vizag resorts & cottages"}</p>
                     </div>
                   </Link>
-                  <Link href="/pilgrimage/sightseeing" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
-                    <Compass className="h-5 w-5 text-emerald-600" />
+                  <Link href="/pilgrimage/sightseeing" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-white/5 hover:text-amber-400">
+                    <Compass className="h-5 w-5 text-[#d4af37] shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "దర్శనీయ ప్రదేశాలు" : "Local Sightseeing"}</p>
-                      <p className="text-xs text-muted-foreground">{language === "te" ? "ఆలయాల చుట్టుపక్కల విహార యాత్రలు" : "Beaches, hill parks & history"}</p>
+                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "దర్శనీయ ప్రదేశాలు" : "Local Sightseeing"}</p>
+                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "ఆలయాల చుట్టుపక్కల విహార యాత్రలు" : "Beaches, hill parks & history"}</p>
                     </div>
                   </Link>
                 </div>

@@ -12,19 +12,10 @@ import type { Puja, Pujari } from "@/lib/data";
 import { defaultPujaris, defaultPujas } from "@/lib/data";
 import type { Deity } from "@/lib/data/stotrams";
 import { stotramsData as defaultDeities } from "@/lib/data/stotrams";
-import {
-  collection,
-  doc,
-  onSnapshot,
-  setDoc,
-  deleteDoc,
-  addDoc,
-  Firestore,
-} from "firebase/firestore";
-import { useFirebase } from "@/firebase";
+import { createClient } from "@/utils/supabase/client";
 import { isAdminEmail } from "@/lib/admin";
 import { compressImage } from "@/lib/utils";
-
+import { useUser } from "@/hooks/use-auth";
 
 export interface ContactContent {
   title: string;
@@ -52,19 +43,19 @@ export const defaultSettings: GlobalSettings = {
 };
 
 export interface PujariJoinRequest {
-  id: string; // Firestore document ID (string)
+  id: string;
   name: string;
   photo: string;
   phone: string;
   email: string;
   city: string;
-  location: string; // Google Maps link or address text
+  location: string;
   qualifications: string[];
   languages: string[];
   experience: number;
   basePrice: number;
   maxParticipants: number;
-  pujas: number[];
+  pujas: string[];
   description: string;
   submittedAt: string;
   whatsapp?: string;
@@ -83,9 +74,9 @@ interface ContentContextValue {
   requests: PujariJoinRequest[];
   isLoading: boolean;
   savePuja: (puja: Puja) => Promise<void>;
-  deletePuja: (id: number) => Promise<void>;
+  deletePuja: (id: string | number) => Promise<void>;
   savePujari: (pujari: Pujari) => Promise<void>;
-  deletePujari: (id: number) => Promise<void>;
+  deletePujari: (id: string | number) => Promise<void>;
   saveDeity: (deity: Deity) => Promise<void>;
   deleteDeity: (id: string) => Promise<void>;
   saveContact: (contact: ContactContent) => Promise<void>;
@@ -97,14 +88,6 @@ interface ContentContextValue {
   rejectJoinRequest: (id: string) => Promise<void>;
   resetContent: () => Promise<void>;
 }
-
-// Firestore paths
-const APP_DATA_COLLECTION = "appData";
-const PUJAS_DOC = "pujas";
-const PUJARIS_DOC = "pujaris";
-const DEITIES_DOC = "deities";
-const CONTACT_DOC = "contact";
-const REQUESTS_COLLECTION = "joinRequests";
 
 const fallbackPhoto =
   "https://images.unsplash.com/photo-1570839753356-6bc05ceea49a?auto=format&fit=crop&w=1200&q=80";
@@ -121,346 +104,439 @@ export const defaultContact: ContactContent = {
   mapUrl: "https://maps.google.com/?q=Guntur%20Andhra%20Pradesh",
 };
 
-function withDefaultVerification(pujari: Pujari): Pujari {
-  return {
-    ...pujari,
-    verified: pujari.verified ?? true,
-    verifiedBy: pujari.verifiedBy ?? "VaidikaConnect",
-    verifiedAt: pujari.verifiedAt ?? "2026-05-03",
-  };
-}
+// Generates a stable UUID based on a numeric ID for backwards compatibility
+const stableUuid = (num: number | string): string => {
+  if (typeof num === 'string' && num.includes('-')) return num;
+  const n = parseInt(String(num));
+  if (isNaN(n)) return "00000000-0000-0000-0000-" + String(num).slice(0, 12).padStart(12, '0');
+  return "00000000-0000-0000-0000-" + String(n).padStart(12, '0');
+};
 
-function nextId(items: { id: number }[]) {
-  return items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
-}
-
-// Firestore helpers
-
-async function writePujas(db: Firestore, pujas: Puja[]) {
-  const cleaned = await Promise.all(
-    pujas.map(async (item) => {
-      if (item.image && item.image.startsWith("data:image/") && item.image.length > 100000) {
-        try {
-          const compressed = await compressImage(item.image);
-          return { ...item, image: compressed };
-        } catch (e) {
-          console.error("Failed to compress bloated puja image:", e);
-        }
-      }
-      return item;
-    })
-  );
-  await setDoc(doc(db, APP_DATA_COLLECTION, PUJAS_DOC), { items: cleaned });
-}
-
-async function writePujaris(db: Firestore, pujaris: Pujari[]) {
-  const cleaned = await Promise.all(
-    pujaris.map(async (item) => {
-      if (item.photo && item.photo.startsWith("data:image/") && item.photo.length > 100000) {
-        try {
-          const compressed = await compressImage(item.photo);
-          return { ...item, photo: compressed };
-        } catch (e) {
-          console.error("Failed to compress bloated pujari photo:", e);
-        }
-      }
-      return item;
-    })
-  );
-  await setDoc(doc(db, APP_DATA_COLLECTION, PUJARIS_DOC), { items: cleaned });
-}
-
-async function writeDeities(db: Firestore, deities: Deity[]) {
-  const cleaned = await Promise.all(
-    deities.map(async (item) => {
-      if (item.imageUrl && item.imageUrl.startsWith("data:image/") && item.imageUrl.length > 100000) {
-        try {
-          const compressed = await compressImage(item.imageUrl);
-          return { ...item, imageUrl: compressed };
-        } catch (e) {
-          console.error("Failed to compress bloated deity image:", e);
-        }
-      }
-      return item;
-    })
-  );
-  await setDoc(doc(db, APP_DATA_COLLECTION, DEITIES_DOC), { items: cleaned });
-}
-
-// Context
-
-const ContentContext = createContext<ContentContextValue | undefined>(
-  undefined
-);
-
-const SETTINGS_DOC = "settings";
+const ContentContext = createContext<ContentContextValue | undefined>(undefined);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const { firestore: db, user, isUserLoading } = useFirebase();
+  const { user, isUserLoading } = useUser();
+  const supabase = useMemo(() => createClient(), []);
   const isAdmin = isAdminEmail(user?.email);
 
-  const [pujas, setPujas] = useState<Puja[]>(defaultPujas);
-  const [pujaris, setPujaris] = useState<Pujari[]>(
-    defaultPujaris.map(withDefaultVerification)
-  );
-  const [deities, setDeities] = useState<Deity[]>(defaultDeities);
+  const [pujas, setPujas] = useState<Puja[]>([]);
+  const [pujaris, setPujaris] = useState<Pujari[]>([]);
+  const [deities, setDeities] = useState<Deity[]>([]);
   const [contact, setContact] = useState<ContactContent>(defaultContact);
   const [settings, setSettings] = useState<GlobalSettings>(defaultSettings);
   const [requests, setRequests] = useState<PujariJoinRequest[]>([]);
-  const [loadedContent, setLoadedContent] = useState({
-    pujas: false,
-    pujaris: false,
-    deities: false,
-    contact: false,
-    settings: false,
-  });
-  const isLoading =
-    !loadedContent.pujas ||
-    !loadedContent.pujaris ||
-    !loadedContent.deities ||
-    !loadedContent.contact ||
-    !loadedContent.settings;
+  const [isLoading, setIsLoading] = useState(true);
 
-  const ensureAdmin = useCallback(() => {
-    if (!isAdmin || isUserLoading) {
-      throw new Error("Admin access is required to change shared content.");
+  // Seeding mechanism if database tables are empty
+  const seedDatabaseIfNeeded = useCallback(async (
+    pujasCount: number,
+    pujarisCount: number,
+    deitiesCount: number
+  ) => {
+    // Only admins or local sessions can trigger initial seed
+    try {
+      if (pujasCount === 0) {
+        console.log("Seeding programs table...");
+        const payload = defaultPujas.map((p) => ({
+          id: stableUuid(p.id),
+          title: p.name_en,
+          title_te: p.name,
+          description: p.description,
+          description_te: p.description_te,
+          image_url: p.image,
+          image_hint: p.imageHint,
+          category: p.category,
+          category_en: p.category_en,
+          categories: p.categories || [],
+          required_items: p.required_items || [],
+          sloka_tags: p.sloka_tags || [],
+          pdf_url: p.pdf_url,
+        }));
+        await supabase.from("programs").insert(payload);
+      }
+
+      if (pujarisCount === 0) {
+        console.log("Seeding profiles (poojaris) table...");
+        const payload = defaultPujaris.map((p) => ({
+          id: stableUuid(p.id),
+          role: "poojari",
+          full_name: p.name,
+          photo: p.photo || fallbackPhoto,
+          photo_hint: p.photoHint || "indian pujari",
+          verified: p.verified ?? true,
+          verified_by: p.verifiedBy || "VaidikaConnect",
+          verified_at: p.verifiedAt || "2026-05-03",
+          rating: p.rating,
+          review_count: p.reviewCount,
+          base_price: p.basePrice,
+          qualifications: p.qualifications,
+          languages: p.languages,
+          experience_years: p.experience,
+          pujas: p.pujas.map(stableUuid),
+          max_participants: p.maxParticipants,
+          lat: p.location.lat,
+          lng: p.location.lng,
+          description: p.description,
+          phone_call: p.phone,
+          phone_whatsapp: p.whatsapp || p.phone,
+          available_timings: p.availableTimings || "Morning Slot, Evening Slot",
+          gallery: p.gallery,
+          reviews: p.reviews,
+        }));
+        await supabase.from("profiles").insert(payload);
+      }
+
+      if (deitiesCount === 0) {
+        console.log("Seeding stotrams table...");
+        const payload = defaultDeities.map((d) => ({
+          id: stableUuid(d.id),
+          deity_name: d.nameEn,
+          name_te: d.name,
+          gender: d.gender,
+          image_hint: d.imageHint,
+          image_url: d.imageUrl,
+          ashtotharam_url: d.ashtotharamUrl,
+          sahasranamam_url: d.sahasranamamUrl,
+        }));
+        await supabase.from("stotrams").insert(payload);
+      }
+
+      // Seed global settings (settings & contact)
+      const { data: currentSettings } = await supabase.from("global_settings").select("*");
+      if (!currentSettings || currentSettings.length === 0) {
+        console.log("Seeding global settings...");
+        await supabase.from("global_settings").insert([
+          { id: "settings", value: JSON.stringify(defaultSettings) },
+          { id: "contact", value: JSON.stringify(defaultContact) },
+        ]);
+      }
+    } catch (e) {
+      console.error("Database seeding exception:", e);
     }
-  }, [isAdmin, isUserLoading]);
+  }, [supabase]);
 
-  // Real-time Firestore listeners
+  // Fetch all content from Supabase
+  const refreshContent = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      // 1. Fetch programs
+      const { data: dbPujas } = await supabase.from("programs").select("*");
+      const pujasList: Puja[] = (dbPujas || []).map((p) => ({
+        id: p.id,
+        name: p.title_te || p.title,
+        name_en: p.title,
+        description: p.description || "",
+        description_te: p.description_te || "",
+        image: p.image_url || fallbackPhoto,
+        imageHint: p.image_hint || "ritual",
+        category: p.category as any,
+        category_en: p.category_en as any,
+        categories: p.categories || [],
+        required_items: p.required_items || [],
+        sloka_tags: p.sloka_tags || [],
+        pdf_url: p.pdf_url || "",
+      }));
 
-  // Pujas listener
-  useEffect(() => {
-    const ref = doc(db, APP_DATA_COLLECTION, PUJAS_DOC);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => {
-        if (snap.exists() && Array.isArray(snap.data()?.items)) {
-          setPujas(snap.data().items as Puja[]);
-        } else {
-          // First load: seed Firestore with defaults when an admin is present.
-          if (isAdmin) {
-            writePujas(db, defaultPujas).catch(console.error);
+      // 2. Fetch profiles where role = 'poojari'
+      const { data: dbPujaris } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("role", "poojari");
+      const pujarisList: Pujari[] = (dbPujaris || []).map((p) => ({
+        id: p.id,
+        name: p.full_name,
+        photo: p.photo || fallbackPhoto,
+        photoHint: p.photo_hint || "pujari",
+        verified: p.verified,
+        verifiedBy: p.verified_by || "",
+        verifiedAt: p.verified_at || "",
+        rating: p.rating || 5.0,
+        reviewCount: p.review_count || 0,
+        basePrice: p.base_price || 5000,
+        qualifications: p.qualifications || [],
+        languages: p.languages || [],
+        experience: p.experience_years || 0,
+        pujas: p.pujas || [],
+        maxParticipants: p.max_participants || 50,
+        location: { lat: p.lat || 16.3067, lng: p.lng || 80.4367 },
+        description: p.description || "",
+        phone: p.phone_call || "",
+        whatsapp: p.phone_whatsapp || "",
+        availableTimings: p.available_timings || "",
+        gallery: p.gallery || [],
+        reviews: p.reviews || [],
+      }));
+
+      // 3. Fetch stotrams
+      const { data: dbDeities } = await supabase.from("stotrams").select("*");
+      const deitiesList: Deity[] = (dbDeities || []).map((d) => ({
+        id: d.id,
+        name: d.name_te || d.deity_name,
+        nameEn: d.deity_name,
+        gender: d.gender as any,
+        imageHint: d.image_hint || "",
+        imageUrl: d.image_url || "",
+        ashtotharamUrl: d.ashtotharam_url || "",
+        sahasranamamUrl: d.sahasranamam_url || "",
+      }));
+
+      // 4. Fetch global settings
+      const { data: dbSettings } = await supabase.from("global_settings").select("*");
+      let parsedSettings = defaultSettings;
+      let parsedContact = defaultContact;
+
+      (dbSettings || []).forEach((row) => {
+        if (row.id === "settings" && row.value) {
+          try {
+            parsedSettings = JSON.parse(row.value);
+          } catch (e) {
+            console.error("Failed to parse settings JSON:", e);
           }
-          setPujas(defaultPujas);
         }
-        setLoadedContent((current) => ({ ...current, pujas: true }));
-      },
-      (err) => {
-        console.error("Firestore pujas listener error:", err);
-        setPujas(defaultPujas);
-        setLoadedContent((current) => ({ ...current, pujas: true }));
-      }
-    );
-    return unsub;
-  }, [db, isAdmin]);
-
-  // Pujaris listener
-  useEffect(() => {
-    const ref = doc(db, APP_DATA_COLLECTION, PUJARIS_DOC);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => {
-        if (snap.exists() && Array.isArray(snap.data()?.items)) {
-          setPujaris(
-            (snap.data().items as Pujari[]).map(withDefaultVerification)
-          );
-        } else {
-          // First load: seed Firestore with defaults when an admin is present.
-          if (isAdmin) {
-            writePujaris(
-              db,
-              defaultPujaris.map(withDefaultVerification)
-            ).catch(console.error);
+        if (row.id === "contact" && row.value) {
+          try {
+            parsedContact = JSON.parse(row.value);
+          } catch (e) {
+            console.error("Failed to parse contact JSON:", e);
           }
-          setPujaris(defaultPujaris.map(withDefaultVerification));
         }
-        setLoadedContent((current) => ({ ...current, pujaris: true }));
-      },
-      (err) => {
-        console.error("Firestore pujaris listener error:", err);
-        setPujaris(defaultPujaris.map(withDefaultVerification));
-        setLoadedContent((current) => ({ ...current, pujaris: true }));
-      }
-    );
-    return unsub;
-  }, [db, isAdmin]);
+      });
 
-  // Contact listener
-  useEffect(() => {
-    const ref = doc(db, APP_DATA_COLLECTION, CONTACT_DOC);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => {
-        if (snap.exists()) {
-          setContact({ ...defaultContact, ...(snap.data() as ContactContent) });
-        } else {
-          // First load: seed Firestore with defaults when an admin is present.
-          if (isAdmin) {
-            setDoc(ref, defaultContact).catch(console.error);
-          }
-          setContact(defaultContact);
-        }
-        setLoadedContent((current) => ({ ...current, contact: true }));
-      },
-      (err) => {
-        console.error("Firestore contact listener error:", err);
-        setContact(defaultContact);
-        setLoadedContent((current) => ({ ...current, contact: true }));
-      }
-    );
-    return unsub;
-  }, [db, isAdmin]);
-
-  // Settings listener
-  useEffect(() => {
-    const ref = doc(db, APP_DATA_COLLECTION, SETTINGS_DOC);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => {
-        if (snap.exists()) {
-          setSettings({ ...defaultSettings, ...(snap.data() as GlobalSettings) });
-        } else {
-          // First load: seed Firestore with defaults when an admin is present.
-          if (isAdmin) {
-            setDoc(ref, defaultSettings).catch(console.error);
-          }
-          setSettings(defaultSettings);
-        }
-        setLoadedContent((current) => ({ ...current, settings: true }));
-      },
-      (err) => {
-        console.error("Firestore settings listener error:", err);
-        setSettings(defaultSettings);
-        setLoadedContent((current) => ({ ...current, settings: true }));
-      }
-    );
-    return unsub;
-  }, [db, isAdmin]);
-
-  // Join Requests listener
-  useEffect(() => {
-    if (isUserLoading) {
-      return;
-    }
-
-    if (!isAdmin) {
-      setRequests([]);
-      return;
-    }
-
-    const ref = collection(db, REQUESTS_COLLECTION);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => {
-        const items: PujariJoinRequest[] = snap.docs.map((d) => ({
-          ...(d.data() as Omit<PujariJoinRequest, "id">),
-          id: d.id,
+      // 5. Fetch join requests (only loaded if admin is logged in)
+      let requestsList: PujariJoinRequest[] = [];
+      if (isAdmin) {
+        const { data: dbRequests } = await supabase.from("join_requests").select("*");
+        requestsList = (dbRequests || []).map((r) => ({
+          id: r.id,
+          name: r.name,
+          photo: r.photo || fallbackPhoto,
+          phone: r.phone,
+          email: r.email || "",
+          city: r.city || "",
+          location: r.location || "",
+          qualifications: r.qualifications || [],
+          languages: r.languages || [],
+          experience: r.experience || 0,
+          basePrice: r.base_price || 5000,
+          maxParticipants: r.max_participants || 50,
+          pujas: r.pujas || [],
+          description: r.description || "",
+          whatsapp: r.whatsapp || "",
+          availableTimings: r.available_timings || "",
+          lat: r.lat,
+          lng: r.lng,
+          status: r.status,
+          submittedAt: r.submitted_at,
         }));
         // Sort newest first
-        items.sort(
-          (a, b) =>
-            new Date(b.submittedAt).getTime() -
-            new Date(a.submittedAt).getTime()
+        requestsList.sort(
+          (a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
         );
-        setRequests(items);
-      },
-      (err) => {
-        console.error("Firestore joinRequests listener error:", err);
-        setRequests([]);
       }
-    );
-    return unsub;
-  }, [db, isAdmin, isUserLoading]);
+
+      // Check if we need to auto-seed
+      if (pujasList.length === 0 || pujarisList.length === 0 || deitiesList.length === 0) {
+        await seedDatabaseIfNeeded(pujasList.length, pujarisList.length, deitiesList.length);
+        // Re-run fetching after seeding
+        setTimeout(() => refreshContent(), 100);
+        return;
+      }
+
+      setPujas(pujasList);
+      setPujaris(pujarisList);
+      setDeities(deitiesList);
+      setContact(parsedContact);
+      setSettings(parsedSettings);
+      setRequests(requestsList);
+    } catch (error) {
+      console.error("Failed to refresh Supabase content:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [supabase, seedDatabaseIfNeeded, isAdmin]);
+
+  // Initial load
+  useEffect(() => {
+    refreshContent();
+  }, [refreshContent]);
+
+  // Admin authorization guard
+  const ensureAdmin = useCallback(() => {
+    if (!isAdmin) {
+      throw new Error("Admin access is required to change shared content.");
+    }
+  }, [isAdmin]);
 
   // Write operations
 
   const savePuja = useCallback(
     async (puja: Puja) => {
       ensureAdmin();
-      const updated = pujas.some((item) => item.id === puja.id)
-        ? pujas.map((item) => (item.id === puja.id ? puja : item))
-        : [...pujas, { ...puja, id: puja.id || nextId(pujas) }];
-      setPujas(updated); // Optimistic UI update
-      await writePujas(db, updated);
+
+      // Compress large image payload if needed
+      let compressedImage = puja.image;
+      if (puja.image && puja.image.startsWith("data:image/") && puja.image.length > 100000) {
+        try {
+          compressedImage = await compressImage(puja.image);
+        } catch (e) {
+          console.error("Failed to compress puja image:", e);
+        }
+      }
+
+      const idToUpsert = puja.id && typeof puja.id === 'string' && puja.id.includes('-') ? puja.id : undefined;
+
+      const payload = {
+        title: puja.name_en,
+        title_te: puja.name,
+        description: puja.description,
+        description_te: puja.description_te,
+        image_url: compressedImage,
+        image_hint: puja.imageHint,
+        category: puja.category,
+        category_en: puja.category_en,
+        categories: puja.categories || [],
+        required_items: puja.required_items || [],
+        sloka_tags: puja.sloka_tags || [],
+        pdf_url: puja.pdf_url,
+      };
+
+      if (idToUpsert) {
+        await supabase.from("programs").update(payload).eq("id", idToUpsert);
+      } else {
+        await supabase.from("programs").insert({
+          ...payload,
+          id: undefined, // auto generate UUID
+        });
+      }
+
+      await refreshContent();
     },
-    [db, ensureAdmin, pujas]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const deletePuja = useCallback(
-    async (id: number) => {
+    async (id: string | number) => {
       ensureAdmin();
-      const updatedPujas = pujas.filter((p) => p.id !== id);
-      const updatedPujaris = pujaris.map((pr) => ({
-        ...pr,
-        pujas: pr.pujas.filter((pujaId) => pujaId !== id),
-      }));
-      setPujas(updatedPujas); // Optimistic update
-      setPujaris(updatedPujaris); // Optimistic update
-      await Promise.all([
-        writePujas(db, updatedPujas),
-        writePujaris(db, updatedPujaris),
-      ]);
+      await supabase.from("programs").delete().eq("id", String(id));
+      await refreshContent();
     },
-    [db, ensureAdmin, pujas, pujaris]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const savePujari = useCallback(
     async (pujari: Pujari) => {
       ensureAdmin();
-      const normalized: Pujari = {
-        ...pujari,
-        id: pujari.id || nextId(pujaris),
-        photo: pujari.photo || fallbackPhoto,
-        photoHint: pujari.photoHint || "indian pujari",
+
+      let compressedPhoto = pujari.photo;
+      if (pujari.photo && pujari.photo.startsWith("data:image/") && pujari.photo.length > 100000) {
+        try {
+          compressedPhoto = await compressImage(pujari.photo);
+        } catch (e) {
+          console.error("Failed to compress pujari photo:", e);
+        }
+      }
+
+      const idToUpsert = pujari.id && typeof pujari.id === 'string' && pujari.id.includes('-') ? pujari.id : undefined;
+
+      const payload = {
+        role: "poojari",
+        full_name: pujari.name,
+        photo: compressedPhoto || fallbackPhoto,
+        photo_hint: pujari.photoHint || "verified pujari",
+        verified: pujari.verified ?? false,
+        verified_by: pujari.verifiedBy || "VaidikaConnect",
+        verified_at: pujari.verifiedAt || new Date().toISOString().slice(0, 10),
+        rating: pujari.rating || 5.0,
+        review_count: pujari.reviewCount || 0,
+        base_price: pujari.basePrice || 5000,
+        qualifications: pujari.qualifications || [],
+        languages: pujari.languages || [],
+        experience_years: pujari.experience || 0,
+        pujas: pujari.pujas.map(stableUuid),
+        max_participants: pujari.maxParticipants || 50,
+        lat: pujari.location?.lat || 16.3067,
+        lng: pujari.location?.lng || 80.4367,
+        description: pujari.description || "",
+        phone_call: pujari.phone,
+        phone_whatsapp: pujari.whatsapp || pujari.phone,
+        available_timings: pujari.availableTimings || "Morning Slot, Evening Slot",
+        gallery: pujari.gallery || [],
+        reviews: pujari.reviews || [],
       };
-      const updated = pujaris.some((item) => item.id === normalized.id)
-        ? pujaris.map((item) => (item.id === normalized.id ? normalized : item))
-        : [...pujaris, normalized];
-      setPujaris(updated); // Optimistic update
-      await writePujaris(db, updated);
+
+      if (idToUpsert) {
+        await supabase.from("profiles").update(payload).eq("id", idToUpsert);
+      } else {
+        await supabase.from("profiles").insert({
+          ...payload,
+          id: crypto.randomUUID(), // generate valid random UUID for profiles primary key
+        });
+      }
+
+      await refreshContent();
     },
-    [db, ensureAdmin, pujaris]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const deletePujari = useCallback(
-    async (id: number) => {
+    async (id: string | number) => {
       ensureAdmin();
-      const updated = pujaris.filter((p) => p.id !== id);
-      setPujaris(updated); // Optimistic update
-      await writePujaris(db, updated);
+      await supabase.from("profiles").delete().eq("id", String(id));
+      await refreshContent();
     },
-    [db, ensureAdmin, pujaris]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const saveContact = useCallback(
-    async (contact: ContactContent) => {
+    async (newContact: ContactContent) => {
       ensureAdmin();
-      setContact(contact); // Optimistic update
-      await setDoc(doc(db, APP_DATA_COLLECTION, CONTACT_DOC), contact);
+      await supabase.from("global_settings").upsert({
+        id: "contact",
+        value: JSON.stringify(newContact),
+      });
+      await refreshContent();
     },
-    [db, ensureAdmin]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const saveSettings = useCallback(
     async (newSettings: GlobalSettings) => {
       ensureAdmin();
-      setSettings(newSettings); // Optimistic update
-      await setDoc(doc(db, APP_DATA_COLLECTION, SETTINGS_DOC), newSettings);
+      await supabase.from("global_settings").upsert({
+        id: "settings",
+        value: JSON.stringify(newSettings),
+      });
+      await refreshContent();
     },
-    [db, ensureAdmin]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const submitJoinRequest = useCallback(
     async (request: Omit<PujariJoinRequest, "id" | "submittedAt">) => {
       const data = {
-        ...request,
+        name: request.name,
         photo: request.photo || fallbackPhoto,
-        submittedAt: new Date().toISOString(),
+        phone: request.phone,
+        email: request.email || "",
+        city: request.city || "",
+        location: request.location || "",
+        qualifications: request.qualifications || [],
+        languages: request.languages || [],
+        experience: request.experience || 0,
+        base_price: request.basePrice || 5000,
+        max_participants: request.maxParticipants || 50,
+        pujas: request.pujas.map(stableUuid),
+        description: request.description || "",
+        whatsapp: request.whatsapp || request.phone,
+        available_timings: request.availableTimings || "Morning Slot, Evening Slot",
+        lat: request.lat || 16.3067,
+        lng: request.lng || 80.4367,
+        status: "pending",
       };
-      await addDoc(collection(db, REQUESTS_COLLECTION), data);
+      await supabase.from("join_requests").insert(data);
+      await refreshContent();
     },
-    [db]
+    [supabase, refreshContent]
   );
 
   const approveJoinRequest = useCallback(
@@ -469,95 +545,109 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       const request = requests.find((item) => item.id === id);
       if (!request) return;
 
-      const newPujari: Pujari = {
-        id: nextId(pujaris),
-        name: request.name,
+      const profileId = crypto.randomUUID();
+      const newPujariPayload = {
+        id: profileId,
+        role: "poojari",
+        full_name: request.name,
         photo: request.photo || fallbackPhoto,
-        photoHint: "verified pujari",
+        photo_hint: "verified pujari",
         verified: true,
-        verifiedBy: "VaidikaConnect",
-        verifiedAt: new Date().toISOString().slice(0, 10),
+        verified_by: "VaidikaConnect",
+        verified_at: new Date().toISOString().slice(0, 10),
         rating: 5,
-        reviewCount: 0,
-        basePrice: request.basePrice,
+        review_count: 0,
+        base_price: request.basePrice,
         qualifications: request.qualifications,
         languages: request.languages,
-        experience: request.experience,
-        pujas: request.pujas,
-        maxParticipants: request.maxParticipants,
-        location: { lat: request.lat || 16.3067, lng: request.lng || 80.4367 },
+        experience_years: request.experience,
+        pujas: request.pujas.map(stableUuid),
+        max_participants: request.maxParticipants,
+        lat: request.lat || 16.3067,
+        lng: request.lng || 80.4367,
         description: request.description,
-        phone: request.phone,
-        whatsapp: request.whatsapp || request.phone,
-        availableTimings: request.availableTimings || "Morning Slot, Evening Slot",
+        phone_call: request.phone,
+        phone_whatsapp: request.whatsapp || request.phone,
+        available_timings: request.availableTimings || "Morning Slot, Evening Slot",
         gallery: [],
         reviews: [],
       };
 
-      const updatedPujaris = [...pujaris, newPujari];
-      setPujaris(updatedPujaris); // Optimistic update
-      setRequests(current => current.filter(r => r.id !== id));
-
-      await Promise.all([
-        writePujaris(db, updatedPujaris),
-        deleteDoc(doc(db, REQUESTS_COLLECTION, id)),
-      ]);
+      await supabase.from("profiles").insert(newPujariPayload);
+      await supabase.from("join_requests").delete().eq("id", id);
+      await refreshContent();
     },
-    [db, ensureAdmin, requests, pujaris]
+    [supabase, ensureAdmin, requests, refreshContent]
   );
 
   const rejectJoinRequest = useCallback(
     async (id: string) => {
       ensureAdmin();
-      setRequests(current => current.filter(r => r.id !== id)); // Optimistic update
-      await deleteDoc(doc(db, REQUESTS_COLLECTION, id));
+      await supabase.from("join_requests").delete().eq("id", id);
+      await refreshContent();
     },
-    [db, ensureAdmin]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const resetContent = useCallback(async () => {
     ensureAdmin();
-    setPujas(defaultPujas);
-    setPujaris(defaultPujaris.map(withDefaultVerification));
-    setDeities(defaultDeities);
-    setContact(defaultContact);
-    setRequests([]);
-    
-    await Promise.all([
-      writePujas(db, defaultPujas),
-      writePujaris(db, defaultPujaris.map(withDefaultVerification)),
-      writeDeities(db, defaultDeities),
-      setDoc(doc(db, APP_DATA_COLLECTION, CONTACT_DOC), defaultContact),
-    ]);
-    // Clear all join requests
-    await Promise.all(
-      requests.map((r) => deleteDoc(doc(db, REQUESTS_COLLECTION, r.id)))
-    );
-  }, [db, ensureAdmin, requests]);
+    // Wipe tables
+    await supabase.from("programs").delete().neq("id", stableUuid(0));
+    await supabase.from("profiles").delete().neq("role", "admin");
+    await supabase.from("stotrams").delete().neq("id", stableUuid(0));
+    await supabase.from("global_settings").delete().neq("id", "admin-key");
+    await supabase.from("join_requests").delete().neq("status", "approved");
+
+    await seedDatabaseIfNeeded(0, 0, 0);
+  }, [supabase, ensureAdmin, seedDatabaseIfNeeded]);
 
   const saveDeity = useCallback(
     async (deity: Deity) => {
       ensureAdmin();
-      const updated = deities.some((item) => item.id === deity.id)
-        ? deities.map((item) => (item.id === deity.id ? deity : item))
-        : [...deities, deity];
-      setDeities(updated); // Optimistic UI update
-      await writeDeities(db, updated);
+
+      let compressedImageUrl = deity.imageUrl;
+      if (deity.imageUrl && deity.imageUrl.startsWith("data:image/") && deity.imageUrl.length > 100000) {
+        try {
+          compressedImageUrl = await compressImage(deity.imageUrl);
+        } catch (e) {
+          console.error("Failed to compress deity image:", e);
+        }
+      }
+
+      const idToUpsert = deity.id && typeof deity.id === 'string' && deity.id.includes('-') ? deity.id : undefined;
+
+      const payload = {
+        deity_name: deity.nameEn,
+        name_te: deity.name,
+        gender: deity.gender,
+        image_hint: deity.imageHint,
+        image_url: compressedImageUrl,
+        ashtotharam_url: deity.ashtotharamUrl,
+        sahasranamam_url: deity.sahasranamamUrl,
+      };
+
+      if (idToUpsert) {
+        await supabase.from("stotrams").update(payload).eq("id", idToUpsert);
+      } else {
+        await supabase.from("stotrams").insert({
+          ...payload,
+          id: undefined, // auto generate UUID
+        });
+      }
+
+      await refreshContent();
     },
-    [db, ensureAdmin, deities]
+    [supabase, ensureAdmin, refreshContent]
   );
 
   const deleteDeity = useCallback(
     async (id: string) => {
       ensureAdmin();
-      const updatedDeities = deities.filter((d) => d.id !== id);
-      setDeities(updatedDeities); // Optimistic update
-      await writeDeities(db, updatedDeities);
+      await supabase.from("stotrams").delete().eq("id", id);
+      await refreshContent();
     },
-    [db, ensureAdmin, deities]
+    [supabase, ensureAdmin, refreshContent]
   );
-
-  // Context value
 
   const value = useMemo<ContentContextValue>(
     () => ({

@@ -5,8 +5,8 @@ export interface Deity {
   gender: 'male' | 'female';
   imageHint: string;
   imageUrl?: string;
-  ashtotharam: string;
-  sahasranamam: string;
+  ashtotharamUrl: string;
+  sahasranamamUrl: string;
 }
 
 export const stotramsData: Deity[] = [
@@ -18,8 +18,8 @@ export const stotramsData: Deity[] = [
     gender: 'male',
     imageHint: 'A premium, divine, and elegant digital painting of Lord Ganesha, warm glowing colors, gold accents, high resolution',
     imageUrl: '/images/deities/ganesha.png',
-    ashtotharam: `Content not found`,
-    sahasranamam: `Content not found`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-ganesha-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/ganesha-sahasranama-stotram.html'
   },
   {
     id: 'shiva',
@@ -28,23 +28,8 @@ export const stotramsData: Deity[] = [
     gender: 'male',
     imageHint: 'A premium, majestic digital painting of Lord Shiva in meditation, cosmic background, crescent moon, glowing aura',
     imageUrl: '/images/deities/shiva.png',
-    ashtotharam: `ఓం శివాయ నమః
-ఓం మహేశ్వరాయ నమః
-ఓం శంభవే నమః
-ఓం పినాకినే నమః
-ఓం శశిశేఖరాయ నమః
-ఓం వామదేవాయ నమః
-ఓం విరూపాక్షాయ నమః
-ఓం కపర్దినే నమః
-ఓం నీలలోహితాయ నమః
-ఓం శంకరాయ నమః
-... (108 names placeholder for Shiva)`,
-    sahasranamam: `శ్రీ శివ సహస్రనామ స్తోత్రం
-
-స్థిరః స్థాణుః ప్రభుర్భీమః ప్రవరో వరదో వరః |
-సర్వాత్మా సర్వవిఖ్యాతః సర్వః సర్వకరో భవః ||
-జటీ చర్మీ శిఖండీ చ సర్వాంగః సర్వభావనః |
-... (1000 names placeholder for Shiva)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/siva-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/siva-sahasranama-stotram.html'
   },
   {
     id: 'vishnu',
@@ -53,181 +38,68 @@ export const stotramsData: Deity[] = [
     gender: 'male',
     imageHint: 'A premium, divine painting of Lord Vishnu, blue skin, yellow garments, holding chakra and conch, divine golden glow',
     imageUrl: '/images/deities/vishnu.png',
-    ashtotharam: `ఓం విష్ణవే నమః
-ఓం జిష్ణవే నమః
-ఓం వషట్కారాయ నమః
-ఓం దేవదేవాయ నమః
-ఓం వృషాకపయే నమః
-ఓం దామోదరాయ నమః
-ఓం దీనబంధవే నమః
-ఓం ఆదిదేవాయ నమః
-ఓం అదితేఃసుతాయ నమః
-ఓం పుండరీకాక్షాయ నమః
-... (108 names placeholder for Vishnu)`,
-    sahasranamam: `శ్రీ విష్ణు సహస్రనామ స్తోత్రం
-
-విశ్వం విష్ణుర్వషట్కారో భూతభవ్యభవత్ప్రభుః |
-భూతకృద్భూతభృద్భావో భూతాత్మా భూతభావనః ||
-పూతాత్మా పరమాత్మా చ ముక్తానాం పరమా గతిః |
-... (1000 names placeholder for Vishnu)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-vishnu-ashtottara-shatanama-stotram.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/sri-vishnu-sahasranama-stotram.html'
   },
   {
     id: 'rama',
-    name: 'శ్రీ రాముడు',
+    name: 'శ్రీరాముడు',
     nameEn: 'Rama',
     gender: 'male',
-    imageHint: 'A premium, serene painting of Lord Sri Rama holding his bow, royal garments, divine halo, warm lighting',
+    imageHint: 'A premium, divine, and noble digital painting of Lord Sri Rama with his bow, glowing light, gold accents',
     imageUrl: '/images/deities/rama.png',
-    ashtotharam: `ఓం శ్రీరామాయ నమః
-ఓం రామభద్రాయ నమః
-ఓం రామచంద్రాయ నమః
-ఓం శాశ్వతాయ నమః
-ఓం రాజీవలోచనాయ నమః
-ఓం శ్రీమతే నమః
-ఓం రాజేంద్రాయ నమః
-ఓం రఘుపుంగవాయ నమః
-ఓం జానకీవల్లభాయ నమః
-ఓం జైత్రాయ నమః
-... (108 names placeholder for Rama)`,
-    sahasranamam: `శ్రీ రామ సహస్రనామ స్తోత్రం
-
-రామో దాశరథిః శూరో లక్ష్మణానుచరో బలీ |
-కాకుత్స్థః పురుషః పూర్ణః కౌసల్యేయో రఘూత్తమః ||
-వేదాంతవేద్యో యజ్ఞేశః పురాణపురుషోత్తమః |
-... (1000 names placeholder for Rama)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-rama-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/sri-rama-sahasranama-stotram.html'
   },
   {
     id: 'hanuman',
-    name: 'ఆంజనేయుడు',
+    name: 'హనుమంతుడు',
     nameEn: 'Hanuman',
     gender: 'male',
-    imageHint: 'A premium, powerful painting of Lord Hanuman in devotion, glowing orange and gold, muscular, divine aura',
+    imageHint: 'A premium, powerful digital painting of Lord Hanuman in a devotional pose, glowing aura, golden sunset background',
     imageUrl: '/images/deities/hanuman.png',
-    ashtotharam: `ఓం ఆంజనేయాయ నమః
-ఓం మహావీరాయ నమః
-ఓం హనుమతే నమః
-ఓం మారుతాత్మజాయ నమః
-ఓం తత్త్వజ్ఞానప్రదాయకాయ నమః
-ఓం సీతాదేవీముద్రాప్రదాయకాయ నమః
-ఓం అశోకవనికాచ్ఛేత్రే నమః
-ఓం సర్వమాయావిభంజనాయ నమః
-ఓం సర్వబంధవిమోక్త్రే నమః
-ఓం రక్షోవిధ్వంసకారకాయ నమః
-... (108 names placeholder for Hanuman)`,
-    sahasranamam: `శ్రీ హనుమత్ సహస్రనామ స్తోత్రం
-
-హనుమాన్ శ్రీమాన్ వాయుపుత్రో మహాబలః |
-రామేష్టః ఫల్గుణసఖః పింగాక్షో మితవిక్రమః ||
-ఉదధిక్రమణశ్చైవ సీతాశోకవినాశకః |
-... (1000 names placeholder for Hanuman)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-hanuma-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/sri-hanumath-sahasranama-stotram.html'
   },
-
   // --- FEMALE DEITIES ---
   {
     id: 'lalitha',
     name: 'లలితా దేవి',
-    nameEn: 'Lalitha Devi',
+    nameEn: 'Lalitha',
     gender: 'female',
-    imageHint: 'A premium, beautiful painting of Goddess Lalitha Tripura Sundari, red garments, holding sugarcane bow, extremely divine',
+    imageHint: 'A premium, luxurious digital painting of Goddess Lalitha Tripurasundari on her throne, glowing golden aura, red saree, divine beauty',
     imageUrl: '/images/deities/lalitha.png',
-    ashtotharam: `ఓం రజతాచలశృంగాగ్ర మధ్యస్థాయై నమః
-ఓం హిమాచల మహావంశ పావనాయై నమః
-ఓం శంకరార్ధాంగ సౌందర్య శరీరాయై నమః
-ఓం లసన్మరకత స్వచ్ఛ విగ్రహాయై నమః
-ఓం మహాతిశయ సౌందర్య లావణ్యాయై నమః
-ఓం శశాంక శేఖర ప్రాణవల్లభాయై నమః
-ఓం సదా పంచదశాత్మాక్య స్వరూపాయై నమః
-ఓం వజ్రమాణిక్య కటక కిరీటాయై నమః
-ఓం కస్తూరీ తిలకోల్లాసి నిటలాయై నమః
-ఓం భస్మరేఖాంకిత లసన్మస్తకాయై నమః
-... (108 names placeholder for Lalitha Devi)`,
-    sahasranamam: `శ్రీ లలితా సహస్రనామ స్తోత్రం
-
-శ్రీమాతా శ్రీమహారాజ్ఞీ శ్రీమత్-సింహాసనేశ్వరీ |
-చిదగ్ని-కుండ-సంభూతా దేవకార్య-సముద్యతా ||
-ఉద్యద్భాను-సహస్రాభా చతుర్బాహు-సమన్వితా |
-రాగస్వరూప-పాశాఢ్యా క్రోధాకారాంకుశోజ్జ్వలా ||
-... (1000 names placeholder for Lalitha Devi)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-lalitha-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/sri-lalitha-sahasranama-stotram.html'
   },
   {
     id: 'lakshmi',
     name: 'లక్ష్మీ దేవి',
-    nameEn: 'Lakshmi Devi',
+    nameEn: 'Lakshmi',
     gender: 'female',
-    imageHint: 'A premium, radiant painting of Goddess Lakshmi sitting on a pink lotus, showering gold coins, elegant and wealthy aura',
+    imageHint: 'A premium, elegant painting of Goddess Lakshmi seated on a pink lotus, showering gold coins, glowing lights, rich colors',
     imageUrl: '/images/deities/lakshmi.png',
-    ashtotharam: `ఓం ప్రకృత్యై నమః
-ఓం వికృత్యై నమః
-ఓం విద్యాయై నమః
-ఓం సర్వభూతహితప్రదాయై నమః
-ఓం శ్రద్ధాయై నమః
-ఓం విభూత్యై నమః
-ఓం సురభ్యై నమః
-ఓం పరమాత్మికాయై నమః
-ఓం వాచే నమః
-ఓం పద్మాలయాయై నమః
-... (108 names placeholder for Lakshmi Devi)`,
-    sahasranamam: `శ్రీ లక్ష్మీ సహస్రనామ స్తోత్రం
-
-పద్మావతీ పద్మనేత్రా పద్మనాభప్రియంకరీ |
-పద్మాసనా పద్మహస్తా పద్మాక్షీ పద్మమాలినీ ||
-కమలా కమలాక్షీ చ కమలోద్భవపూజితా |
-... (1000 names placeholder for Lakshmi Devi)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-lakshmi-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/sri-lakshmi-sahasranama-stotram.html'
   },
   {
     id: 'saraswati',
-    name: 'సరస్వతి దేవి',
-    nameEn: 'Saraswati Devi',
+    name: 'సరస్వతీ దేవి',
+    nameEn: 'Saraswati',
     gender: 'female',
-    imageHint: 'A premium, pure painting of Goddess Saraswati sitting on a white lotus, playing veena, white garments, serene glow',
+    imageHint: 'A premium, beautiful painting of Goddess Saraswati playing the Veena, white swan, white saree, calm glowing background',
     imageUrl: '/images/deities/saraswati.png',
-    ashtotharam: `ఓం సరస్వత్యై నమః
-ఓం మహాభద్రాయై నమః
-ఓం మహామాయాయై నమః
-ఓం వరప్రదాయై నమః
-ఓం శ్రీప్రదాయై నమః
-ఓం పద్మనిలయాయై నమః
-ఓం పద్మాక్ష్యై నమః
-ఓం పద్మవక్త్రకాయై నమః
-ఓం శివానుజాయై నమః
-ఓం పుస్తకభృతై నమః
-... (108 names placeholder for Saraswati Devi)`,
-    sahasranamam: `శ్రీ సరస్వతీ సహస్రనామ స్తోత్రం
-
-వాగ్దేవీ భారతీ గౌరీ శారదా విద్యాదాయిని |
-హంసవాహనారూఢా వీణాపాతకధారిణీ ||
-... (1000 names placeholder for Saraswati Devi)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-saraswathi-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/sri-saraswathi-sahasranama-stotram.html'
   },
   {
     id: 'durga',
     name: 'దుర్గా దేవి',
-    nameEn: 'Durga Devi',
+    nameEn: 'Durga',
     gender: 'female',
-    imageHint: 'A premium, fierce and beautiful painting of Goddess Durga riding a lion, multiple arms holding weapons, red and gold',
+    imageHint: 'A premium, energetic digital painting of Goddess Durga riding a lion, carrying celestial weapons, divine light, powerful colors',
     imageUrl: '/images/deities/durga.png',
-    ashtotharam: `ఓం సత్యై నమః
-ఓం సాధ్వ్యై నమః
-ఓం భవప్రీతాయై నమః
-ఓం భవాన్యై నమః
-ఓం భవమోచన్యై నమః
-ఓం ఆర్యాయై నమః
-ఓం దుర్గాయై నమః
-ఓం జయాయై నమః
-ఓం ఆద్యాయై నమః
-ఓం త్రినేత్రాయై నమః
-... (108 names placeholder for Durga Devi)`,
-    sahasranamam: `శ్రీ దుర్గా సహస్రనామ స్తోత్రం
-
-శివా భవానీ రుద్రాణీ శర్వాణీ సర్వమంగళా |
-అపర్ణా పార్వతీ దుర్గా మృడానీ చండికాంబికా ||
-... (1000 names placeholder for Durga Devi)`
+    ashtotharamUrl: 'https://vignanam.org/telugu/sri-durga-ashtottara-shatanama-valih.html',
+    sahasranamamUrl: 'https://vignanam.org/telugu/sri-durga-sahasranama-stotram.html'
   }
 ];
-
-export const getDeityById = (id: string): Deity | undefined => {
-  return stotramsData.find(deity => deity.id === id);
-};
-
-export const getDeitiesByGender = (gender: 'male' | 'female'): Deity[] => {
-  return stotramsData.filter(deity => deity.gender === gender);
-};

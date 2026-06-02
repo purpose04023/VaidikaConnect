@@ -1,7 +1,7 @@
 import { PlaceHolderImages } from './placeholder-images';
 
 export interface Puja {
-  id: number;
+  id: number | string;
   name: string; // Telugu name
   name_en: string; // English name
   description: string; // English description
@@ -18,7 +18,7 @@ export interface Puja {
 
 
 export interface Pujari {
-  id: number;
+  id: number | string;
   name: string;
   photo: string;
   photoHint: string;
@@ -31,7 +31,7 @@ export interface Pujari {
   qualifications: string[];
   languages: string[];
   experience: number;
-  pujas: number[];
+  pujas: (number | string)[];
   maxParticipants: number;
   location: { lat: number; lng: number };
   description: string;
@@ -162,10 +162,10 @@ export async function getPujas(): Promise<Puja[]> {
   return pujas;
 }
 
-export async function getPujariById(id: number): Promise<Pujari | undefined> {
+export async function getPujariById(id: string | number): Promise<Pujari | undefined> {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 50));
-  return pujaris.find(p => p.id === id);
+  return pujaris.find(p => p.id.toString() === id.toString());
 }
 
 export async function getPujaris(): Promise<Pujari[]> {
@@ -174,9 +174,9 @@ export async function getPujaris(): Promise<Pujari[]> {
     return pujaris;
 }
 
-export async function getPujaById(id: number): Promise<Puja | undefined> {
+export async function getPujaById(id: string | number): Promise<Puja | undefined> {
   await new Promise(resolve => setTimeout(resolve, 50));
-  return pujas.find(p => p.id === id);
+  return pujas.find(p => p.id.toString() === id.toString());
 }
 
 export { pujas as defaultPujas, pujaris as defaultPujaris };

@@ -15,10 +15,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { useAuth } from '@/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { createClient } from '@/utils/supabase/client';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -30,9 +29,9 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
-  const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const supabase = createClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,7 +43,11 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+      if (error) throw error;
       router.push('/');
       toast({
         title: 'Login Successful',

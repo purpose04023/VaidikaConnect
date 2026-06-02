@@ -11,7 +11,7 @@ import { ManagedImage } from '@/components/common/ManagedImage';
 interface PujariCardProps {
   pujari: Pujari;
   isSelected: boolean;
-  onSelect: (id: number) => void;
+  onSelect: (id: string | number) => void;
 }
 
 export function PujariCard({ pujari, isSelected, onSelect }: PujariCardProps) {

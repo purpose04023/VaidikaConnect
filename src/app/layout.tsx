@@ -4,7 +4,6 @@ import { Header } from '@/components/common/Header';
 import Navbar from '@/components/common/Navbar';
 import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/context/language-context';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { ContentProvider } from '@/lib/content-store';
 import Script from 'next/script';
 
@@ -28,18 +27,17 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossOrigin=""/>
       </head>
       <body className="font-body antialiased min-h-screen flex flex-col">
-        <FirebaseClientProvider>
-          <LanguageProvider>
-            <ContentProvider>
-              <Header />
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Toaster />
-            </ContentProvider>
-          </LanguageProvider>
-        </FirebaseClientProvider>
+        <LanguageProvider>
+          <ContentProvider>
+            <Header />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Toaster />
+          </ContentProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
 }
+
 

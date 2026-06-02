@@ -22,7 +22,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
     [pujas, language]
   );
   const [activeTab, setActiveTab] = useState<string | undefined>();
-  const [loadingPujaId, setLoadingPujaId] = useState<number | null>(null);
+  const [loadingPujaId, setLoadingPujaId] = useState<string | number | null>(null);
 
   useEffect(() => {
     if (categories.length > 0 && (!activeTab || !categories.includes(activeTab))) {

@@ -15,8 +15,8 @@ const center: L.LatLngExpression = [16.3067, 80.4367]; // Guntur, AP
 
 interface PujariMapProps {
     pujaris: Pujari[];
-    selectedPujariId: number | null;
-    setSelectedPujariId: (id: number) => void;
+    selectedPujariId: string | number | null;
+    setSelectedPujariId: (id: string | number) => void;
     carouselApi: CarouselApi | undefined;
 }
 
@@ -24,7 +24,7 @@ export function PujariMap({ pujaris, selectedPujariId, setSelectedPujariId, caro
     const [isClient, setIsClient] = useState(false);
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
-    const markersRef = useRef<Record<number, L.Marker>>({});
+    const markersRef = useRef<Record<string | number, L.Marker>>({});
 
     useEffect(() => {
         setIsClient(true);
@@ -45,9 +45,9 @@ export function PujariMap({ pujaris, selectedPujariId, setSelectedPujariId, caro
         });
     };
 
-    const handleMarkerClick = useCallback((id: number) => {
+    const handleMarkerClick = useCallback((id: string | number) => {
         setSelectedPujariId(id);
-        const index = pujaris.findIndex(p => p.id === id);
+        const index = pujaris.findIndex(p => p.id.toString() === id.toString());
         if (index !== -1 && carouselApi) {
           carouselApi.scrollTo(index);
         }
@@ -96,10 +96,10 @@ export function PujariMap({ pujaris, selectedPujariId, setSelectedPujariId, caro
 
     // Update marker styles and pan map when selectedPujariId changes
     useEffect(() => {
-      const selectedPujari = pujaris.find(p => p.id === selectedPujariId);
+      const selectedPujari = pujaris.find(p => p.id.toString() === selectedPujariId?.toString());
       if (mapInstanceRef.current && selectedPujari) {
         Object.entries(markersRef.current).forEach(([id, marker]) => {
-          const isSelected = Number(id) === selectedPujariId;
+          const isSelected = id.toString() === selectedPujariId?.toString();
           marker.setIcon(createPujariIcon(isSelected));
           marker.setZIndexOffset(isSelected ? 1000 : 0);
           if (isSelected) {

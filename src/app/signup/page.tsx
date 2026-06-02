@@ -15,13 +15,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { useAuth, useFirestore } from '@/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
+import { createClient } from '@/utils/supabase/client';
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: 'First name is required' }),
@@ -35,10 +32,9 @@ const formSchema = z.object({
 });
 
 export default function SignupPage() {
-  const auth = useAuth();
-  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  const supabase = createClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,22 +57,25 @@ export default function SignupPage() {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
-      
-      const userProfileRef = doc(firestore, 'userProfiles', user.uid);
-      const userProfileData = {
-        id: user.uid,
-        firstName: values.firstName,
-        lastName: values.lastName,
+      const { data: { user }, error } = await supabase.auth.signUp({
         email: values.email,
-        phoneNumber: '',
-        location: '',
-        preferences: '',
-      };
-
-      // Create a user profile document in Firestore
-      setDocumentNonBlocking(userProfileRef, userProfileData, { merge: true });
+        password: values.password,
+        options: {
+          data: {
+            full_name: `${values.firstName} ${values.lastName}`
+          }
+        }
+      });
+      if (error) throw error;
+      
+      if (user) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: user.id,
+          role: 'user',
+          full_name: `${values.firstName} ${values.lastName}`
+        });
+        if (profileError) throw profileError;
+      }
 
       router.push('/');
       toast({

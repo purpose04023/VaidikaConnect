@@ -21,8 +21,7 @@ import { useLanguage, type Language } from "@/context/language-context"
 import { useState } from "react"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { ThemeToggle } from "./ThemeToggle"
-import { useUser, useAuth } from "@/firebase"
-import { signOut } from "firebase/auth"
+import { useUser, useAuth } from "@/hooks/use-auth"
 import { ManagedImage } from "./ManagedImage"
 
 export function Header() {
@@ -36,12 +35,11 @@ export function Header() {
   }
 
   const handleLogout = () => {
-    if (auth) {
-      signOut(auth);
-    }
+    auth.signOut();
   }
   
   const logo = PlaceHolderImages.find(p => p.id === 'app-logo');
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -148,18 +146,18 @@ export function Header() {
           {isUserLoading ? (
             <div className="h-10 w-10 bg-muted rounded-full animate-pulse" />
           ) : user ? (
-             <DropdownMenu>
+              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Avatar>
-                    <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} data-ai-hint="user avatar" />
+                    <AvatarImage src={user.user_metadata?.avatar_url || `https://picsum.photos/seed/${user.id}/100/100`} data-ai-hint="user avatar" />
                     <AvatarFallback>{user.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                   <span className="sr-only">{t('header.user_avatar')}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user.displayName || user.email}</DropdownMenuLabel>
+                <DropdownMenuLabel>{user.user_metadata?.full_name || user.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>

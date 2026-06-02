@@ -41,7 +41,7 @@ const benefits = [
 export default function JoinNetworkPage() {
   const { pujas, submitJoinRequest } = useContent();
   const { toast } = useToast();
-  const [selectedPujas, setSelectedPujas] = useState<number[]>([]);
+  const [selectedPujas, setSelectedPujas] = useState<(string | number)[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -83,7 +83,7 @@ export default function JoinNetworkPage() {
     return compressImage(file);
   };
 
-  const togglePuja = (id: number) => {
+  const togglePuja = (id: string | number) => {
     setSelectedPujas((current) =>
       current.includes(id) ? current.filter((pujaId) => pujaId !== id) : [...current, id]
     );
@@ -142,7 +142,7 @@ export default function JoinNetworkPage() {
         experience: Number(form.experience),
         basePrice: Number(form.basePrice),
         maxParticipants: 50,
-        pujas: selectedPujas,
+        pujas: selectedPujas.map(String),
         description: form.description,
         lat: coords?.lat || 16.3067, // default Guntur if not captured
         lng: coords?.lng || 80.4367,
@@ -505,7 +505,7 @@ export default function JoinNetworkPage() {
                       <p className="text-xs text-muted-foreground mb-2">{selectedPujas.length} programs selected:</p>
                       <div className="flex flex-wrap gap-1.5">
                         {selectedPujas.map((id) => {
-                          const puja = pujas.find((item) => item.id === id);
+                          const puja = pujas.find((item) => item.id.toString() === id.toString());
                           return puja ? (
                             <Badge key={id} className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 font-semibold text-xs py-0.5 px-2">
                               {puja.name_en}
