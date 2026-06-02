@@ -12,71 +12,72 @@ body {
 /* ─── Color Tokens ──────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    /* Deep charcoal background (#120f0e) & premium warm brass gold accents — divine luxury by default */
-    --background: 10 9% 6%;
-    --foreground: 38 35% 90%;
+    /* True Black background (#050505) and Ethereal Glowing Gold / Saffron accents */
+    --background: 0 0% 2%;
+    --foreground: 0 0% 96%;
 
-    --card: 10 9% 8%;
-    --card-foreground: 38 35% 90%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 10 9% 8%;
-    --popover-foreground: 38 35% 90%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 38 55% 50%;         /* Elegant muted Brass/Gold (#b89045) */
-    --primary-foreground: 10 9% 6%;
+    --primary: 37 69% 64%;         /* Ethereal Glowing Gold (#E4B363) */
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 10 9% 12%;
-    --secondary-foreground: 38 35% 90%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 96%;
 
-    --muted: 10 9% 11%;
-    --muted-foreground: 38 12% 60%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 64%;
 
-    --accent: 43 65% 53%;          /* Elegant Gold accent (#d4af37) */
-    --accent-foreground: 10 9% 6%;
+    --accent: 33 100% 50%;          /* Mystic Saffron (#FF8C00) */
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 65% 45%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 100% / 0.06;    /* Very subtle borders (border-white/6) */
-    --input: 0 0% 100% / 0.06;
-    --ring: 38 55% 50%;
+    --border: 0 0% 100% / 0.05;    /* Very subtle borders (border-white/5) */
+    --input: 0 0% 100% / 0.05;
+    --ring: 37 69% 64%;
 
-    --radius: 1rem;                /* Soft luxurious corners */
+    --radius: 1.5rem;              /* Soft rounded-3xl corners */
 
     /* Premium glow variables */
-    --glow-primary: 38deg 55% 50%;
-    --glow-gold: 43deg 65% 53%;
+    --glow-primary: 37deg 69% 64%;
+    --glow-gold: 37deg 69% 64%;
+    --glow-saffron: 33deg 100% 50%;
   }
 
   .dark {
-    /* Kept identical to root to enforce the gorgeous dark premium layout everywhere */
-    --background: 10 9% 6%;
-    --foreground: 38 35% 90%;
+    /* Identical to keep the gorgeous cinematic dark theme everywhere */
+    --background: 0 0% 2%;
+    --foreground: 0 0% 96%;
 
-    --card: 10 9% 8%;
-    --card-foreground: 38 35% 90%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 10 9% 8%;
-    --popover-foreground: 38 35% 90%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 38 55% 50%;
-    --primary-foreground: 10 9% 6%;
+    --primary: 37 69% 64%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 10 9% 12%;
-    --secondary-foreground: 38 35% 90%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 96%;
 
-    --muted: 10 9% 11%;
-    --muted-foreground: 38 12% 60%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 64%;
 
-    --accent: 43 65% 53%;
-    --accent-foreground: 10 9% 6%;
+    --accent: 33 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 65% 45%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 100% / 0.06;
-    --input: 0 0% 100% / 0.06;
-    --ring: 38 55% 50%;
+    --border: 0 0% 100% / 0.05;
+    --input: 0 0% 100% / 0.05;
+    --ring: 37 69% 64%;
   }
 }
 
@@ -94,98 +95,130 @@ body {
     scroll-behavior: smooth;
   }
 
-  /* Headings use the decorative Cinzel font for a classical divine feel */
+  /* Headings use the modern sans-serif Inter font for striking contrast against ancient subject matter */
   h1, h2, h3, .font-headline {
-    font-family: 'Cinzel', Georgia, serif !important;
-    letter-spacing: 0.02em;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    line-height: 1.25 !important;
   }
 }
 
 /* ─── Custom Utility Classes ─────────────────────────────────────────────────── */
 @layer components {
 
-  /* Divine page background — subtle animated gradient */
+  /* Ethereal animated divine background with True Black (#050505) and subtle saffron/gold glows */
   .divine-bg {
-    background: radial-gradient(ellipse 80% 60% at 50% -20%, hsl(var(--primary) / 0.12) 0%, transparent 70%),
-                radial-gradient(ellipse 60% 50% at 80% 100%, hsl(var(--accent) / 0.08) 0%, transparent 70%),
-                hsl(var(--background));
+    background: radial-gradient(circle 800px at 50% -250px, rgba(228, 179, 99, 0.08) 0%, transparent 80%),
+                radial-gradient(circle 600px at 100% 90%, rgba(255, 140, 0, 0.04) 0%, transparent 70%),
+                #050505;
     position: relative;
   }
 
-  /* Glassmorphism card — translucent luxury */
+  /* Ethereal Glowing Orbs mimicking divine light/incense smoke */
+  .divine-glow-orb {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(228, 179, 99, 0.08) 0%, rgba(255, 140, 0, 0.02) 50%, transparent 100%);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .divine-smoke-orb {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.05) 0%, rgba(228, 179, 99, 0.01) 60%, transparent 100%);
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    animation: float 10s ease-in-out infinite alternate;
+  }
+
+  /* Glassmorphism card — completely translucent luxury */
   .glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1.25rem;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem; /* rounded-3xl */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
   }
 
   .glass-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
-                0 0 15px rgba(184, 144, 69, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(228, 179, 99, 0.25);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9),
+                inset 0 0 15px rgba(228, 179, 99, 0.12), /* Ethereal subtle inner glow */
+                inset 0 1px 2px rgba(255, 255, 255, 0.15);
     transform: translateY(-4px);
   }
 
   /* Divine section card (form sections) */
   .divine-section-card {
-    @apply rounded-2xl border overflow-hidden;
-    background: hsl(var(--card));
-    box-shadow: 0 2px 16px hsl(var(--primary) / 0.06);
-    border-color: hsl(var(--border));
-    transition: box-shadow 0.3s ease;
+    @apply rounded-3xl border overflow-hidden;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.4s ease;
   }
 
   .divine-section-card:hover {
-    box-shadow: 0 4px 24px hsl(var(--primary) / 0.1);
+    border-color: rgba(228, 179, 99, 0.15);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
   }
 
   /* Divine section header inside form cards */
   .divine-section-header {
-    @apply flex items-center gap-4 px-6 py-4 border-b;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.07) 0%, hsl(var(--accent) / 0.04) 100%);
-    border-bottom-color: hsl(var(--border));
+    @apply flex items-center gap-4 px-6 py-5 border-b;
+    background: linear-gradient(135deg, rgba(228, 179, 99, 0.05) 0%, rgba(255, 140, 0, 0.02) 100%);
+    border-bottom-color: rgba(255, 255, 255, 0.05);
   }
 
   /* Numbered step badge */
   .divine-step-badge {
     @apply flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold;
     background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    box-shadow: 0 2px 8px hsl(var(--primary) / 0.4);
+    color: #000;
+    box-shadow: 0 0 15px rgba(228, 179, 99, 0.4);
   }
 
   /* Divine input fields */
   .divine-input {
-    @apply rounded-lg;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    border-color: hsl(var(--border));
+    @apply rounded-xl bg-white/[0.01] border-white/[0.08] text-white;
+    transition: all 0.3s ease;
   }
 
   .divine-input:focus {
-    border-color: hsl(var(--primary) / 0.7) !important;
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12) !important;
+    border-color: rgba(228, 179, 99, 0.5) !important;
+    box-shadow: 0 0 15px rgba(228, 179, 99, 0.1) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
   }
 
-  /* Premium CTA button with glow */
+  /* Highly stylized Premium CTA button with heavy saffron/gold glow */
   .divine-button {
-    background: linear-gradient(135deg, hsl(33 95% 48%) 0%, hsl(42 90% 50%) 100%);
-    color: white;
+    background: linear-gradient(135deg, #FF8C00 0%, #E4B363 100%);
+    color: #000;
+    font-weight: 700;
     border: none;
-    box-shadow: 0 4px 16px hsl(33deg 95% 48% / 0.4),
-                0 1px 4px hsl(33deg 95% 48% / 0.3);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 20px rgba(255, 140, 0, 0.4),
+                0 0 10px rgba(228, 179, 99, 0.2);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .divine-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px hsl(33deg 95% 48% / 0.5),
-                0 2px 8px hsl(33deg 95% 48% / 0.4);
+    box-shadow: 0 8px 30px rgba(255, 140, 0, 0.6),
+                0 0 20px rgba(228, 179, 99, 0.4);
+    filter: brightness(1.1);
   }
 
   .divine-button:active:not(:disabled) {
@@ -194,7 +227,7 @@ body {
 
   /* Om / decorative mandala shimmer text */
   .gold-gradient-text {
-    background: linear-gradient(135deg, hsl(36 100% 50%) 0%, hsl(44 100% 65%) 50%, hsl(36 100% 50%) 100%);
+    background: linear-gradient(135deg, #FF8C00 0%, #E4B363 50%, #FF8C00 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -204,17 +237,18 @@ body {
 
   /* Puja card hover lift */
   .puja-card-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .puja-card-lift:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px hsl(var(--primary) / 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8),
+                0 0 25px rgba(228, 179, 99, 0.15);
   }
 
   /* Verified badge glow */
   .verified-glow {
-    box-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 15px rgba(228, 179, 99, 0.6);
   }
 }
 
