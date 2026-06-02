@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Puja, Pujari } from "@/lib/data";
+import type { Deity } from "@/lib/data/stotrams";
 import { useContent, type ContactContent } from "@/lib/content-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X } from "lucide-react";
+import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/firebase";
 import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
@@ -22,6 +23,18 @@ import { compressImage } from "@/lib/utils";
 
 type PujaForm = Puja;
 type PujariForm = Pujari;
+type DeityForm = Deity;
+
+const emptyDeity = (): DeityForm => ({
+  id: `deity-${Date.now()}`,
+  name: "",
+  nameEn: "",
+  gender: "female",
+  imageHint: "beautiful deity painting",
+  imageUrl: "",
+  ashtotharam: "",
+  sahasranamam: "",
+});
 
 const emptyPuja = (nextId: number): PujaForm => ({
   id: nextId,
@@ -80,12 +93,15 @@ export default function AdminPage() {
   const {
     pujas,
     pujaris,
+    deities,
     requests,
     contact,
     savePuja,
     deletePuja,
     savePujari,
     deletePujari,
+    saveDeity,
+    deleteDeity,
     saveContact,
     approveJoinRequest,
     rejectJoinRequest,
@@ -93,6 +109,7 @@ export default function AdminPage() {
   } = useContent();
   const [pujaForm, setPujaForm] = useState<PujaForm>(() => emptyPuja(nextId(pujas)));
   const [pujariForm, setPujariForm] = useState<PujariForm>(() => emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)));
+  const [deityForm, setDeityForm] = useState<DeityForm>(emptyDeity);
   const [contactForm, setContactForm] = useState<ContactContent>(contact);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -157,6 +174,10 @@ export default function AdminPage() {
     setPujariForm(current => ({ ...current, [key]: value }));
   };
 
+  const updateDeity = <K extends keyof DeityForm>(key: K, value: DeityForm[K]) => {
+    setDeityForm(current => ({ ...current, [key]: value }));
+  };
+
   const togglePujariPuja = (id: number) => {
     setPujariForm(current => ({
       ...current,
@@ -186,6 +207,13 @@ export default function AdminPage() {
     }, "Pujari saved");
   };
 
+  const saveCurrentDeity = () => {
+    void runAdminAction(async () => {
+      await saveDeity(deityForm);
+      setDeityForm(emptyDeity());
+    }, "Deity saved");
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -203,6 +231,7 @@ export default function AdminPage() {
         <TabsList className="h-auto flex flex-wrap justify-start">
           <TabsTrigger value="pujas"><FilePlus className="mr-2 h-4 w-4" />Pujas</TabsTrigger>
           <TabsTrigger value="pujaris"><BadgeCheck className="mr-2 h-4 w-4" />Pujaris</TabsTrigger>
+          <TabsTrigger value="deities"><BookOpen className="mr-2 h-4 w-4" />Deities</TabsTrigger>
           <TabsTrigger value="requests"><UserPlus className="mr-2 h-4 w-4" />Requests ({requests.length})</TabsTrigger>
           <TabsTrigger value="contact"><Contact className="mr-2 h-4 w-4" />Contact</TabsTrigger>
         </TabsList>
@@ -223,7 +252,9 @@ export default function AdminPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={() => setPujaForm(puja)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this puja?") && void runAdminAction(() => deletePuja(puja.id), "Puja deleted")}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this puja?") && void runAdminAction(() => deletePuja(puja.id), "Puja deleted")}>
+                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -260,7 +291,10 @@ export default function AdminPage() {
                 <Field label="English Description"><Textarea value={pujaForm.description} onChange={event => updatePuja("description", event.target.value)} /></Field>
                 <Field label="Telugu Description"><Textarea value={pujaForm.description_te} onChange={event => updatePuja("description_te", event.target.value)} /></Field>
                 <div className="flex gap-2">
-                  <Button onClick={saveCurrentPuja} disabled={isSaving}><Plus className="mr-2 h-4 w-4" />Save Puja</Button>
+                  <Button onClick={saveCurrentPuja} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                    Save Puja
+                  </Button>
                   <Button variant="outline" onClick={() => setPujaForm(emptyPuja(nextId(pujas)))}>New</Button>
                 </div>
               </CardContent>
@@ -285,7 +319,9 @@ export default function AdminPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={() => setPujariForm(pujari)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this pujari?") && void runAdminAction(() => deletePujari(pujari.id), "Pujari deleted")}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this pujari?") && void runAdminAction(() => deletePujari(pujari.id), "Pujari deleted")}>
+                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -344,8 +380,80 @@ export default function AdminPage() {
                   <Field label="Verified By"><Input value={pujariForm.verifiedBy || ""} onChange={event => updatePujari("verifiedBy", event.target.value)} /></Field>
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={saveCurrentPujari} disabled={isSaving}><Plus className="mr-2 h-4 w-4" />Save Pujari</Button>
+                  <Button onClick={saveCurrentPujari} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                    Save Pujari
+                  </Button>
                   <Button variant="outline" onClick={() => setPujariForm(emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)))}>New</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="deities" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
+            <div className="space-y-3">
+              {deities.map(deity => (
+                <Card key={deity.id}>
+                  <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-center">
+                    <ManagedImage src={deity.imageUrl || ""} alt={deity.nameEn} width={80} height={80} className="h-20 w-20 rounded-full object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-semibold">{deity.nameEn}</h3>
+                        <Badge variant="secondary">{deity.gender}</Badge>
+                      </div>
+                      <p className="line-clamp-2 text-sm text-muted-foreground">{deity.name}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setDeityForm(deity)}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this deity?") && void runAdminAction(() => deleteDeity(deity.id), "Deity deleted")}>
+                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{deities.some(d => d.id === deityForm.id) ? "Edit Deity" : "Add Deity"}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Field label="ID"><Input value={deityForm.id} disabled={deities.some(d => d.id === deityForm.id)} onChange={event => updateDeity("id", event.target.value)} /></Field>
+                <Field label="English Name"><Input value={deityForm.nameEn} onChange={event => updateDeity("nameEn", event.target.value)} /></Field>
+                <Field label="Telugu Name"><Input value={deityForm.name} onChange={event => updateDeity("name", event.target.value)} /></Field>
+                <div className="flex items-center gap-4">
+                  <Label>Gender</Label>
+                  <div className="flex gap-2">
+                    <label className="flex items-center gap-1"><input type="radio" checked={deityForm.gender === "male"} onChange={() => updateDeity("gender", "male")} /> Male</label>
+                    <label className="flex items-center gap-1"><input type="radio" checked={deityForm.gender === "female"} onChange={() => updateDeity("gender", "female")} /> Female</label>
+                  </div>
+                </div>
+                <Field label="Image">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={async event => {
+                      const file = event.target.files?.[0];
+                      if (file) {
+                        updateDeity("imageUrl", await readUploadedImage(file));
+                        updateDeity("imageHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
+                      }
+                    }}
+                  />
+                  {deityForm.imageUrl && <ManagedImage src={deityForm.imageUrl} alt="Deity preview" width={96} height={96} className="mt-2 h-24 w-24 rounded-full object-cover" />}
+                </Field>
+                <Field label="Image Hint"><Input value={deityForm.imageHint} onChange={event => updateDeity("imageHint", event.target.value)} /></Field>
+                <Field label="Ashtotharam"><Textarea className="font-telugu" value={deityForm.ashtotharam} onChange={event => updateDeity("ashtotharam", event.target.value)} /></Field>
+                <Field label="Sahasranamam"><Textarea className="font-telugu" value={deityForm.sahasranamam} onChange={event => updateDeity("sahasranamam", event.target.value)} /></Field>
+                <div className="flex gap-2">
+                  <Button onClick={saveCurrentDeity} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                    Save Deity
+                  </Button>
+                  <Button variant="outline" onClick={() => setDeityForm(emptyDeity())}>New</Button>
                 </div>
               </CardContent>
             </Card>
@@ -389,7 +497,10 @@ export default function AdminPage() {
               <Field label="Hours"><Input value={contactForm.hours} onChange={event => setContactForm(current => ({ ...current, hours: event.target.value }))} /></Field>
               <Field label="WhatsApp"><Input value={contactForm.whatsapp} onChange={event => setContactForm(current => ({ ...current, whatsapp: event.target.value }))} /></Field>
               <Field label="Map URL"><Input value={contactForm.mapUrl} onChange={event => setContactForm(current => ({ ...current, mapUrl: event.target.value }))} /></Field>
-              <Button disabled={isSaving} onClick={() => void runAdminAction(() => saveContact(contactForm), "Contact page saved")}>Save Contact Page</Button>
+              <Button disabled={isSaving} onClick={() => void runAdminAction(() => saveContact(contactForm), "Contact page saved")}>
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Save Contact Page
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { stotramsData, getDeitiesByGender, Deity } from "@/lib/data/stotrams";
+import { useContent } from "@/lib/content-store";
+import type { Deity } from "@/lib/data/stotrams";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/context/language-context";
@@ -12,8 +13,9 @@ import { CategoryBrowser } from "./spiritual/CategoryBrowser";
 
 export default function StotramsDisplay() {
   const { language } = useLanguage();
-  const maleDeities = getDeitiesByGender('male');
-  const femaleDeities = getDeitiesByGender('female');
+  const { deities } = useContent();
+  const maleDeities = deities.filter(d => d.gender === 'male');
+  const femaleDeities = deities.filter(d => d.gender === 'female');
 
   return (
     <div className="w-full">

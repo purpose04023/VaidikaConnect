@@ -10,6 +10,8 @@ import React, {
 } from "react";
 import type { Puja, Pujari } from "@/lib/data";
 import { defaultPujaris, defaultPujas } from "@/lib/data";
+import type { Deity } from "@/lib/data/stotrams";
+import { stotramsData as defaultDeities } from "@/lib/data/stotrams";
 import {
   collection,
   doc,
@@ -56,6 +58,7 @@ export interface PujariJoinRequest {
 interface ContentContextValue {
   pujas: Puja[];
   pujaris: Pujari[];
+  deities: Deity[];
   contact: ContactContent;
   requests: PujariJoinRequest[];
   isLoading: boolean;
@@ -63,6 +66,8 @@ interface ContentContextValue {
   deletePuja: (id: number) => Promise<void>;
   savePujari: (pujari: Pujari) => Promise<void>;
   deletePujari: (id: number) => Promise<void>;
+  saveDeity: (deity: Deity) => Promise<void>;
+  deleteDeity: (id: string) => Promise<void>;
   saveContact: (contact: ContactContent) => Promise<void>;
   submitJoinRequest: (
     request: Omit<PujariJoinRequest, "id" | "submittedAt">
@@ -76,6 +81,7 @@ interface ContentContextValue {
 const APP_DATA_COLLECTION = "appData";
 const PUJAS_DOC = "pujas";
 const PUJARIS_DOC = "pujaris";
+const DEITIES_DOC = "deities";
 const CONTACT_DOC = "contact";
 const REQUESTS_COLLECTION = "joinRequests";
 
@@ -143,6 +149,23 @@ async function writePujaris(db: Firestore, pujaris: Pujari[]) {
   await setDoc(doc(db, APP_DATA_COLLECTION, PUJARIS_DOC), { items: cleaned });
 }
 
+async function writeDeities(db: Firestore, deities: Deity[]) {
+  const cleaned = await Promise.all(
+    deities.map(async (item) => {
+      if (item.imageUrl && item.imageUrl.startsWith("data:image/") && item.imageUrl.length > 100000) {
+        try {
+          const compressed = await compressImage(item.imageUrl);
+          return { ...item, imageUrl: compressed };
+        } catch (e) {
+          console.error("Failed to compress bloated deity image:", e);
+        }
+      }
+      return item;
+    })
+  );
+  await setDoc(doc(db, APP_DATA_COLLECTION, DEITIES_DOC), { items: cleaned });
+}
+
 // Context
 
 const ContentContext = createContext<ContentContextValue | undefined>(
@@ -157,15 +180,17 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [pujaris, setPujaris] = useState<Pujari[]>(
     defaultPujaris.map(withDefaultVerification)
   );
+  const [deities, setDeities] = useState<Deity[]>(defaultDeities);
   const [contact, setContact] = useState<ContactContent>(defaultContact);
   const [requests, setRequests] = useState<PujariJoinRequest[]>([]);
   const [loadedContent, setLoadedContent] = useState({
     pujas: false,
     pujaris: false,
+    deities: false,
     contact: false,
   });
   const isLoading =
-    !loadedContent.pujas || !loadedContent.pujaris || !loadedContent.contact;
+    !loadedContent.pujas || !loadedContent.pujaris || !loadedContent.deities || !loadedContent.contact;
 
   const ensureAdmin = useCallback(() => {
     if (!isAdmin || isUserLoading) {
@@ -301,6 +326,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       const updated = pujas.some((item) => item.id === puja.id)
         ? pujas.map((item) => (item.id === puja.id ? puja : item))
         : [...pujas, { ...puja, id: puja.id || nextId(pujas) }];
+      setPujas(updated); // Optimistic UI update
       await writePujas(db, updated);
     },
     [db, ensureAdmin, pujas]
@@ -314,6 +340,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         ...pr,
         pujas: pr.pujas.filter((pujaId) => pujaId !== id),
       }));
+      setPujas(updatedPujas); // Optimistic update
+      setPujaris(updatedPujaris); // Optimistic update
       await Promise.all([
         writePujas(db, updatedPujas),
         writePujaris(db, updatedPujaris),
@@ -334,6 +362,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       const updated = pujaris.some((item) => item.id === normalized.id)
         ? pujaris.map((item) => (item.id === normalized.id ? normalized : item))
         : [...pujaris, normalized];
+      setPujaris(updated); // Optimistic update
       await writePujaris(db, updated);
     },
     [db, ensureAdmin, pujaris]
@@ -343,6 +372,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     async (id: number) => {
       ensureAdmin();
       const updated = pujaris.filter((p) => p.id !== id);
+      setPujaris(updated); // Optimistic update
       await writePujaris(db, updated);
     },
     [db, ensureAdmin, pujaris]
@@ -351,6 +381,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const saveContact = useCallback(
     async (contact: ContactContent) => {
       ensureAdmin();
+      setContact(contact); // Optimistic update
       await setDoc(doc(db, APP_DATA_COLLECTION, CONTACT_DOC), contact);
     },
     [db, ensureAdmin]
@@ -397,8 +428,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         reviews: [],
       };
 
+      const updatedPujaris = [...pujaris, newPujari];
+      setPujaris(updatedPujaris); // Optimistic update
+      setRequests(current => current.filter(r => r.id !== id));
+
       await Promise.all([
-        writePujaris(db, [...pujaris, newPujari]),
+        writePujaris(db, updatedPujaris),
         deleteDoc(doc(db, REQUESTS_COLLECTION, id)),
       ]);
     },
@@ -408,6 +443,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const rejectJoinRequest = useCallback(
     async (id: string) => {
       ensureAdmin();
+      setRequests(current => current.filter(r => r.id !== id)); // Optimistic update
       await deleteDoc(doc(db, REQUESTS_COLLECTION, id));
     },
     [db, ensureAdmin]
@@ -415,9 +451,16 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
   const resetContent = useCallback(async () => {
     ensureAdmin();
+    setPujas(defaultPujas);
+    setPujaris(defaultPujaris.map(withDefaultVerification));
+    setDeities(defaultDeities);
+    setContact(defaultContact);
+    setRequests([]);
+    
     await Promise.all([
       writePujas(db, defaultPujas),
       writePujaris(db, defaultPujaris.map(withDefaultVerification)),
+      writeDeities(db, defaultDeities),
       setDoc(doc(db, APP_DATA_COLLECTION, CONTACT_DOC), defaultContact),
     ]);
     // Clear all join requests
@@ -426,12 +469,35 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     );
   }, [db, ensureAdmin, requests]);
 
+  const saveDeity = useCallback(
+    async (deity: Deity) => {
+      ensureAdmin();
+      const updated = deities.some((item) => item.id === deity.id)
+        ? deities.map((item) => (item.id === deity.id ? deity : item))
+        : [...deities, deity];
+      setDeities(updated); // Optimistic UI update
+      await writeDeities(db, updated);
+    },
+    [db, ensureAdmin, deities]
+  );
+
+  const deleteDeity = useCallback(
+    async (id: string) => {
+      ensureAdmin();
+      const updatedDeities = deities.filter((d) => d.id !== id);
+      setDeities(updatedDeities); // Optimistic update
+      await writeDeities(db, updatedDeities);
+    },
+    [db, ensureAdmin, deities]
+  );
+
   // Context value
 
   const value = useMemo<ContentContextValue>(
     () => ({
       pujas,
       pujaris,
+      deities,
       contact,
       requests,
       isLoading,
@@ -439,6 +505,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       deletePuja,
       savePujari,
       deletePujari,
+      saveDeity,
+      deleteDeity,
       saveContact,
       submitJoinRequest,
       approveJoinRequest,
@@ -448,6 +516,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     [
       pujas,
       pujaris,
+      deities,
       contact,
       requests,
       isLoading,
@@ -455,6 +524,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       deletePuja,
       savePujari,
       deletePujari,
+      saveDeity,
+      deleteDeity,
       saveContact,
       submitJoinRequest,
       approveJoinRequest,
