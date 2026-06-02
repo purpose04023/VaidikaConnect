@@ -48,7 +48,7 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="divine-button px-8 py-6 text-base">
-              <Link href="/programs">{t('home.hero_cta_explore')} <ArrowRight className="ml-2" /></Link>
+              <Link href="/life-cycle-poojas">{t('home.hero_cta_explore')} <ArrowRight className="ml-2" /></Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-primary/40 hover:bg-primary/10 px-8 py-6 text-base">
               <Link href="/login">{t('home.hero_cta_login')}</Link>
