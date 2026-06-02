@@ -53,6 +53,11 @@ export interface PujariJoinRequest {
   pujas: number[];
   description: string;
   submittedAt: string;
+  whatsapp?: string;
+  availableTimings?: string;
+  lat?: number;
+  lng?: number;
+  status?: string;
 }
 
 interface ContentContextValue {
@@ -421,9 +426,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         experience: request.experience,
         pujas: request.pujas,
         maxParticipants: request.maxParticipants,
-        location: { lat: 16.3067, lng: 80.4367 },
+        location: { lat: request.lat || 16.3067, lng: request.lng || 80.4367 },
         description: request.description,
         phone: request.phone,
+        whatsapp: request.whatsapp || request.phone,
+        availableTimings: request.availableTimings || "Morning Slot, Evening Slot",
         gallery: [],
         reviews: [],
       };

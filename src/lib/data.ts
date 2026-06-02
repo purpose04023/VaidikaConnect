@@ -32,6 +32,8 @@ export interface Pujari {
   location: { lat: number; lng: number };
   description: string;
   phone: string;
+  whatsapp?: string;
+  availableTimings?: string;
   gallery: { url: string; hint: string }[];
   reviews: { name: string; rating: number; comment: string }[];
 }

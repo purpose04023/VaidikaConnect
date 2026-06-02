@@ -10,9 +10,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useContent } from "@/lib/content-store";
-import { BadgeCheck, Send, Star, Users, ChevronRight, Sparkles } from "lucide-react";
+import { 
+  BadgeCheck, 
+  Send, 
+  Star, 
+  Users, 
+  ChevronRight, 
+  Sparkles, 
+  MapPin, 
+  Navigation, 
+  CheckCircle2, 
+  Loader2,
+  Clock,
+  Phone,
+  MessageSquare
+} from "lucide-react";
 import { ManagedImage } from "@/components/common/ManagedImage";
-
 import { compressImage } from "@/lib/utils";
 
 const defaultPhoto =
@@ -31,9 +44,12 @@ export default function JoinNetworkPage() {
   const [selectedPujas, setSelectedPujas] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Form State
   const [form, setForm] = useState({
     name: "",
     phone: "",
+    whatsapp: "",
     email: "",
     city: "",
     location: "",
@@ -43,7 +59,12 @@ export default function JoinNetworkPage() {
     experience: "1",
     basePrice: "5000",
     description: "",
+    availableTimings: "Morning Slot, Evening Slot",
   });
+
+  // Geolocation Coordinates State
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
 
   const update = (key: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -53,7 +74,7 @@ export default function JoinNetworkPage() {
 
   const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <div className="space-y-2">
-      <Label>{label}</Label>
+      <Label className="text-sm font-semibold">{label}</Label>
       {children}
     </div>
   );
@@ -68,6 +89,42 @@ export default function JoinNetworkPage() {
     );
   };
 
+  // Device GPS Location Retrieval
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      toast({
+        variant: "destructive",
+        title: "Geolocation Unsupported",
+        description: "Your device or browser does not support GPS coordinate detection."
+      });
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCoords({ lat: latitude, lng: longitude });
+        setIsLocating(false);
+        toast({
+          title: "📍 GPS Coords Captured!",
+          description: `Coordinates added: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}.`
+        });
+      },
+      (error) => {
+        console.error("GPS fetch error:", error);
+        setIsLocating(false);
+        toast({
+          variant: "destructive",
+          title: "GPS Access Denied",
+          description: "Could not fetch exact coordinates. Please check browser permissions."
+        });
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  };
+
+  // Submit form handler
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -75,6 +132,7 @@ export default function JoinNetworkPage() {
       await submitJoinRequest({
         name: form.name,
         phone: form.phone,
+        whatsapp: form.whatsapp || form.phone,
         email: form.email,
         city: form.city,
         location: form.location,
@@ -86,11 +144,16 @@ export default function JoinNetworkPage() {
         maxParticipants: 50,
         pujas: selectedPujas,
         description: form.description,
+        lat: coords?.lat || 16.3067, // default Guntur if not captured
+        lng: coords?.lng || 80.4367,
+        availableTimings: form.availableTimings,
+        status: "Pending Review", // pending review status in admin portal
       });
+
       setSubmitted(true);
       toast({
         title: "🙏 Application Submitted!",
-        description: "Your profile is now pending review. We will contact you shortly.",
+        description: "Application submitted successfully! Our team will review your details shortly.",
       });
     } catch (error) {
       console.error("Join request submission failed:", error);
@@ -112,10 +175,10 @@ export default function JoinNetworkPage() {
             <BadgeCheck className="h-12 w-12 text-primary" />
           </div>
           <h1 className="font-headline text-4xl text-primary mb-4">🙏 Namaste!</h1>
-          <p className="text-xl font-semibold mb-2">Your Application is Received</p>
+          <p className="text-xl font-semibold mb-2">Application Under Review</p>
           <p className="text-muted-foreground mb-8">
-            Our team will review your profile and reach out to you within 2-3 business days. 
-            Welcome to the VaidikaConnect family!
+            Your details are successfully loaded under **Pending Review** status. Our team will verify 
+            your exact coordinates and timings shortly!
           </p>
           <Button onClick={() => setSubmitted(false)} variant="outline" className="border-primary/40 hover:bg-primary/10">
             Submit Another Application
@@ -126,10 +189,9 @@ export default function JoinNetworkPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-16">
       {/* Hero Section */}
       <section className="divine-bg relative overflow-hidden py-20 md:py-28 text-center">
-        {/* Decorative Om symbols */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <span className="absolute top-8 left-[10%] text-primary/5 text-[180px] font-serif select-none leading-none">ॐ</span>
           <span className="absolute bottom-0 right-[8%] text-primary/5 text-[150px] font-serif select-none leading-none">ॐ</span>
@@ -138,16 +200,16 @@ export default function JoinNetworkPage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-medium mb-6">
             <Sparkles className="h-4 w-4" />
-            Now accepting applications
+            Now accepting onboarding applications
           </div>
           <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary mb-4">
             Join the Sacred Network
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Are you a qualified Vedic priest? Join VaidikaConnect and bring the divine blessings 
-            of ancient rituals to devotees across India.
+            Are you a qualified Vedic priest? Register on VaidikaConnect and let regional devotees 
+            find you dynamically on our booking map.
           </p>
-          {/* Benefit cards */}
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             {benefits.map((b) => (
               <div
@@ -165,45 +227,77 @@ export default function JoinNetworkPage() {
         </div>
       </section>
 
-      {/* Form Section */}
-      <section className="py-16 md:py-20 bg-background">
+      {/* Onboarding Form Section */}
+      <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            {/* Section Header */}
-            <div className="text-center mb-12">
-              <h2 className="font-headline text-3xl md:text-4xl font-bold mb-3">Pujari Application</h2>
-              <p className="text-muted-foreground">Fill in your details below. Our team personally reviews every application.</p>
+            
+            <div className="text-center mb-10">
+              <h2 className="font-headline text-3xl md:text-4xl font-bold mb-3">Poojari Registration</h2>
+              <p className="text-muted-foreground">Complete the form below to register your priestly practice on our discovery map.</p>
             </div>
 
-            <form onSubmit={submit}>
-              {/* Personal Details */}
-              <div className="divine-section-card mb-8">
-                <div className="divine-section-header">
-                  <span className="divine-step-badge">1</span>
+            <form onSubmit={submit} className="space-y-8">
+              
+              {/* Card 1: Personal & Contact Info */}
+              <Card className="border border-border/60 shadow-md rounded-2xl overflow-hidden bg-card/50">
+                <div className="border-b border-border/40 p-5 bg-muted/10 flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-sm">1</span>
                   <div>
-                    <h3 className="font-semibold text-lg">Personal Details</h3>
-                    <p className="text-sm text-muted-foreground">Your basic contact information</p>
+                    <h3 className="font-semibold text-base">Personal & Contact Information</h3>
+                    <p className="text-xs text-muted-foreground">Verify your phone and WhatsApp details for direct client dial-ins</p>
                   </div>
                 </div>
-                <div className="grid gap-5 md:grid-cols-2 p-6">
+                
+                <CardContent className="p-6 grid gap-5 md:grid-cols-2">
                   <FormField label="Full Name *">
                     <Input
                       required
-                      placeholder="e.g. Sri Venkata Rao"
+                      placeholder="e.g. Sri Venkata Sastry"
                       value={form.name}
                       onChange={(e) => update("name", e.target.value)}
                       className="divine-input"
                     />
                   </FormField>
-                  <FormField label="Phone Number *">
+
+                  <FormField label="Years of Experience *">
                     <Input
                       required
-                      placeholder="+91 98765 43210"
-                      value={form.phone}
-                      onChange={(e) => update("phone", e.target.value)}
+                      type="number"
+                      min="0"
+                      placeholder="e.g. 12"
+                      value={form.experience}
+                      onChange={(e) => update("experience", e.target.value)}
                       className="divine-input"
                     />
                   </FormField>
+
+                  <FormField label="Direct Calling Number *">
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        required
+                        placeholder="+91 98765 43210"
+                        value={form.phone}
+                        onChange={(e) => update("phone", e.target.value)}
+                        className="divine-input pl-9"
+                      />
+                    </div>
+                  </FormField>
+
+                  <FormField label="WhatsApp Number (for messaging) *">
+                    <div className="relative">
+                      <MessageSquare className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500" />
+                      <Input
+                        required
+                        placeholder="+91 98765 43210"
+                        value={form.whatsapp}
+                        onChange={(e) => update("whatsapp", e.target.value)}
+                        className="divine-input pl-9"
+                      />
+                    </div>
+                  </FormField>
+
                   <FormField label="Email Address">
                     <Input
                       type="email"
@@ -213,25 +307,137 @@ export default function JoinNetworkPage() {
                       className="divine-input"
                     />
                   </FormField>
-                  <FormField label="City / Town *">
+
+                  <FormField label="Base Price per Ceremony (₹) *">
                     <Input
                       required
-                      placeholder="e.g. Guntur, Vijayawada"
-                      value={form.city}
-                      onChange={(e) => update("city", e.target.value)}
+                      type="number"
+                      min="0"
+                      placeholder="e.g. 4500"
+                      value={form.basePrice}
+                      onChange={(e) => update("basePrice", e.target.value)}
                       className="divine-input"
                     />
                   </FormField>
-                  <FormField label="Your Location (Google Maps Link or Address) *">
+                </CardContent>
+              </Card>
+
+              {/* Card 2: Smart GPS Location Capture */}
+              <Card className="border border-border/60 shadow-md rounded-2xl overflow-hidden bg-card/50">
+                <div className="border-b border-border/40 p-5 bg-muted/10 flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-sm">2</span>
+                  <div>
+                    <h3 className="font-semibold text-base">Smart Location & Map Coordinates</h3>
+                    <p className="text-xs text-muted-foreground">Plot your exact geolocation so clients in Guntur can locate you</p>
+                  </div>
+                </div>
+
+                <CardContent className="p-6 space-y-5">
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <FormField label="City / Pincode / Area *">
+                      <Input
+                        required
+                        placeholder="e.g. Guntur - 522002"
+                        value={form.city}
+                        onChange={(e) => update("city", e.target.value)}
+                        className="divine-input"
+                      />
+                    </FormField>
+
+                    <FormField label="Practice Address / Temple Area *">
+                      <Input
+                        required
+                        placeholder="e.g. Near Rama Temple, Arundeltop, Guntur"
+                        value={form.location}
+                        onChange={(e) => update("location", e.target.value)}
+                        className="divine-input"
+                      />
+                    </FormField>
+                  </div>
+
+                  {/* Geolocation Button */}
+                  <div className="bg-muted/30 rounded-xl p-4 border border-border/40 space-y-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground">Map Coordinate Accuracy</h4>
+                        <p className="text-xs text-muted-foreground max-w-md mt-1">
+                          Click below to capture your current exact Latitude and Longitude. This maps your profile precisely.
+                        </p>
+                      </div>
+
+                      <Button
+                        type="button"
+                        onClick={handleDetectLocation}
+                        disabled={isLocating}
+                        className="gap-2 shrink-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl h-11"
+                      >
+                        {isLocating ? (
+                          <Loader2 className="h-4 w-4 animate-spin text-white" />
+                        ) : (
+                          <MapPin className="h-4 w-4 text-white" />
+                        )}
+                        <span>📍 Detect My Exact Location for Map</span>
+                      </Button>
+                    </div>
+
+                    {/* GPS Coordinates Capture Status check */}
+                    {coords ? (
+                      <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2.5">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                        <span>Coordinates Captured successfully: Lat {coords.lat.toFixed(6)}, Lng {coords.lng.toFixed(6)}</span>
+                      </div>
+                    ) : (
+                      <div className="text-xs text-muted-foreground italic px-1">
+                        GPS Coordinates: Not captured yet (fallback Guntur region will be mapped if not detected).
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Card 3: Availability & Qualifications */}
+              <Card className="border border-border/60 shadow-md rounded-2xl overflow-hidden bg-card/50">
+                <div className="border-b border-border/40 p-5 bg-muted/10 flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-sm">3</span>
+                  <div>
+                    <h3 className="font-semibold text-base">Availability & Qualifications</h3>
+                    <p className="text-xs text-muted-foreground">List your active timing slots and certified credentials</p>
+                  </div>
+                </div>
+
+                <CardContent className="p-6 grid gap-5 md:grid-cols-2">
+                  <FormField label="Languages Spoken">
                     <Input
-                      required
-                      placeholder="e.g. https://maps.app.goo.gl/... or 'Near Rama Temple, Guntur'"
-                      value={form.location}
-                      onChange={(e) => update("location", e.target.value)}
+                      placeholder="Telugu, Sanskrit, Hindi"
+                      value={form.languages}
+                      onChange={(e) => update("languages", e.target.value)}
                       className="divine-input"
                     />
                   </FormField>
-                  <FormField label="Profile Photo">
+
+                  <FormField label="Qualifications / Titles">
+                    <Input
+                      placeholder="Veda Praveena, Smartha Acharya"
+                      value={form.qualifications}
+                      onChange={(e) => update("qualifications", e.target.value)}
+                      className="divine-input"
+                    />
+                  </FormField>
+
+                  <FormField label="Available Timing Slots (e.g. Morning Slot, Evening Slot) *">
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        required
+                        placeholder="Morning Slot (9:00 AM - 12:00 PM), Evening Slot"
+                        value={form.availableTimings}
+                        onChange={(e) => update("availableTimings", e.target.value)}
+                        className="divine-input pl-9"
+                      />
+                    </div>
+                  </FormField>
+
+                  <FormField label="Profile Photo Upload">
                     <Input
                       type="file"
                       accept="image/*"
@@ -249,107 +455,59 @@ export default function JoinNetworkPage() {
                         alt="Profile preview"
                         width={112}
                         height={112}
-                        className="mt-3 h-24 w-24 rounded-full object-cover border-4 border-primary/30 shadow-md"
+                        className="mt-3 h-20 w-20 rounded-full object-cover border-2 border-primary/30 shadow-sm"
                       />
                     )}
                   </FormField>
-                </div>
-              </div>
 
-              {/* Qualifications */}
-              <div className="divine-section-card mb-8">
-                <div className="divine-section-header">
-                  <span className="divine-step-badge">2</span>
-                  <div>
-                    <h3 className="font-semibold text-lg">Qualifications & Experience</h3>
-                    <p className="text-sm text-muted-foreground">Tell us about your priestly expertise</p>
-                  </div>
-                </div>
-                <div className="grid gap-5 md:grid-cols-2 p-6">
-                  <FormField label="Languages Spoken">
-                    <Input
-                      placeholder="Telugu, Sanskrit, Hindi"
-                      value={form.languages}
-                      onChange={(e) => update("languages", e.target.value)}
-                      className="divine-input"
-                    />
-                  </FormField>
-                  <FormField label="Qualifications / Titles">
-                    <Input
-                      placeholder="Veda Praveena, Jyotisha Acharya"
-                      value={form.qualifications}
-                      onChange={(e) => update("qualifications", e.target.value)}
-                      className="divine-input"
-                    />
-                  </FormField>
-                  <FormField label="Years of Experience *">
-                    <Input
-                      required
-                      type="number"
-                      min="0"
-                      placeholder="e.g. 15"
-                      value={form.experience}
-                      onChange={(e) => update("experience", e.target.value)}
-                      className="divine-input"
-                    />
-                  </FormField>
-                  <FormField label="Base Price per Puja (₹) *">
-                    <Input
-                      required
-                      type="number"
-                      min="0"
-                      placeholder="e.g. 5000"
-                      value={form.basePrice}
-                      onChange={(e) => update("basePrice", e.target.value)}
-                      className="divine-input"
-                    />
-                  </FormField>
                   <div className="md:col-span-2">
                     <FormField label="About Your Priestly Practice *">
                       <Textarea
                         required
-                        placeholder="Describe your background, tradition, and what makes you a qualified pujari..."
+                        placeholder="Describe your background, lineage tradition, and what makes you a qualified pujari..."
                         value={form.description}
                         onChange={(e) => update("description", e.target.value)}
-                        className="divine-input min-h-[120px]"
+                        className="divine-input min-h-[100px]"
                       />
                     </FormField>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              {/* Programs */}
-              <div className="divine-section-card mb-8">
-                <div className="divine-section-header">
-                  <span className="divine-step-badge">3</span>
+              {/* Card 4: Services Offered checklist */}
+              <Card className="border border-border/60 shadow-md rounded-2xl overflow-hidden bg-card/50">
+                <div className="border-b border-border/40 p-5 bg-muted/10 flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-sm">4</span>
                   <div>
-                    <h3 className="font-semibold text-lg">Programs You Can Perform</h3>
-                    <p className="text-sm text-muted-foreground">Select all rituals you are qualified to perform</p>
+                    <h3 className="font-semibold text-base">Rituals & Programs You Can Perform</h3>
+                    <p className="text-xs text-muted-foreground">Select all programs you are qualified to perform for regional devotees</p>
                   </div>
                 </div>
-                <div className="p-6">
-                  <div className="grid max-h-72 gap-2 overflow-auto rounded-xl border border-border/60 p-4 sm:grid-cols-2 lg:grid-cols-3 bg-muted/30">
+
+                <CardContent className="p-6">
+                  <div className="grid max-h-72 gap-2 overflow-auto rounded-xl border border-border/40 p-4 sm:grid-cols-2 lg:grid-cols-3 bg-muted/10">
                     {pujas.filter((puja) => puja.name_en && puja.name_en.trim() !== '').map((puja) => (
                       <label
                         key={puja.id}
-                        className="flex items-center gap-2 text-sm py-1.5 px-2 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors"
+                        className="flex items-center gap-2.5 text-sm py-2 px-2.5 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors"
                       >
                         <Checkbox
                           checked={selectedPujas.includes(puja.id)}
                           onCheckedChange={() => togglePuja(puja.id)}
                         />
-                        {puja.name_en}
+                        <span className="font-medium">{puja.name_en}</span>
                       </label>
                     ))}
                   </div>
+
                   {selectedPujas.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-sm text-muted-foreground mb-2">{selectedPujas.length} programs selected:</p>
-                      <div className="flex flex-wrap gap-2">
+                    <div className="mt-4 animate-in fade-in duration-200">
+                      <p className="text-xs text-muted-foreground mb-2">{selectedPujas.length} programs selected:</p>
+                      <div className="flex flex-wrap gap-1.5">
                         {selectedPujas.map((id) => {
                           const puja = pujas.find((item) => item.id === id);
                           return puja ? (
-                            <Badge key={id} className="bg-primary/15 text-primary border-primary/30 hover:bg-primary/20">
+                            <Badge key={id} className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 font-semibold text-xs py-0.5 px-2">
                               {puja.name_en}
                             </Badge>
                           ) : null;
@@ -357,56 +515,46 @@ export default function JoinNetworkPage() {
                       </div>
                     </div>
                   )}
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              {/* Submit */}
-              <div className="text-center">
+              {/* Submit Buttons area */}
+              <div className="text-center pt-4">
                 <Button
                   type="submit"
                   size="lg"
                   disabled={selectedPujas.length === 0 || isSubmitting}
-                  className="divine-button px-10 py-6 text-base font-semibold"
+                  className="divine-button px-12 py-6 text-base font-bold shadow-lg"
                 >
                   {isSubmitting ? (
-                    "Submitting..."
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      <span>Submitting Application...</span>
+                    </>
                   ) : (
                     <>
                       <Send className="mr-2 h-5 w-5" />
-                      Submit Application for Review
+                      <span>Submit Onboarding Application</span>
                       <ChevronRight className="ml-2 h-5 w-5" />
                     </>
                   )}
                 </Button>
+                
                 {selectedPujas.length === 0 && (
-                  <p className="text-sm text-muted-foreground mt-3">
-                    Please select at least one program you can perform.
+                  <p className="text-sm text-red-500 font-semibold mt-3 animate-pulse">
+                    * Please select at least one program you are qualified to perform.
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground mt-4">
-                  By submitting, you agree to our terms of service. We respect your privacy and will never share your data.
+                
+                <p className="text-[11px] text-muted-foreground mt-4">
+                  By submitting, you agree to our terms of service. We respect your privacy and will never share your personal data.
                 </p>
               </div>
+
             </form>
           </div>
         </div>
       </section>
     </div>
   );
-}
-
-function FormField({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium">{label}</Label>
-      {children}
-    </div>
-  );
-}
-
-function csv(value: string) {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
 }

@@ -484,7 +484,17 @@ export default function AdminPage() {
                 <ManagedImage src={request.photo} alt={request.name} width={120} height={120} className="h-28 w-28 rounded-md object-cover" />
                 <div>
                   <h3 className="font-semibold">{request.name}</h3>
-                  <p className="text-sm text-muted-foreground">{request.city} • {request.phone} • {request.email}</p>
+                  <p className="text-sm text-muted-foreground">{request.city} • Phone: {request.phone} • WhatsApp: {request.whatsapp || request.phone} • {request.email}</p>
+                  
+                  <div className="mt-2 flex flex-wrap gap-2 mb-2">
+                    <span className="text-xs font-semibold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                      📍 Lat: {request.lat?.toFixed(6) ?? "N/A"}, Lng: {request.lng?.toFixed(6) ?? "N/A"}
+                    </span>
+                    <span className="text-xs font-semibold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 flex items-center gap-1">
+                      ⏰ Available Timings: {request.availableTimings ?? "Morning Slot, Evening Slot"}
+                    </span>
+                  </div>
+
                   <p className="mt-2 text-sm">{request.description}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {request.qualifications.map(item => <Badge key={item} variant="outline">{item}</Badge>)}
