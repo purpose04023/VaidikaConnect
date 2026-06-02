@@ -37,6 +37,20 @@ export interface ContactContent {
   mapUrl: string;
 }
 
+export interface GlobalSettings {
+  landingTitleEn?: string;
+  landingTitleTe?: string;
+  landingSubtitleEn?: string;
+  landingSubtitleTe?: string;
+}
+
+export const defaultSettings: GlobalSettings = {
+  landingTitleEn: "Authentic Vedic Poojas At Your Home",
+  landingTitleTe: "మీ ఇంట్లోనే ప్రామాణిక వైదిక పూజలు",
+  landingSubtitleEn: "Connect with certified, experienced Vedic priests in Guntur for all rituals, vratams, homams, and kalyanams.",
+  landingSubtitleTe: "అన్ని రకాల వ్రతాలు, హోమాలు, కళ్యాణాలు మరియు వైదిక పూజల కోసం గుంటూరులోని సర్టిఫైడ్, అనుభవజ్ఞులైన వైదిక పండితులను సంప్రదించండి.",
+};
+
 export interface PujariJoinRequest {
   id: string; // Firestore document ID (string)
   name: string;
@@ -65,6 +79,7 @@ interface ContentContextValue {
   pujaris: Pujari[];
   deities: Deity[];
   contact: ContactContent;
+  settings: GlobalSettings;
   requests: PujariJoinRequest[];
   isLoading: boolean;
   savePuja: (puja: Puja) => Promise<void>;
@@ -74,6 +89,7 @@ interface ContentContextValue {
   saveDeity: (deity: Deity) => Promise<void>;
   deleteDeity: (id: string) => Promise<void>;
   saveContact: (contact: ContactContent) => Promise<void>;
+  saveSettings: (settings: GlobalSettings) => Promise<void>;
   submitJoinRequest: (
     request: Omit<PujariJoinRequest, "id" | "submittedAt">
   ) => Promise<void>;
@@ -177,6 +193,8 @@ const ContentContext = createContext<ContentContextValue | undefined>(
   undefined
 );
 
+const SETTINGS_DOC = "settings";
+
 export function ContentProvider({ children }: { children: React.ReactNode }) {
   const { firestore: db, user, isUserLoading } = useFirebase();
   const isAdmin = isAdminEmail(user?.email);
@@ -187,15 +205,21 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   );
   const [deities, setDeities] = useState<Deity[]>(defaultDeities);
   const [contact, setContact] = useState<ContactContent>(defaultContact);
+  const [settings, setSettings] = useState<GlobalSettings>(defaultSettings);
   const [requests, setRequests] = useState<PujariJoinRequest[]>([]);
   const [loadedContent, setLoadedContent] = useState({
     pujas: false,
     pujaris: false,
     deities: false,
     contact: false,
+    settings: false,
   });
   const isLoading =
-    !loadedContent.pujas || !loadedContent.pujaris || !loadedContent.deities || !loadedContent.contact;
+    !loadedContent.pujas ||
+    !loadedContent.pujaris ||
+    !loadedContent.deities ||
+    !loadedContent.contact ||
+    !loadedContent.settings;
 
   const ensureAdmin = useCallback(() => {
     if (!isAdmin || isUserLoading) {
@@ -283,6 +307,32 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         console.error("Firestore contact listener error:", err);
         setContact(defaultContact);
         setLoadedContent((current) => ({ ...current, contact: true }));
+      }
+    );
+    return unsub;
+  }, [db, isAdmin]);
+
+  // Settings listener
+  useEffect(() => {
+    const ref = doc(db, APP_DATA_COLLECTION, SETTINGS_DOC);
+    const unsub = onSnapshot(
+      ref,
+      (snap) => {
+        if (snap.exists()) {
+          setSettings({ ...defaultSettings, ...(snap.data() as GlobalSettings) });
+        } else {
+          // First load: seed Firestore with defaults when an admin is present.
+          if (isAdmin) {
+            setDoc(ref, defaultSettings).catch(console.error);
+          }
+          setSettings(defaultSettings);
+        }
+        setLoadedContent((current) => ({ ...current, settings: true }));
+      },
+      (err) => {
+        console.error("Firestore settings listener error:", err);
+        setSettings(defaultSettings);
+        setLoadedContent((current) => ({ ...current, settings: true }));
       }
     );
     return unsub;
@@ -388,6 +438,15 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       ensureAdmin();
       setContact(contact); // Optimistic update
       await setDoc(doc(db, APP_DATA_COLLECTION, CONTACT_DOC), contact);
+    },
+    [db, ensureAdmin]
+  );
+
+  const saveSettings = useCallback(
+    async (newSettings: GlobalSettings) => {
+      ensureAdmin();
+      setSettings(newSettings); // Optimistic update
+      await setDoc(doc(db, APP_DATA_COLLECTION, SETTINGS_DOC), newSettings);
     },
     [db, ensureAdmin]
   );
@@ -506,6 +565,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       pujaris,
       deities,
       contact,
+      settings,
       requests,
       isLoading,
       savePuja,
@@ -515,6 +575,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       saveDeity,
       deleteDeity,
       saveContact,
+      saveSettings,
       submitJoinRequest,
       approveJoinRequest,
       rejectJoinRequest,
@@ -525,6 +586,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       pujaris,
       deities,
       contact,
+      settings,
       requests,
       isLoading,
       savePuja,
@@ -534,6 +596,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       saveDeity,
       deleteDeity,
       saveContact,
+      saveSettings,
       submitJoinRequest,
       approveJoinRequest,
       rejectJoinRequest,

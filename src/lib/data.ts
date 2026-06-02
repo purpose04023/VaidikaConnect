@@ -10,6 +10,10 @@ export interface Puja {
   imageHint: string;
   category: 'వ్రతాలు' | 'నోములు' | 'హోమాలు' | 'పూజలు' | 'కళ్యాణములు' | 'దోష పరిహార పూజలు' | 'దీక్ష పూజలు';
   category_en: 'Vratas' | 'Nomulu' | 'Homams' | 'Pujas' | 'Kalyanams' | 'Dosha Parihara Pujas' | 'Deeksha Pujas';
+  required_items?: string[];
+  sloka_tags?: { name: string; link: string }[];
+  pdf_url?: string;
+  categories?: string[];
 }
 
 

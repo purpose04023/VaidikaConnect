@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Search, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/context/language-context";
@@ -58,40 +59,45 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
     }, {} as Record<string, Puja[]>);
   }, [filteredPujas, language]);
 
-  const PujaCard = ({ puja }: { puja: Puja }) => (
-    <Card key={puja.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
-      <CardHeader className="p-0">
-        <ManagedImage
-            src={puja.image}
-            alt={puja.name}
-            width={600}
-            height={400}
-            className="w-full h-48 object-cover"
-            data-ai-hint={puja.imageHint}
-        />
-      </CardHeader>
-      <CardContent className="p-6 flex-grow">
-        <CardTitle className="font-headline text-2xl mb-2">{language === 'te' ? puja.name : puja.name_en}</CardTitle>
-        <p className="text-muted-foreground">{language === 'te' ? puja.description_te : puja.description}</p>
-      </CardContent>
-      <CardFooter>
-        <Button 
-          className="w-full flex items-center justify-center gap-2" 
-          onClick={() => handleFindPujaris(puja)}
-          disabled={loadingPujaId !== null}
-        >
-          {loadingPujaId === puja.id ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Loading...</span>
-            </>
-          ) : (
-            t('home.select_program')
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
-  );
+  const PujaCard = ({ puja }: { puja: Puja }) => {
+    const pujaSlug = puja.name_en.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return (
+      <Card key={puja.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col group cursor-pointer border border-border/50 rounded-2xl bg-card">
+        <Link href={`/programs/${pujaSlug}`} className="block flex-grow flex flex-col">
+          <CardHeader className="p-0 overflow-hidden">
+            <ManagedImage
+                src={puja.image}
+                alt={puja.name}
+                width={600}
+                height={400}
+                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                data-ai-hint={puja.imageHint}
+            />
+          </CardHeader>
+          <CardContent className="p-6 flex-grow flex flex-col text-left space-y-2">
+            <CardTitle className="font-headline text-2xl mb-1 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.name : puja.name_en}</CardTitle>
+            <p className="text-muted-foreground line-clamp-3 text-sm break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.description_te : puja.description}</p>
+          </CardContent>
+        </Link>
+        <CardFooter className="pt-0 pb-5 px-6">
+          <Button 
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-5 font-bold shadow-md divine-button h-auto" 
+            onClick={() => handleFindPujaris(puja)}
+            disabled={loadingPujaId !== null}
+          >
+            {loadingPujaId === puja.id ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              t('home.select_program')
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  };
 
   return (
     <div>

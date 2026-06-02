@@ -27,6 +27,14 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
   const displayPujas = content.pujas.length ? content.pujas : allPujas;
   const displayPujaris = content.pujaris.length ? content.pujaris : pujaris;
 
+  const landingTitle = language === 'te'
+    ? (content.settings?.landingTitleTe || t('home.title'))
+    : (content.settings?.landingTitleEn || t('home.title'));
+
+  const landingSubtitle = language === 'te'
+    ? (content.settings?.landingSubtitleTe || t('home.subtitle'))
+    : (content.settings?.landingSubtitleEn || t('home.subtitle'));
+
   return (
     <div className="flex flex-col items-center text-center">
       {/* Hero Section */}
@@ -40,17 +48,17 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-medium mb-6">
             ✦ Trusted by 500+ families across Andhra Pradesh
           </div>
-          <h1 className="font-headline text-4xl md:text-6xl font-bold gold-gradient-text">
-            {t('home.title')}
+          <h1 className="font-headline text-4xl md:text-6xl font-bold gold-gradient-text break-words whitespace-normal leading-relaxed">
+            {landingTitle}
           </h1>
-          <p className="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground">
-            {t('home.subtitle')}
+          <p className="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground break-words whitespace-normal leading-relaxed">
+            {landingSubtitle}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="divine-button px-8 py-6 text-base">
-              <Link href="/life-cycle-poojas">{t('home.hero_cta_explore')} <ArrowRight className="ml-2" /></Link>
+            <Button asChild size="lg" className="divine-button px-8 py-6 text-base h-auto">
+              <Link href="/explore">{t('home.hero_cta_explore')} <ArrowRight className="ml-2" /></Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary/40 hover:bg-primary/10 px-8 py-6 text-base">
+            <Button asChild size="lg" variant="outline" className="border-primary/40 hover:bg-primary/10 px-8 py-6 text-base h-auto">
               <Link href="/login">{t('home.hero_cta_login')}</Link>
             </Button>
           </div>

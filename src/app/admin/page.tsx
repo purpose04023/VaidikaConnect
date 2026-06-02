@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Puja, Pujari } from "@/lib/data";
 import type { Deity } from "@/lib/data/stotrams";
-import { useContent, type ContactContent } from "@/lib/content-store";
+import { useContent, type ContactContent, type GlobalSettings } from "@/lib/content-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen } from "lucide-react";
+import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen, Settings } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/firebase";
 import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
@@ -46,6 +46,10 @@ const emptyPuja = (nextId: number): PujaForm => ({
   imageHint: "puja ritual",
   category: "" as Puja["category"],
   category_en: "Pujas",
+  required_items: [],
+  sloka_tags: [],
+  pdf_url: "",
+  categories: [],
 });
 
 const emptyPujari = (nextId: number, pujaIds: number[]): PujariForm => ({
@@ -96,6 +100,7 @@ export default function AdminPage() {
     deities,
     requests,
     contact,
+    settings,
     savePuja,
     deletePuja,
     savePujari,
@@ -103,6 +108,7 @@ export default function AdminPage() {
     saveDeity,
     deleteDeity,
     saveContact,
+    saveSettings,
     approveJoinRequest,
     rejectJoinRequest,
     resetContent,
@@ -111,13 +117,60 @@ export default function AdminPage() {
   const [pujariForm, setPujariForm] = useState<PujariForm>(() => emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)));
   const [deityForm, setDeityForm] = useState<DeityForm>(emptyDeity);
   const [contactForm, setContactForm] = useState<ContactContent>(contact);
+  const [settingsForm, setSettingsForm] = useState<GlobalSettings>(settings || {});
   const [isSaving, setIsSaving] = useState(false);
+
+  // Dynamic lists helper states
+  const [newRequiredItem, setNewRequiredItem] = useState("");
+  const [newSlokaName, setNewSlokaName] = useState("");
+  const [newSlokaLink, setNewSlokaLink] = useState("");
+
+  const addRequiredItem = () => {
+    if (!newRequiredItem.trim()) return;
+    const currentItems = pujaForm.required_items || [];
+    if (!currentItems.includes(newRequiredItem.trim())) {
+      updatePuja("required_items", [...currentItems, newRequiredItem.trim()]);
+    }
+    setNewRequiredItem("");
+  };
+
+  const removeRequiredItem = (itemToRemove: string) => {
+    const currentItems = pujaForm.required_items || [];
+    updatePuja("required_items", currentItems.filter(item => item !== itemToRemove));
+  };
+
+  const addSlokaTag = () => {
+    if (!newSlokaName.trim() || !newSlokaLink.trim()) return;
+    const currentSlokas = pujaForm.sloka_tags || [];
+    updatePuja("sloka_tags", [...currentSlokas, { name: newSlokaName.trim(), link: newSlokaLink.trim() }]);
+    setNewSlokaName("");
+    setNewSlokaLink("");
+  };
+
+  const removeSlokaTag = (indexToRemove: number) => {
+    const currentSlokas = pujaForm.sloka_tags || [];
+    updatePuja("sloka_tags", currentSlokas.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const toggleCategoryTag = (categoryTag: string) => {
+    const currentCategories = pujaForm.categories || [];
+    const updated = currentCategories.includes(categoryTag)
+      ? currentCategories.filter(c => c !== categoryTag)
+      : [...currentCategories, categoryTag];
+    updatePuja("categories", updated);
+  };
 
   const categoryOptions = useMemo(() => [...new Set(pujas.map(puja => puja.category_en))], [pujas]);
 
   useEffect(() => {
     setContactForm(contact);
   }, [contact]);
+
+  useEffect(() => {
+    if (settings) {
+      setSettingsForm(settings);
+    }
+  }, [settings]);
 
   const runAdminAction = async (action: () => Promise<void>, successTitle: string) => {
     setIsSaving(true);
@@ -243,6 +296,7 @@ export default function AdminPage() {
           <TabsTrigger value="deities"><BookOpen className="mr-2 h-4 w-4" />Deities</TabsTrigger>
           <TabsTrigger value="requests"><UserPlus className="mr-2 h-4 w-4" />Requests ({requests.length})</TabsTrigger>
           <TabsTrigger value="contact"><Contact className="mr-2 h-4 w-4" />Contact</TabsTrigger>
+          <TabsTrigger value="settings"><Settings className="mr-2 h-4 w-4" />Global Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pujas" className="space-y-6">
@@ -278,11 +332,90 @@ export default function AdminPage() {
                 <fieldset disabled={isSaving} className="space-y-4">
                   <Field label="English Name"><Input value={pujaForm.name_en} onChange={event => updatePuja("name_en", event.target.value)} /></Field>
                   <Field label="Telugu Name"><Input value={pujaForm.name} onChange={event => updatePuja("name", event.target.value)} /></Field>
-                  <Field label="Category">
-                    <Input list="puja-categories" value={pujaForm.category_en} onChange={event => updatePuja("category_en", event.target.value as Puja["category_en"])} />
-                    <datalist id="puja-categories">{categoryOptions.map(category => <option key={category} value={category} />)}</datalist>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="Category">
+                      <Input list="puja-categories" value={pujaForm.category_en} onChange={event => updatePuja("category_en", event.target.value as Puja["category_en"])} />
+                      <datalist id="puja-categories">{categoryOptions.map(category => <option key={category} value={category} />)}</datalist>
+                    </Field>
+                    <Field label="Telugu Category"><Input value={pujaForm.category} onChange={event => updatePuja("category", event.target.value as Puja["category"])} /></Field>
+                  </div>
+
+                  <Field label="Predefined Categories (Tags)">
+                    <div className="grid grid-cols-2 gap-2 mt-1 border border-border/40 p-3 rounded-lg bg-muted/10">
+                      {["Deeksha Poojalu", "Prenatal", "Childhood", "Homams", "Kalyanams", "Vratas"].map(cat => (
+                        <label key={cat} className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                          <Checkbox
+                            checked={(pujaForm.categories || []).includes(cat)}
+                            onCheckedChange={() => toggleCategoryTag(cat)}
+                          />
+                          <span>{cat}</span>
+                        </label>
+                      ))}
+                    </div>
                   </Field>
-                  <Field label="Telugu Category"><Input value={pujaForm.category} onChange={event => updatePuja("category", event.target.value as Puja["category"])} /></Field>
+
+                  <Field label="Pooja Vidhanam PDF Link / URL">
+                    <Input
+                      placeholder="https://example.com/pooja-vidhanam.pdf"
+                      value={pujaForm.pdf_url || ""}
+                      onChange={e => updatePuja("pdf_url", e.target.value)}
+                    />
+                  </Field>
+
+                  <Field label="Required Samagri Items (Compulsory)">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="e.g. Pasupu (Turmeric)"
+                        value={newRequiredItem}
+                        onChange={e => setNewRequiredItem(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addRequiredItem())}
+                      />
+                      <Button type="button" variant="secondary" onClick={addRequiredItem}><Plus className="h-4 w-4" /></Button>
+                    </div>
+                    {(pujaForm.required_items || []).length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5 max-h-24 overflow-y-auto border border-border/40 p-2 rounded-md bg-muted/10">
+                        {(pujaForm.required_items || []).map(item => (
+                          <Badge key={item} variant="outline" className="gap-1 text-xs py-0.5 px-2">
+                            {item}
+                            <X className="h-3 w-3 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => removeRequiredItem(item)} />
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </Field>
+
+                  <Field label="Associated Slokas & Stotrams">
+                    <div className="space-y-2 border border-border/40 p-3 rounded-lg bg-muted/10">
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input
+                          placeholder="Sloka Title"
+                          value={newSlokaName}
+                          onChange={e => setNewSlokaName(e.target.value)}
+                        />
+                        <Input
+                          placeholder="Relative link (e.g. /readings/ganapati)"
+                          value={newSlokaLink}
+                          onChange={e => setNewSlokaLink(e.target.value)}
+                        />
+                      </div>
+                      <Button type="button" size="sm" className="w-full text-xs" variant="outline" onClick={addSlokaTag}>
+                        <Plus className="mr-1 h-3.5 w-3.5" /> Add Sloka Tag
+                      </Button>
+                    </div>
+                    {(pujaForm.sloka_tags || []).length > 0 && (
+                      <div className="mt-2 space-y-1.5 max-h-28 overflow-y-auto border border-border/40 p-2 rounded-md bg-card">
+                        {(pujaForm.sloka_tags || []).map((sloka, index) => (
+                          <div key={index} className="flex items-center justify-between text-xs border-b border-border/30 pb-1 last:border-b-0">
+                            <span className="font-semibold text-primary truncate max-w-[150px]">{sloka.name}</span>
+                            <span className="text-muted-foreground truncate max-w-[150px] italic">{sloka.link}</span>
+                            <X className="h-3.5 w-3.5 cursor-pointer text-red-500 hover:text-red-700 ml-2" onClick={() => removeSlokaTag(index)} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </Field>
+
                   <Field label="Program Image">
                     <Input
                       type="file"
@@ -297,10 +430,12 @@ export default function AdminPage() {
                     />
                     {pujaForm.image && <ManagedImage src={pujaForm.image} alt="Program preview" width={160} height={100} className="h-24 w-40 rounded-md object-cover" />}
                   </Field>
+                  
                   <Field label="Image Hint"><Input value={pujaForm.imageHint} onChange={event => updatePuja("imageHint", event.target.value)} /></Field>
                   <Field label="English Description"><Textarea value={pujaForm.description} onChange={event => updatePuja("description", event.target.value)} /></Field>
                   <Field label="Telugu Description"><Textarea value={pujaForm.description_te} onChange={event => updatePuja("description_te", event.target.value)} /></Field>
-                  <div className="flex gap-2">
+                  
+                  <div className="flex gap-2 pt-2">
                     <Button onClick={saveCurrentPuja} disabled={isSaving}>
                       {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
                       Save Puja
@@ -526,6 +661,46 @@ export default function AdminPage() {
                 <Button disabled={isSaving} onClick={() => void runAdminAction(() => saveContact(contactForm), "Contact page saved")}>
                   {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Save Contact Page
+                </Button>
+              </fieldset>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <Card className="max-w-3xl">
+            <CardHeader><CardTitle>Global Webpage Content Settings</CardTitle></CardHeader>
+            <CardContent>
+              <fieldset disabled={isSaving} className="space-y-4">
+                <Field label="Landing Page Main Heading (English)">
+                  <Input
+                    value={settingsForm.landingTitleEn || ""}
+                    onChange={event => setSettingsForm(current => ({ ...current, landingTitleEn: event.target.value }))}
+                  />
+                </Field>
+                <Field label="Landing Page Main Heading (Telugu)">
+                  <Input
+                    className="font-telugu"
+                    value={settingsForm.landingTitleTe || ""}
+                    onChange={event => setSettingsForm(current => ({ ...current, landingTitleTe: event.target.value }))}
+                  />
+                </Field>
+                <Field label="Landing Page Subtext (English)">
+                  <Textarea
+                    value={settingsForm.landingSubtitleEn || ""}
+                    onChange={event => setSettingsForm(current => ({ ...current, landingSubtitleEn: event.target.value }))}
+                  />
+                </Field>
+                <Field label="Landing Page Subtext (Telugu)">
+                  <Textarea
+                    className="font-telugu"
+                    value={settingsForm.landingSubtitleTe || ""}
+                    onChange={event => setSettingsForm(current => ({ ...current, landingSubtitleTe: event.target.value }))}
+                  />
+                </Field>
+                <Button disabled={isSaving} onClick={() => void runAdminAction(() => saveSettings(settingsForm), "Global settings saved")}>
+                  {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Save Global Settings
                 </Button>
               </fieldset>
             </CardContent>

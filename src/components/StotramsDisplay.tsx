@@ -504,7 +504,7 @@ function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: 
               {categoryTag}
             </span>
           )}
-          <h4 className="font-semibold text-sm sm:text-base text-foreground leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2 break-words whitespace-normal leading-relaxed">
+          <h4 className="font-semibold text-sm sm:text-base text-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2 break-words whitespace-normal leading-relaxed">
             {item.title}
           </h4>
         </div>
