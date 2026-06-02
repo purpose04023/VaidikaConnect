@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/context/language-context";
 import { ManagedImage } from "@/components/common/ManagedImage";
 
-export function PujaListClient({ pujas }: { pujas: Puja[] }) {
+export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[], variant?: "tabs" | "sections" }) {
   const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
@@ -113,36 +113,57 @@ export function PujaListClient({ pujas }: { pujas: Puja[] }) {
           )}
         </div>
       ) : (
-        activeTab && (
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex justify-center mb-8">
-                <TabsList className="grid h-auto w-full max-w-5xl grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
-                {categories.map(category => (
-                    <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">{category}</TabsTrigger>
-                ))}
-                </TabsList>
-            </div>
+        variant === "tabs" ? (
+          activeTab && (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <div className="flex justify-center mb-8">
+                  <TabsList className="grid h-auto w-full max-w-5xl grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
+                  {categories.map(category => (
+                      <TabsTrigger key={category} value={category} className="text-xs sm:text-sm">{category}</TabsTrigger>
+                  ))}
+                  </TabsList>
+              </div>
 
+              {categories.map(category => {
+                  const categoryPujas = pujas.filter(puja => (language === 'te' ? puja.category : puja.category_en) === category);
+                  
+                  return (
+                    <TabsContent key={category} value={category}>
+                        {categoryPujas.length > 0 ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {categoryPujas.map(puja => (
+                                <PujaCard key={puja.id} puja={puja} />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center text-muted-foreground mt-8">
+                            <p>{t('home.no_pujas_in_category')}</p>
+                          </div>
+                        )}
+                    </TabsContent>
+                  )
+              })}
+            </Tabs>
+          )
+        ) : (
+          <div className="space-y-12">
             {categories.map(category => {
                 const categoryPujas = pujas.filter(puja => (language === 'te' ? puja.category : puja.category_en) === category);
                 
+                if (categoryPujas.length === 0) return null;
+
                 return (
-                  <TabsContent key={category} value={category}>
-                      {categoryPujas.length > 0 ? (
+                    <div key={category}>
+                        <h2 className="font-headline text-3xl border-b pb-2 mb-6 text-primary">{category}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                          {categoryPujas.map(puja => (
-                              <PujaCard key={puja.id} puja={puja} />
-                          ))}
+                            {categoryPujas.map(puja => (
+                                <PujaCard key={puja.id} puja={puja} />
+                            ))}
                         </div>
-                      ) : (
-                        <div className="text-center text-muted-foreground mt-8">
-                          <p>{t('home.no_pujas_in_category')}</p>
-                        </div>
-                      )}
-                  </TabsContent>
+                    </div>
                 )
             })}
-          </Tabs>
+          </div>
         )
       )}
 
