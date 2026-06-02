@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/context/language-context";
 import { ManagedImage } from "@/components/common/ManagedImage";
@@ -21,6 +21,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
     [pujas, language]
   );
   const [activeTab, setActiveTab] = useState<string | undefined>();
+  const [loadingPujaId, setLoadingPujaId] = useState<number | null>(null);
 
   useEffect(() => {
     if (categories.length > 0 && (!activeTab || !categories.includes(activeTab))) {
@@ -29,6 +30,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
   }, [categories, activeTab]);
 
   const handleFindPujaris = (puja: Puja) => {
+    setLoadingPujaId(puja.id);
     router.push(`/find-pujari?puja=${puja.id}`);
   };
 
@@ -73,8 +75,19 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
         <p className="text-muted-foreground">{language === 'te' ? puja.description_te : puja.description}</p>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" onClick={() => handleFindPujaris(puja)}>
-            {t('home.select_program')}
+        <Button 
+          className="w-full flex items-center justify-center gap-2" 
+          onClick={() => handleFindPujaris(puja)}
+          disabled={loadingPujaId !== null}
+        >
+          {loadingPujaId === puja.id ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Loading...</span>
+            </>
+          ) : (
+            t('home.select_program')
+          )}
         </Button>
       </CardFooter>
     </Card>

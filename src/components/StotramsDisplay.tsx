@@ -47,9 +47,9 @@ export default function StotramsDisplay() {
   const categoriesData: VignanamCategory[] = vignanamData;
 
   // Define the special Deity Category
-  const DEITY_CATEGORY_NAME = language === "te" ? "🕉️ పూజా మూర్తులు (Deity Readings)" : "🕉️ Deity Readings & CMS";
+  const DEITY_CATEGORY_NAME = language === "te" ? "🕉️ దేవతా పఠనాలు & CMS" : "🕉️ Deity Readings & CMS";
   const DEITY_CATEGORY_DESC = language === "te" 
-    ? "మన పూజా మూర్తుల విశిష్ట అష్టోత్తర శతనామావళి మరియు సహస్రనామ స్తోత్రాలు (సజీవ సవరణ CMS)."
+    ? "సజీవ సవరణ (CMS) సౌకర్యంతో దేవతా అష్టోత్తర శతనామావళి మరియు సహస్రనామ స్తోత్రాల పఠన వేదిక."
     : "Read the sacred 108 and 1000 names of Hindu Deities with live double-click editing.";
 
   // State
