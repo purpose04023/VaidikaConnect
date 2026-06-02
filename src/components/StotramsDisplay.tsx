@@ -43,7 +43,7 @@ export default function StotramsDisplay() {
               value="female" 
               className="rounded-full px-6 py-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary transition-all duration-300 flex items-center gap-2"
             >
-              <Flower2 className="h-4 w-4 text-rose-500" />
+              <Flower className="h-4 w-4 text-rose-500" />
               <span className="font-semibold text-sm md:text-base">
                 {language === 'te' ? 'స్త్రీ మూర్తులు' : 'Female Goddesses'}
               </span>
