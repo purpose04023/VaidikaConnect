@@ -16,7 +16,11 @@ import {
   Video,
   Compass,
   Hotel,
-  Ticket
+  Ticket,
+  Star,
+  Users,
+  Sun,
+  Flower
 } from "lucide-react";
 
 export default function Navbar() {
@@ -36,6 +40,65 @@ export default function Navbar() {
           {/* Main Desktop Navigation Items */}
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
             
+            {/* Dropdown 0: Sacred Programs */}
+            <div 
+              className="relative group"
+              onMouseEnter={() => setActiveDropdown("sacredPrograms")}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center gap-1 py-3 text-foreground/75 transition-colors hover:text-primary focus:outline-none">
+                <span>{language === "te" ? "పవిత్ర కార్యక్రమాలు" : "Sacred Programs"}</span>
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              </button>
+              
+              <div className="absolute left-0 top-full w-80 rounded-lg border border-primary/20 bg-background/95 p-4 shadow-xl backdrop-blur-md transition-all duration-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0">
+                <div className="grid grid-cols-2 gap-3">
+                  <Link href="/programs/deeksha-pujas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
+                    <Sun className="h-4 w-4 text-amber-500" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "దీక్షా పూజలు" : "Deeksha Pujas"}</p>
+                    </div>
+                  </Link>
+                  <Link href="/programs/dosha-parihara-pujas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
+                    <Star className="h-4 w-4 text-indigo-500" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "దోష పరిహార పూజలు" : "Dosha Parihara"}</p>
+                    </div>
+                  </Link>
+                  <Link href="/programs/homams" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
+                    <Flame className="h-4 w-4 text-orange-500" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "హోమాలు" : "Homams"}</p>
+                    </div>
+                  </Link>
+                  <Link href="/programs/kalyanams" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
+                    <Heart className="h-4 w-4 text-rose-500" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "కల్యాణాలు" : "Kalyanams"}</p>
+                    </div>
+                  </Link>
+                  <Link href="/programs/nomulu" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
+                    <Users className="h-4 w-4 text-pink-500" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "నోములు" : "Nomulu"}</p>
+                    </div>
+                  </Link>
+                  <Link href="/programs/pujas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10">
+                    <Flower className="h-4 w-4 text-emerald-500" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "పూజలు" : "Pujas"}</p>
+                    </div>
+                  </Link>
+                  <Link href="/programs/vratas" className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-primary/10 col-span-2">
+                    <Sparkles className="h-4 w-4 text-blue-500" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{language === "te" ? "వ్రతాలు" : "Vratas"}</p>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
             {/* Dropdown 1: సంస్కారాలు (Life Cycle Poojas) */}
             <div 
               className="relative group"
@@ -197,6 +260,43 @@ export default function Navbar() {
         <div className="md:hidden border-t border-border/40 bg-background px-4 py-3 space-y-4 shadow-lg absolute w-full left-0 z-50">
           <div className="space-y-3">
             
+            {/* Mobile Block 0: Sacred Programs */}
+            <div>
+              <button 
+                onClick={() => toggleDropdown("sacredPrograms")}
+                className="flex items-center justify-between w-full font-bold text-sm text-foreground border-b pb-1 border-border/40"
+              >
+                <span>{language === "te" ? "పవిత్ర కార్యక్రమాలు (Sacred Programs)" : "Sacred Programs"}</span>
+                <ChevronDown className={`h-4 w-4 transform transition-transform ${activeDropdown === "sacredPrograms" ? "rotate-180" : ""}`} />
+              </button>
+              
+              {activeDropdown === "sacredPrograms" && (
+                <div className="pl-3 mt-2 space-y-2 text-sm text-muted-foreground">
+                  <Link href="/programs/deeksha-pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                    - {language === "te" ? "దీక్షా పూజలు (Deeksha)" : "Deeksha Pujas"}
+                  </Link>
+                  <Link href="/programs/dosha-parihara-pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                    - {language === "te" ? "దోష పరిహార పూజలు" : "Dosha Parihara"}
+                  </Link>
+                  <Link href="/programs/homams" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                    - {language === "te" ? "హోమాలు (Homams)" : "Homams"}
+                  </Link>
+                  <Link href="/programs/kalyanams" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                    - {language === "te" ? "కల్యాణాలు (Kalyanams)" : "Kalyanams"}
+                  </Link>
+                  <Link href="/programs/nomulu" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                    - {language === "te" ? "నోములు (Nomulu)" : "Nomulu"}
+                  </Link>
+                  <Link href="/programs/pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                    - {language === "te" ? "పూజలు (Pujas)" : "Pujas"}
+                  </Link>
+                  <Link href="/programs/vratas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                    - {language === "te" ? "వ్రతాలు (Vratas)" : "Vratas"}
+                  </Link>
+                </div>
+              )}
+            </div>
+
             {/* Mobile Block 1: సంస్కారాలు */}
             <div>
               <button 
