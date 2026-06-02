@@ -5,7 +5,8 @@ import { lifeCycleSamskaras, LifeCycleStage, PoojaItem } from "@/lib/data/servic
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { 
   Baby, 
   BookOpen, 
@@ -14,12 +15,15 @@ import {
   Flame, 
   Clock, 
   ShieldCheck, 
-  ArrowRight 
+  ArrowRight,
+  Loader2
 } from "lucide-react";
 
 export default function LifeCycleSamskaras() {
   const { t, language } = useLanguage();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [loadingPoojaId, setLoadingPoojaId] = useState<number | null>(null);
 
   // Helper to filter poojas by life stage
   const getPoojasByStage = (stage: LifeCycleStage): PoojaItem[] => {
@@ -27,8 +31,11 @@ export default function LifeCycleSamskaras() {
   };
 
   const handleBookPooja = (pooja: PoojaItem) => {
-    // Navigates to the Pujari finder page with search queries
-    router.push(`/find-pujari?pujaName=${encodeURIComponent(pooja.nameEn)}&stage=${pooja.stage}`);
+    setLoadingPoojaId(pooja.id);
+    // Simulate searching delay for better UX
+    setTimeout(() => {
+      router.push(`/find-pujari?pujaName=${encodeURIComponent(pooja.nameEn)}&stage=${pooja.stage}`);
+    }, 1500);
   };
 
   const stages: { key: LifeCycleStage; labelTe: string; labelEn: string; icon: any; color: string; descTe: string; descEn: string }[] = [
@@ -79,6 +86,8 @@ export default function LifeCycleSamskaras() {
     }
   ];
 
+  const initialStage = searchParams.get('stage') as LifeCycleStage || "prenatal";
+
   return (
     <div className="w-full py-8 text-left">
       <div className="text-center max-w-2xl mx-auto mb-10">
@@ -92,7 +101,7 @@ export default function LifeCycleSamskaras() {
         </p>
       </div>
 
-      <Tabs defaultValue="prenatal" className="w-full">
+      <Tabs defaultValue={initialStage} className="w-full">
         {/* Horizontal Timeline Connector Style */}
         <div className="relative mb-12 flex justify-center">
           {/* Background Timeline Line */}
@@ -191,10 +200,20 @@ export default function LifeCycleSamskaras() {
                     <CardFooter className="pt-4 border-t border-border/40 mt-auto">
                       <Button 
                         onClick={() => handleBookPooja(pooja)}
+                        disabled={loadingPoojaId === pooja.id}
                         className="w-full divine-button group-hover:shadow-lg group-hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
                       >
-                        <span>{language === "te" ? "పూజారిని బుక్ చేసుకోండి" : "Book Pujari Now"}</span>
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        {loadingPoojaId === pooja.id ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>{language === "te" ? "దగ్గరలోని పూజారుల కోసం వెతుకుతోంది..." : "Searching poojaris nearby..."}</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>{language === "te" ? "ఈ పూజను ఎంచుకోండి" : "Select this program"}</span>
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                          </>
+                        )}
                       </Button>
                     </CardFooter>
 
