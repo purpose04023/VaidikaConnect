@@ -40,14 +40,14 @@ export default function Navbar() {
           {/* Main Desktop Navigation Items */}
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
             
-            {/* Dropdown 0: Sacred Programs */}
+            {/* Dropdown 0: Vaidika Poojas */}
             <div 
               className="relative group"
               onMouseEnter={() => setActiveDropdown("sacredPrograms")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <button className="flex items-center gap-1 py-3 text-foreground/75 transition-colors hover:text-primary focus:outline-none">
-                <span>{language === "te" ? "పవిత్ర కార్యక్రమాలు" : "Sacred Programs"}</span>
+                <span>{language === "te" ? "వైదిక పూజలు" : "Vaidika Poojas"}</span>
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
               </button>
               
@@ -260,13 +260,13 @@ export default function Navbar() {
         <div className="md:hidden border-t border-border/40 bg-background px-4 py-3 space-y-4 shadow-lg absolute w-full left-0 z-50">
           <div className="space-y-3">
             
-            {/* Mobile Block 0: Sacred Programs */}
+            {/* Mobile Block 0: Vaidika Poojas */}
             <div>
               <button 
                 onClick={() => toggleDropdown("sacredPrograms")}
                 className="flex items-center justify-between w-full font-bold text-sm text-foreground border-b pb-1 border-border/40"
               >
-                <span>{language === "te" ? "పవిత్ర కార్యక్రమాలు (Sacred Programs)" : "Sacred Programs"}</span>
+                <span>{language === "te" ? "వైదిక పూజలు (Vaidika Poojas)" : "Vaidika Poojas"}</span>
                 <ChevronDown className={`h-4 w-4 transform transition-transform ${activeDropdown === "sacredPrograms" ? "rotate-180" : ""}`} />
               </button>
               

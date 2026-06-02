@@ -452,7 +452,7 @@ function DeityCard({ deity, language }: { deity: Deity; language: string }) {
           </div>
           
           <div className="mt-4 flex-1">
-            <h4 className="font-headline text-base sm:text-lg md:text-xl font-bold group-hover:text-primary transition-colors duration-200">
+            <h4 className="font-headline text-base sm:text-lg md:text-xl font-bold group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed">
               {deity.name}
             </h4>
             <p className="text-[10px] sm:text-xs text-muted-foreground tracking-widest uppercase mt-1">
@@ -476,11 +476,20 @@ function DeityCard({ deity, language }: { deity: Deity; language: string }) {
 function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: string }) {
   const { language } = useLanguage();
   
+  // Extract slug from URL (e.g. "https://www.vignanam.org/telugu/ganapati-prarthana-ghanapatham.html" -> "ganapati-prarthana-ghanapatham")
+  const slug = useMemo(() => {
+    try {
+      const parts = item.url.split("/");
+      const filename = parts[parts.length - 1];
+      return filename.replace(".html", "") || "unknown-stotram";
+    } catch (e) {
+      return "unknown-stotram";
+    }
+  }, [item.url]);
+  
   return (
-    <a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/readings/${slug}`}
       className="flex flex-col rounded-2xl border border-border/40 bg-card/45 hover:bg-card/90 dark:bg-black/10 dark:hover:bg-muted/10 shadow-sm hover:shadow-md hover:border-amber-500/30 transition-all duration-300 group overflow-hidden"
     >
       <div className="p-5 flex-1 flex gap-4 items-start">
@@ -495,7 +504,7 @@ function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: 
               {categoryTag}
             </span>
           )}
-          <h4 className="font-semibold text-sm sm:text-base text-foreground leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+          <h4 className="font-semibold text-sm sm:text-base text-foreground leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2 break-words whitespace-normal leading-relaxed">
             {item.title}
           </h4>
         </div>
@@ -504,10 +513,10 @@ function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: 
       {/* Scripture card bottom drawer */}
       <div className="border-t border-border/20 px-4 py-2.5 bg-muted/5 flex items-center justify-between text-muted-foreground group-hover:text-foreground transition-colors">
         <span className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-          {language === "te" ? "విజ్ఞానం.ఆర్గ్ లో చదవండి" : "Open Vignanam Text"}
+          {language === "te" ? "శ్లోకం చదవండి ➔" : "Read Sloka ➔"}
         </span>
-        <ArrowUpRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all shrink-0" />
+        <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:scale-110 group-hover:translate-x-0.5 transition-all shrink-0" />
       </div>
-    </a>
+    </Link>
   );
 }
