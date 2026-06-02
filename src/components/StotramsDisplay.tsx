@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/context/language-context";
 import { Flower2, Moon, Sparkles } from "lucide-react";
+import { ManagedImage } from "./common/ManagedImage";
 
 export default function StotramsDisplay() {
   const { language } = useLanguage();
@@ -70,9 +71,14 @@ function DeityGrid({ deities, language }: { deities: Deity[], language: string }
           <Card className="glass-card hover:-translate-y-1 transition-all duration-300 h-full flex flex-col items-center justify-center text-center p-6 border border-primary/10 hover:border-primary/30 group relative overflow-hidden cursor-pointer">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
-            <CardHeader className="p-0 mb-4 z-10">
-              <div className="h-16 w-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="h-8 w-8 text-primary" />
+            <CardHeader className="p-0 mb-4 z-10 w-full flex flex-col items-center">
+              <div className="h-20 w-20 md:h-24 md:w-24 mx-auto rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 overflow-hidden border-2 border-primary/30 shadow-lg relative">
+                <ManagedImage 
+                  src={deity.imageUrl}
+                  alt={deity.nameEn}
+                  imageHint={deity.imageHint}
+                  className="object-cover w-full h-full"
+                />
               </div>
               <CardTitle className="font-headline text-xl md:text-2xl group-hover:text-primary transition-colors">
                 {language === 'te' ? deity.name : deity.nameEn}
