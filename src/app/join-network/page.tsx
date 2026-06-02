@@ -36,6 +36,7 @@ export default function JoinNetworkPage() {
     phone: "",
     email: "",
     city: "",
+    location: "",
     photo: "",
     qualifications: "",
     languages: "Telugu, Sanskrit",
@@ -47,6 +48,15 @@ export default function JoinNetworkPage() {
   const update = (key: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
   };
+
+  const csv = (str: string) => str.split(",").map((s) => s.trim()).filter(Boolean);
+
+  const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      {children}
+    </div>
+  );
 
   const readUploadedImage = (file: File) => {
     return compressImage(file);
@@ -67,6 +77,7 @@ export default function JoinNetworkPage() {
         phone: form.phone,
         email: form.email,
         city: form.city,
+        location: form.location,
         photo: form.photo || defaultPhoto,
         qualifications: csv(form.qualifications),
         languages: csv(form.languages),
@@ -193,11 +204,10 @@ export default function JoinNetworkPage() {
                       className="divine-input"
                     />
                   </FormField>
-                  <FormField label="Email Address *">
+                  <FormField label="Email Address">
                     <Input
-                      required
                       type="email"
-                      placeholder="your@email.com"
+                      placeholder="your@email.com (optional)"
                       value={form.email}
                       onChange={(e) => update("email", e.target.value)}
                       className="divine-input"
@@ -209,6 +219,15 @@ export default function JoinNetworkPage() {
                       placeholder="e.g. Guntur, Vijayawada"
                       value={form.city}
                       onChange={(e) => update("city", e.target.value)}
+                      className="divine-input"
+                    />
+                  </FormField>
+                  <FormField label="Your Location (Google Maps Link or Address) *">
+                    <Input
+                      required
+                      placeholder="e.g. https://maps.app.goo.gl/... or 'Near Rama Temple, Guntur'"
+                      value={form.location}
+                      onChange={(e) => update("location", e.target.value)}
                       className="divine-input"
                     />
                   </FormField>

@@ -42,6 +42,7 @@ export interface PujariJoinRequest {
   phone: string;
   email: string;
   city: string;
+  location: string; // Google Maps link or address text
   qualifications: string[];
   languages: string[];
   experience: number;
