@@ -38,23 +38,6 @@ export default function RootLayout({
             </ContentProvider>
           </LanguageProvider>
         </FirebaseClientProvider>
-        
-        {/* Hidden Google Translate Target */}
-        <div id="google_translate_element" style={{ display: 'none' }}></div>
-        
-        {/* Google Translate API Scripts */}
-        <Script id="google-translate-init" strategy="afterInteractive">
-          {`
-            window.googleTranslateElementInit = function() {
-              new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-              }, 'google_translate_element');
-            }
-          `}
-        </Script>
-        <Script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" strategy="afterInteractive" />
       </body>
     </html>
   );

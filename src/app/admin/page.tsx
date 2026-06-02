@@ -121,11 +121,20 @@ export default function AdminPage() {
 
   const runAdminAction = async (action: () => Promise<void>, successTitle: string) => {
     setIsSaving(true);
+    const savingToast = toast({
+      title: "Saving data to cloud...",
+      description: "Please wait while we update the database.",
+    });
     try {
       await action();
-      toast({ title: successTitle, description: "Changes were saved to the shared database." });
+      savingToast.dismiss();
+      toast({
+        title: successTitle,
+        description: "Updated successfully!",
+      });
     } catch (error) {
       console.error("Admin action failed:", error);
+      savingToast.dismiss();
       toast({
         variant: "destructive",
         title: "Admin update failed",
@@ -265,38 +274,40 @@ export default function AdminPage() {
               <CardHeader>
                 <CardTitle>{pujas.some(puja => puja.id === pujaForm.id) ? "Edit Puja" : "Add Puja"}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Field label="English Name"><Input value={pujaForm.name_en} onChange={event => updatePuja("name_en", event.target.value)} /></Field>
-                <Field label="Telugu Name"><Input value={pujaForm.name} onChange={event => updatePuja("name", event.target.value)} /></Field>
-                <Field label="Category">
-                  <Input list="puja-categories" value={pujaForm.category_en} onChange={event => updatePuja("category_en", event.target.value as Puja["category_en"])} />
-                  <datalist id="puja-categories">{categoryOptions.map(category => <option key={category} value={category} />)}</datalist>
-                </Field>
-                <Field label="Telugu Category"><Input value={pujaForm.category} onChange={event => updatePuja("category", event.target.value as Puja["category"])} /></Field>
-                <Field label="Program Image">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={async event => {
-                      const file = event.target.files?.[0];
-                      if (file) {
-                        updatePuja("image", await readUploadedImage(file));
-                        updatePuja("imageHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
-                      }
-                    }}
-                  />
-                  {pujaForm.image && <ManagedImage src={pujaForm.image} alt="Program preview" width={160} height={100} className="h-24 w-40 rounded-md object-cover" />}
-                </Field>
-                <Field label="Image Hint"><Input value={pujaForm.imageHint} onChange={event => updatePuja("imageHint", event.target.value)} /></Field>
-                <Field label="English Description"><Textarea value={pujaForm.description} onChange={event => updatePuja("description", event.target.value)} /></Field>
-                <Field label="Telugu Description"><Textarea value={pujaForm.description_te} onChange={event => updatePuja("description_te", event.target.value)} /></Field>
-                <div className="flex gap-2">
-                  <Button onClick={saveCurrentPuja} disabled={isSaving}>
-                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                    Save Puja
-                  </Button>
-                  <Button variant="outline" onClick={() => setPujaForm(emptyPuja(nextId(pujas)))}>New</Button>
-                </div>
+              <CardContent>
+                <fieldset disabled={isSaving} className="space-y-4">
+                  <Field label="English Name"><Input value={pujaForm.name_en} onChange={event => updatePuja("name_en", event.target.value)} /></Field>
+                  <Field label="Telugu Name"><Input value={pujaForm.name} onChange={event => updatePuja("name", event.target.value)} /></Field>
+                  <Field label="Category">
+                    <Input list="puja-categories" value={pujaForm.category_en} onChange={event => updatePuja("category_en", event.target.value as Puja["category_en"])} />
+                    <datalist id="puja-categories">{categoryOptions.map(category => <option key={category} value={category} />)}</datalist>
+                  </Field>
+                  <Field label="Telugu Category"><Input value={pujaForm.category} onChange={event => updatePuja("category", event.target.value as Puja["category"])} /></Field>
+                  <Field label="Program Image">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async event => {
+                        const file = event.target.files?.[0];
+                        if (file) {
+                          updatePuja("image", await readUploadedImage(file));
+                          updatePuja("imageHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
+                        }
+                      }}
+                    />
+                    {pujaForm.image && <ManagedImage src={pujaForm.image} alt="Program preview" width={160} height={100} className="h-24 w-40 rounded-md object-cover" />}
+                  </Field>
+                  <Field label="Image Hint"><Input value={pujaForm.imageHint} onChange={event => updatePuja("imageHint", event.target.value)} /></Field>
+                  <Field label="English Description"><Textarea value={pujaForm.description} onChange={event => updatePuja("description", event.target.value)} /></Field>
+                  <Field label="Telugu Description"><Textarea value={pujaForm.description_te} onChange={event => updatePuja("description_te", event.target.value)} /></Field>
+                  <div className="flex gap-2">
+                    <Button onClick={saveCurrentPuja} disabled={isSaving}>
+                      {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                      Save Puja
+                    </Button>
+                    <Button variant="outline" onClick={() => setPujaForm(emptyPuja(nextId(pujas)))}>New</Button>
+                  </div>
+                </fieldset>
               </CardContent>
             </Card>
           </div>
@@ -332,60 +343,62 @@ export default function AdminPage() {
               <CardHeader>
                 <CardTitle>{pujaris.some(pujari => pujari.id === pujariForm.id) ? "Edit Pujari" : "Add Pujari"}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Field label="Name"><Input value={pujariForm.name} onChange={event => updatePujari("name", event.target.value)} /></Field>
-                <Field label="Profile Image">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={async event => {
-                      const file = event.target.files?.[0];
-                      if (file) {
-                        updatePujari("photo", await readUploadedImage(file));
-                        updatePujari("photoHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
-                      }
-                    }}
-                  />
-                  {pujariForm.photo && <ManagedImage src={pujariForm.photo} alt="Pujari preview" width={112} height={112} className="h-28 w-28 rounded-full object-cover" />}
-                </Field>
-                <Field label="Phone"><Input value={pujariForm.phone} onChange={event => updatePujari("phone", event.target.value)} /></Field>
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Base Price"><Input type="number" value={pujariForm.basePrice} onChange={event => updatePujari("basePrice", Number(event.target.value))} /></Field>
-                  <Field label="Experience"><Input type="number" value={pujariForm.experience} onChange={event => updatePujari("experience", Number(event.target.value))} /></Field>
-                  <Field label="Rating"><Input type="number" step="0.1" value={pujariForm.rating} onChange={event => updatePujari("rating", Number(event.target.value))} /></Field>
-                </div>
-                <Field label="Languages"><Input value={toCsv(pujariForm.languages)} onChange={event => updatePujari("languages", fromCsv(event.target.value))} /></Field>
-                <Field label="Qualifications"><Input value={toCsv(pujariForm.qualifications)} onChange={event => updatePujari("qualifications", fromCsv(event.target.value))} /></Field>
-                <Field label="Description"><Textarea value={pujariForm.description} onChange={event => updatePujari("description", event.target.value)} /></Field>
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Latitude"><Input type="number" value={pujariForm.location.lat} onChange={event => updatePujari("location", { ...pujariForm.location, lat: Number(event.target.value) })} /></Field>
-                  <Field label="Longitude"><Input type="number" value={pujariForm.location.lng} onChange={event => updatePujari("location", { ...pujariForm.location, lng: Number(event.target.value) })} /></Field>
-                </div>
-                <div className="space-y-2">
-                  <Label>Programs Offered</Label>
-                  <div className="max-h-52 overflow-auto rounded-md border p-3">
-                    {pujas.map(puja => (
-                      <label key={puja.id} className="flex items-center gap-2 py-1 text-sm">
-                        <Checkbox checked={pujariForm.pujas.includes(puja.id)} onCheckedChange={() => togglePujariPuja(puja.id)} />
-                        {puja.name_en}
-                      </label>
-                    ))}
+              <CardContent>
+                <fieldset disabled={isSaving} className="space-y-4">
+                  <Field label="Name"><Input value={pujariForm.name} onChange={event => updatePujari("name", event.target.value)} /></Field>
+                  <Field label="Profile Image">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async event => {
+                        const file = event.target.files?.[0];
+                        if (file) {
+                          updatePujari("photo", await readUploadedImage(file));
+                          updatePujari("photoHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
+                        }
+                      }}
+                    />
+                    {pujariForm.photo && <ManagedImage src={pujariForm.photo} alt="Pujari preview" width={112} height={112} className="h-28 w-28 rounded-full object-cover" />}
+                  </Field>
+                  <Field label="Phone"><Input value={pujariForm.phone} onChange={event => updatePujari("phone", event.target.value)} /></Field>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Base Price"><Input type="number" value={pujariForm.basePrice} onChange={event => updatePujari("basePrice", Number(event.target.value))} /></Field>
+                    <Field label="Experience"><Input type="number" value={pujariForm.experience} onChange={event => updatePujari("experience", Number(event.target.value))} /></Field>
+                    <Field label="Rating"><Input type="number" step="0.1" value={pujariForm.rating} onChange={event => updatePujari("rating", Number(event.target.value))} /></Field>
                   </div>
-                </div>
-                <div className="rounded-md border p-3 space-y-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <Label htmlFor="verified">Verified by organisation</Label>
-                    <Switch id="verified" checked={!!pujariForm.verified} onCheckedChange={checked => updatePujari("verified", checked)} />
+                  <Field label="Languages"><Input value={toCsv(pujariForm.languages)} onChange={event => updatePujari("languages", fromCsv(event.target.value))} /></Field>
+                  <Field label="Qualifications"><Input value={toCsv(pujariForm.qualifications)} onChange={event => updatePujari("qualifications", fromCsv(event.target.value))} /></Field>
+                  <Field label="Description"><Textarea value={pujariForm.description} onChange={event => updatePujari("description", event.target.value)} /></Field>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Latitude"><Input type="number" value={pujariForm.location.lat} onChange={event => updatePujari("location", { ...pujariForm.location, lat: Number(event.target.value) })} /></Field>
+                    <Field label="Longitude"><Input type="number" value={pujariForm.location.lng} onChange={event => updatePujari("location", { ...pujariForm.location, lng: Number(event.target.value) })} /></Field>
                   </div>
-                  <Field label="Verified By"><Input value={pujariForm.verifiedBy || ""} onChange={event => updatePujari("verifiedBy", event.target.value)} /></Field>
-                </div>
-                <div className="flex gap-2">
-                  <Button onClick={saveCurrentPujari} disabled={isSaving}>
-                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                    Save Pujari
-                  </Button>
-                  <Button variant="outline" onClick={() => setPujariForm(emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)))}>New</Button>
-                </div>
+                  <div className="space-y-2">
+                    <Label>Programs Offered</Label>
+                    <div className="max-h-52 overflow-auto rounded-md border p-3">
+                      {pujas.map(puja => (
+                        <label key={puja.id} className="flex items-center gap-2 py-1 text-sm">
+                          <Checkbox checked={pujariForm.pujas.includes(puja.id)} onCheckedChange={() => togglePujariPuja(puja.id)} />
+                          {puja.name_en}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-md border p-3 space-y-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <Label htmlFor="verified">Verified by organisation</Label>
+                      <Switch id="verified" checked={!!pujariForm.verified} onCheckedChange={checked => updatePujari("verified", checked)} />
+                    </div>
+                    <Field label="Verified By"><Input value={pujariForm.verifiedBy || ""} onChange={event => updatePujari("verifiedBy", event.target.value)} /></Field>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={saveCurrentPujari} disabled={isSaving}>
+                      {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                      Save Pujari
+                    </Button>
+                    <Button variant="outline" onClick={() => setPujariForm(emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)))}>New</Button>
+                  </div>
+                </fieldset>
               </CardContent>
             </Card>
           </div>
@@ -420,41 +433,43 @@ export default function AdminPage() {
               <CardHeader>
                 <CardTitle>{deities.some(d => d.id === deityForm.id) ? "Edit Deity" : "Add Deity"}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Field label="ID"><Input value={deityForm.id} disabled={deities.some(d => d.id === deityForm.id)} onChange={event => updateDeity("id", event.target.value)} /></Field>
-                <Field label="English Name"><Input value={deityForm.nameEn} onChange={event => updateDeity("nameEn", event.target.value)} /></Field>
-                <Field label="Telugu Name"><Input value={deityForm.name} onChange={event => updateDeity("name", event.target.value)} /></Field>
-                <div className="flex items-center gap-4">
-                  <Label>Gender</Label>
-                  <div className="flex gap-2">
-                    <label className="flex items-center gap-1"><input type="radio" checked={deityForm.gender === "male"} onChange={() => updateDeity("gender", "male")} /> Male</label>
-                    <label className="flex items-center gap-1"><input type="radio" checked={deityForm.gender === "female"} onChange={() => updateDeity("gender", "female")} /> Female</label>
+              <CardContent>
+                <fieldset disabled={isSaving} className="space-y-4">
+                  <Field label="ID"><Input value={deityForm.id} disabled={deities.some(d => d.id === deityForm.id)} onChange={event => updateDeity("id", event.target.value)} /></Field>
+                  <Field label="English Name"><Input value={deityForm.nameEn} onChange={event => updateDeity("nameEn", event.target.value)} /></Field>
+                  <Field label="Telugu Name"><Input value={deityForm.name} onChange={event => updateDeity("name", event.target.value)} /></Field>
+                  <div className="flex items-center gap-4">
+                    <Label>Gender</Label>
+                    <div className="flex gap-2">
+                      <label className="flex items-center gap-1"><input type="radio" checked={deityForm.gender === "male"} onChange={() => updateDeity("gender", "male")} /> Male</label>
+                      <label className="flex items-center gap-1"><input type="radio" checked={deityForm.gender === "female"} onChange={() => updateDeity("gender", "female")} /> Female</label>
+                    </div>
                   </div>
-                </div>
-                <Field label="Image">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={async event => {
-                      const file = event.target.files?.[0];
-                      if (file) {
-                        updateDeity("imageUrl", await readUploadedImage(file));
-                        updateDeity("imageHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
-                      }
-                    }}
-                  />
-                  {deityForm.imageUrl && <ManagedImage src={deityForm.imageUrl} alt="Deity preview" width={96} height={96} className="mt-2 h-24 w-24 rounded-full object-cover" />}
-                </Field>
-                <Field label="Image Hint"><Input value={deityForm.imageHint} onChange={event => updateDeity("imageHint", event.target.value)} /></Field>
-                <Field label="Ashtotharam"><Textarea className="font-telugu" value={deityForm.ashtotharam} onChange={event => updateDeity("ashtotharam", event.target.value)} /></Field>
-                <Field label="Sahasranamam"><Textarea className="font-telugu" value={deityForm.sahasranamam} onChange={event => updateDeity("sahasranamam", event.target.value)} /></Field>
-                <div className="flex gap-2">
-                  <Button onClick={saveCurrentDeity} disabled={isSaving}>
-                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                    Save Deity
-                  </Button>
-                  <Button variant="outline" onClick={() => setDeityForm(emptyDeity())}>New</Button>
-                </div>
+                  <Field label="Image">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async event => {
+                        const file = event.target.files?.[0];
+                        if (file) {
+                          updateDeity("imageUrl", await readUploadedImage(file));
+                          updateDeity("imageHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
+                        }
+                      }}
+                    />
+                    {deityForm.imageUrl && <ManagedImage src={deityForm.imageUrl} alt="Deity preview" width={96} height={96} className="mt-2 h-24 w-24 rounded-full object-cover" />}
+                  </Field>
+                  <Field label="Image Hint"><Input value={deityForm.imageHint} onChange={event => updateDeity("imageHint", event.target.value)} /></Field>
+                  <Field label="Ashtotharam"><Textarea className="font-telugu" value={deityForm.ashtotharam} onChange={event => updateDeity("ashtotharam", event.target.value)} /></Field>
+                  <Field label="Sahasranamam"><Textarea className="font-telugu" value={deityForm.sahasranamam} onChange={event => updateDeity("sahasranamam", event.target.value)} /></Field>
+                  <div className="flex gap-2">
+                    <Button onClick={saveCurrentDeity} disabled={isSaving}>
+                      {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                      Save Deity
+                    </Button>
+                    <Button variant="outline" onClick={() => setDeityForm(emptyDeity())}>New</Button>
+                  </div>
+                </fieldset>
               </CardContent>
             </Card>
           </div>
@@ -488,19 +503,21 @@ export default function AdminPage() {
         <TabsContent value="contact">
           <Card className="max-w-3xl">
             <CardHeader><CardTitle>Edit Contact Page</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <Field label="Title"><Input value={contactForm.title} onChange={event => setContactForm(current => ({ ...current, title: event.target.value }))} /></Field>
-              <Field label="Subtitle"><Textarea value={contactForm.subtitle} onChange={event => setContactForm(current => ({ ...current, subtitle: event.target.value }))} /></Field>
-              <Field label="Phone"><Input value={contactForm.phone} onChange={event => setContactForm(current => ({ ...current, phone: event.target.value }))} /></Field>
-              <Field label="Email"><Input value={contactForm.email} onChange={event => setContactForm(current => ({ ...current, email: event.target.value }))} /></Field>
-              <Field label="Address"><Textarea value={contactForm.address} onChange={event => setContactForm(current => ({ ...current, address: event.target.value }))} /></Field>
-              <Field label="Hours"><Input value={contactForm.hours} onChange={event => setContactForm(current => ({ ...current, hours: event.target.value }))} /></Field>
-              <Field label="WhatsApp"><Input value={contactForm.whatsapp} onChange={event => setContactForm(current => ({ ...current, whatsapp: event.target.value }))} /></Field>
-              <Field label="Map URL"><Input value={contactForm.mapUrl} onChange={event => setContactForm(current => ({ ...current, mapUrl: event.target.value }))} /></Field>
-              <Button disabled={isSaving} onClick={() => void runAdminAction(() => saveContact(contactForm), "Contact page saved")}>
-                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Save Contact Page
-              </Button>
+            <CardContent>
+              <fieldset disabled={isSaving} className="space-y-4">
+                <Field label="Title"><Input value={contactForm.title} onChange={event => setContactForm(current => ({ ...current, title: event.target.value }))} /></Field>
+                <Field label="Subtitle"><Textarea value={contactForm.subtitle} onChange={event => setContactForm(current => ({ ...current, subtitle: event.target.value }))} /></Field>
+                <Field label="Phone"><Input value={contactForm.phone} onChange={event => setContactForm(current => ({ ...current, phone: event.target.value }))} /></Field>
+                <Field label="Email"><Input value={contactForm.email} onChange={event => setContactForm(current => ({ ...current, email: event.target.value }))} /></Field>
+                <Field label="Address"><Textarea value={contactForm.address} onChange={event => setContactForm(current => ({ ...current, address: event.target.value }))} /></Field>
+                <Field label="Hours"><Input value={contactForm.hours} onChange={event => setContactForm(current => ({ ...current, hours: event.target.value }))} /></Field>
+                <Field label="WhatsApp"><Input value={contactForm.whatsapp} onChange={event => setContactForm(current => ({ ...current, whatsapp: event.target.value }))} /></Field>
+                <Field label="Map URL"><Input value={contactForm.mapUrl} onChange={event => setContactForm(current => ({ ...current, mapUrl: event.target.value }))} /></Field>
+                <Button disabled={isSaving} onClick={() => void runAdminAction(() => saveContact(contactForm), "Contact page saved")}>
+                  {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Save Contact Page
+                </Button>
+              </fieldset>
             </CardContent>
           </Card>
         </TabsContent>

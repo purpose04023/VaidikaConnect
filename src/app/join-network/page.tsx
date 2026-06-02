@@ -329,7 +329,7 @@ export default function JoinNetworkPage() {
                 </div>
                 <div className="p-6">
                   <div className="grid max-h-72 gap-2 overflow-auto rounded-xl border border-border/60 p-4 sm:grid-cols-2 lg:grid-cols-3 bg-muted/30">
-                    {pujas.map((puja) => (
+                    {pujas.filter((puja) => puja.name_en && puja.name_en.trim() !== '').map((puja) => (
                       <label
                         key={puja.id}
                         className="flex items-center gap-2 text-sm py-1.5 px-2 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors"

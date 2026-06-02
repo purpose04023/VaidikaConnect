@@ -31,10 +31,10 @@ export function DeityClient({ id, initialDeity }: { id: string; initialDeity: De
     return text.split('\n\n').map((stanza, i) => (
       <div 
         key={i} 
-        className="mb-6 p-6 md:p-8 rounded-2xl bg-white/5 dark:bg-black/20 border border-primary/10 shadow-lg backdrop-blur-sm transition-all hover:border-primary/30 hover:bg-white/10 dark:hover:bg-black/30"
+        className="mb-8 p-6 md:p-10 rounded-2xl bg-muted/20 dark:bg-black/15 border border-primary/10 shadow-md hover:shadow-xl transition-all duration-300 hover:border-amber-500/30 w-full h-full"
       >
         {stanza.split('\n').map((line, j) => (
-          <p key={j} className="my-2 text-xl md:text-2xl font-telugu text-foreground/90 font-medium tracking-wide">
+          <p key={j} className="my-3 text-base md:text-lg lg:text-xl leading-relaxed font-telugu text-foreground/90 font-medium tracking-wide">
             {line.trim()}
           </p>
         ))}
@@ -74,8 +74,7 @@ export function DeityClient({ id, initialDeity }: { id: string; initialDeity: De
         <p className="text-muted-foreground text-xl md:text-2xl tracking-widest uppercase">{deity.nameEn}</p>
       </div>
 
-      <div className="glass-card p-4 md:p-10 lg:p-16 rounded-[2.5rem] border border-primary/20 shadow-2xl bg-background/80 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-5 pointer-events-none mix-blend-overlay"></div>
+      <div className="bg-card rounded-2xl shadow-xl p-6 md:p-12 border border-border/50 relative overflow-hidden w-full h-full">
         
         <Tabs defaultValue="ashtotharam" className="w-full relative z-10">
           <div className="flex justify-center mb-12 border-b border-border/40 pb-2 overflow-x-auto">

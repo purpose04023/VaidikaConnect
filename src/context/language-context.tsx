@@ -39,19 +39,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         const supportedLanguages: Language[] = ['en', 'te', 'ta', 'ka', 'hi'];
         if (supportedLanguages.includes(langCode as Language)) {
           setLanguage(langCode as Language);
-          
-          if (langCode !== 'en') {
-            const googleLangMap: { [key: string]: string } = {
-              en: 'en',
-              te: 'te',
-              ta: 'ta',
-              ka: 'kn',
-              hi: 'hi'
-            };
-            const target = googleLangMap[langCode] || langCode;
-            document.cookie = `googtrans=/en/${target}; path=/;`;
-            document.cookie = `googtrans=/en/${target}; path=/; domain=${window.location.hostname};`;
-          }
         }
       }
     }
@@ -61,26 +48,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLanguage(newLang);
     if (typeof window !== 'undefined') {
       localStorage.setItem('language_pref', newLang);
-      
-      const googleLangMap: { [key: string]: string } = {
-        en: 'en',
-        te: 'te',
-        ta: 'ta',
-        ka: 'kn',
-        hi: 'hi'
-      };
-      const target = googleLangMap[newLang] || newLang;
-
-      if (newLang === 'en') {
-        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
-      } else {
-        document.cookie = `googtrans=/en/${target}; path=/;`;
-        document.cookie = `googtrans=/en/${target}; path=/; domain=${window.location.hostname};`;
-      }
-      
-      // Reload page to instantly apply Google Translate to the entire DOM
-      window.location.reload();
     }
   }, []);
 
