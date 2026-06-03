@@ -43,25 +43,50 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
-      if (error) throw error;
+      
+      if (authError) {
+        console.error("SUPABASE DB ERROR: ", JSON.stringify(authError, null, 2));
+        throw authError;
+      }
+
+      if (user) {
+        // Query the user's profile data immediately to capture any table schema or permission issues
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error("SUPABASE DB ERROR: ", JSON.stringify(profileError, null, 2));
+          throw profileError;
+        }
+        console.log("Successfully retrieved user profile schema:", profileData);
+      }
+
       router.push('/');
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',
       });
     } catch (error: any) {
-      console.error(error);
+      console.error("AUTH/DB CATCH ERROR:", error);
+      
+      // Construct a detailed error message displaying raw message or code details
+      const errorMsg = error.message || error.details || (error.code ? `Error Code: ${error.code}` : JSON.stringify(error));
+      
       toast({
         variant: 'destructive',
         title: 'Uh oh! Something went wrong.',
-        description: error.message || 'Could not sign you in.',
+        description: errorMsg,
       });
     }
   }
+
 
   return (
     <div className="container flex min-h-[calc(100vh-56px)] items-center justify-center py-12">
