@@ -57,8 +57,14 @@ export function Hero({
 
             {/* Massive Heading (Tightly tracked modern Sans-Serif font) */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter font-extrabold text-white leading-[1.05] break-words whitespace-normal font-sans">
-              Ancient Vedic Legacy.<br />
-              <span className="gold-gradient-text">Modern Divine Experience.</span>
+              {title.includes(".") ? (
+                <>
+                  {title.split(".")[0]}.<br />
+                  <span className="gold-gradient-text">{title.split(".")[1]}</span>
+                </>
+              ) : (
+                title
+              )}
             </h1>
 
             {/* Dynamic Content Subtitle */}
@@ -89,9 +95,9 @@ export function Hero({
             {/* Quick stats (Glassmorphic containers) */}
             <div className="grid grid-cols-3 gap-4 md:gap-6 pt-6 w-full max-w-lg">
               {[
-                { num: "68+", label: "Sacred Programs" },
-                { num: "500+", label: "Happy Families" },
-                { num: "30+", label: "Expert Pujaris" },
+                { num: "68+", label: language === "te" ? "పూజా కార్యక్రమాలు" : "Sacred Programs" },
+                { num: "500+", label: language === "te" ? "ఆనందకరమైన కుటుంబాలు" : "Happy Families" },
+                { num: "30+", label: language === "te" ? "ప్రముఖ పండితులు" : "Expert Pujaris" },
               ].map((stat) => (
                 <div key={stat.label} className="glass-card rounded-2xl p-4 text-center border border-white/[0.04] bg-white/[0.01] hover:border-primary/20 hover:bg-white/[0.03] transition-all duration-500">
                   <p className="text-2xl md:text-3xl font-extrabold gold-gradient-text tracking-tighter">{stat.num}</p>
