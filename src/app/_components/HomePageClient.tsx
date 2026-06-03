@@ -46,21 +46,21 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
         <div className="container mx-auto px-4">
           <h2 className="font-headline text-3xl md:text-5xl font-bold mb-16 tracking-tight text-foreground">{t('home.how_it_works_title')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left">
-            <div className="flex flex-col items-center text-center p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+            <div className="flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card">
               <div className="flex items-center justify-center h-16 w-16 rounded-full bg-amber-500/10 text-amber-500 mb-6 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                 <Search className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold mb-3">{t('home.how_it_works_step1_title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{t('home.how_it_works_step1_desc')}</p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+            <div className="flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card">
               <div className="flex items-center justify-center h-16 w-16 rounded-full bg-amber-500/10 text-amber-500 mb-6 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                 <Users className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold mb-3">{t('home.how_it_works_step2_title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{t('home.how_it_works_step2_desc')}</p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+            <div className="flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card">
               <div className="flex items-center justify-center h-16 w-16 rounded-full bg-amber-500/10 text-amber-500 mb-6 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                 <CheckCircle className="h-8 w-8" />
               </div>
@@ -72,7 +72,7 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
       </section>
       
       {/* All Programs Section */}
-      <section className="w-full py-24 md:py-32 bg-white/[0.01] border-y border-white/5 relative">
+      <section className="w-full py-24 md:py-32 bg-secondary/20 border-y border-border relative">
         <div className="container mx-auto px-4">
           <h2 className="font-headline text-3xl md:text-5xl font-bold mb-16 tracking-tight text-foreground">{t('home.programs_title')}</h2>
           <Carousel
@@ -101,7 +101,7 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
                       <CardContent className="p-6 flex-grow flex flex-col bg-transparent">
                         <h3 className="font-headline text-2xl font-bold text-foreground mb-3 leading-tight">{language === 'te' ? puja.name : puja.name_en}</h3>
                         <p className="text-sm text-muted-foreground mb-6 flex-grow leading-relaxed line-clamp-3">{language === 'te' ? puja.description_te : puja.description}</p>
-                        <Button asChild variant="outline" className="mt-auto border-white/10 hover:bg-white/10 hover:text-amber-400 transition-all rounded-xl">
+                        <Button asChild variant="outline" className="mt-auto border-border hover:bg-secondary/40 hover:text-amber-500 transition-all rounded-xl">
                           <Link href="/programs" className="flex items-center gap-2">
                             {t('home.programs_cta')} <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
@@ -112,8 +112,8 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden sm:flex border-white/10 hover:bg-white/5 hover:text-amber-400" />
-            <CarouselNext className="hidden sm:flex border-white/10 hover:bg-white/5 hover:text-amber-400" />
+            <CarouselPrevious className="hidden sm:flex border-border hover:bg-secondary/40 hover:text-amber-500" />
+            <CarouselNext className="hidden sm:flex border-border hover:bg-secondary/40 hover:text-amber-500" />
           </Carousel>
         </div>
       </section>

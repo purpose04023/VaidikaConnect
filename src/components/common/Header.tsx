@@ -42,7 +42,7 @@ export function Header() {
 
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 border-b border-white/10 bg-black/60 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 w-full z-50 border-b border-border bg-background/60 backdrop-blur-xl">
       <div className="container mx-auto flex h-14 max-w-screen-2xl items-center px-4">
 
         <div className="mr-4 flex items-center">
