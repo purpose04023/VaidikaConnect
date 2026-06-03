@@ -13,7 +13,7 @@ export function Hero({
   title: string; 
   subtitle: string; 
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
     <section className="w-full bg-[#050505] min-h-[90vh] flex items-center relative overflow-hidden py-16 md:py-28 border-b border-white/[0.03]">
@@ -71,13 +71,14 @@ export function Hero({
               {/* Highly stylized, glowing pill-shape "Explore Poojas" button */}
               <Link href="/explore" className="group relative rounded-full p-[1.5px] transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,140,0,0.6)] focus:outline-none focus:ring-2 focus:ring-primary inline-block">
                 <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF8C00] via-[#E4B363] to-[#FF8C00] p-[1.5px]" />
-                <div className="px-8 py-4 rounded-full bg-[#050505] transition-all duration-300 group-hover:bg-transparent flex items-center justify-center gap-3">
-                  <span className="text-white group-hover:text-black font-extrabold tracking-wide text-base transition-colors duration-300">
-                    {t('home.hero_cta_explore') || "Explore Poojas"}
+                <div className="px-8 py-4 rounded-full bg-gradient-to-r from-[#FF8C00] to-[#E4B363] flex items-center justify-center gap-3 relative z-10">
+                  <span className="text-black font-extrabold tracking-wide text-base">
+                    {t('home.hero_cta_explore') || (language === 'te' ? "పూజలను అన్వేషించండి" : "Explore Pujas")}
                   </span>
-                  <ArrowRight className="h-5 w-5 text-primary group-hover:text-black transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight className="h-5 w-5 text-black transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
               </Link>
+
 
               {/* Login Button with Glassmorphism */}
               <Button asChild size="lg" className="rounded-full bg-white/[0.03] border border-white/[0.08] text-white hover:bg-white/[0.08] hover:border-white/[0.15] hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] px-8 py-6 text-base font-semibold tracking-wide transition-all h-auto">

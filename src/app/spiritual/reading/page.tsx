@@ -22,63 +22,63 @@ export default function SpiritualReadingPage() {
   // Standalone Stotramanjari platform on GitHub Pages
   const stotramanjariBase = "https://master43721.github.io/stotramanjari";
 
-  // Categories mapping directly to Stotramanjari navigation anchors
+  // Categories mapping directly to Stotramanjari navigation query params
   const categories = [
     {
       nameTe: "నిత్య పారాయణ శ్లోకాలు",
       nameEn: "Daily Chants",
       icon: Sun,
       color: "text-amber-500",
-      url: `${stotramanjariBase}/#daily`
+      url: `${stotramanjariBase}/?category=daily`
     },
     {
       nameTe: "గణేశ స్తోత్రాలు",
       nameEn: "Ganesha Stotrams",
       icon: Sparkles,
       color: "text-amber-400",
-      url: `${stotramanjariBase}/#ganesha`
+      url: `${stotramanjariBase}/?category=ganesha`
     },
     {
       nameTe: "శివ స్తోత్రాలు",
       nameEn: "Shiva Stotrams",
       icon: Flame,
       color: "text-[#FF8C00]",
-      url: `${stotramanjariBase}/#shiva`
+      url: `${stotramanjariBase}/?category=shiva`
     },
     {
       nameTe: "విష్ణు స్తోత్రాలు",
       nameEn: "Vishnu Stotrams",
       icon: Star,
       color: "text-[#E4B363]",
-      url: `${stotramanjariBase}/#vishnu`
+      url: `${stotramanjariBase}/?category=vishnu`
     },
     {
       nameTe: "దేవీ స్తోత్రాలు",
       nameEn: "Devi Stotrams",
       icon: Heart,
       color: "text-rose-500",
-      url: `${stotramanjariBase}/#devi`
+      url: `${stotramanjariBase}/?category=devi`
     },
     {
       nameTe: "రామ స్తోత్రాలు",
       nameEn: "Rama Stotrams",
       icon: Flower,
       color: "text-emerald-400",
-      url: `${stotramanjariBase}/#rama`
+      url: `${stotramanjariBase}/?category=rama`
     },
     {
       nameTe: "హనుమద్ స్తోత్రాలు",
       nameEn: "Hanuman Stotrams",
       icon: Compass,
       color: "text-blue-400",
-      url: `${stotramanjariBase}/#hanuman`
+      url: `${stotramanjariBase}/?category=hanuman`
     },
     {
       nameTe: "వేద సూక్తములు",
       nameEn: "Vedic Suktams",
       icon: BookOpen,
       color: "text-purple-400",
-      url: `${stotramanjariBase}/#vedas`
+      url: `${stotramanjariBase}/?category=vedas`
     }
   ];
 
@@ -201,7 +201,7 @@ export default function SpiritualReadingPage() {
                     {/* Navigation CTA button */}
                     <div className="mt-6 pt-4 border-t border-white/5">
                       <a
-                        href={`${stotramanjariBase}/readings/${deity.id}`}
+                        href={`${stotramanjariBase}/?category=${deity.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-white/[0.02] hover:bg-gradient-to-r hover:from-[#FF8C00] hover:to-[#E4B363] border border-white/[0.08] hover:border-transparent text-white hover:text-black font-extrabold text-sm transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,140,0,0.3)] shadow-[inset_0_1px_2px_rgba(255,255,255,0.05)]"
