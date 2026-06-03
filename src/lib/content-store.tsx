@@ -127,93 +127,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [requests, setRequests] = useState<PujariJoinRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Seeding mechanism if database tables are empty
-  const seedDatabaseIfNeeded = useCallback(async (
-    pujasCount: number,
-    pujarisCount: number,
-    deitiesCount: number
-  ) => {
-    // Only admins or local sessions can trigger initial seed
-    try {
-      if (pujasCount === 0) {
-        console.log("Seeding programs table...");
-        const payload = defaultPujas.map((p) => ({
-          id: stableUuid(p.id),
-          title: p.name_en,
-          title_te: p.name,
-          description: p.description,
-          description_te: p.description_te,
-          image_url: p.image,
-          image_hint: p.imageHint,
-          category: p.category,
-          category_en: p.category_en,
-          categories: p.categories || [],
-          required_items: p.required_items || [],
-          sloka_tags: p.sloka_tags || [],
-          pdf_url: p.pdf_url,
-        }));
-        await supabase.from("programs").insert(payload);
-      }
 
-      if (pujarisCount === 0) {
-        console.log("Seeding profiles (poojaris) table...");
-        const payload = defaultPujaris.map((p) => ({
-          id: stableUuid(p.id),
-          role: "poojari",
-          full_name: p.name,
-          photo: p.photo || fallbackPhoto,
-          photo_hint: p.photoHint || "indian pujari",
-          verified: p.verified ?? true,
-          verified_by: p.verifiedBy || "VaidikaConnect",
-          verified_at: p.verifiedAt || "2026-05-03",
-          rating: p.rating,
-          review_count: p.reviewCount,
-          base_price: p.basePrice,
-          qualifications: p.qualifications,
-          languages: p.languages,
-          experience_years: p.experience,
-          pujas: p.pujas.map(stableUuid),
-          max_participants: p.maxParticipants,
-          lat: p.location.lat,
-          lng: p.location.lng,
-          description: p.description,
-          phone_call: p.phone,
-          phone_whatsapp: p.whatsapp || p.phone,
-          available_timings: p.availableTimings || "Morning Slot, Evening Slot",
-          gallery: p.gallery,
-          reviews: p.reviews,
-        }));
-        await supabase.from("profiles").insert(payload);
-      }
-
-      if (deitiesCount === 0) {
-        console.log("Seeding stotrams table...");
-        const payload = defaultDeities.map((d) => ({
-          id: stableUuid(d.id),
-          deity_name: d.nameEn,
-          name_te: d.name,
-          gender: d.gender,
-          image_hint: d.imageHint,
-          image_url: d.imageUrl,
-          ashtotharam_url: d.ashtotharamUrl,
-          sahasranamam_url: d.sahasranamamUrl,
-        }));
-        await supabase.from("stotrams").insert(payload);
-      }
-
-      // Seed global settings (settings & contact)
-      const { data: currentSettings } = await supabase.from("global_settings").select("*");
-      if (!currentSettings || currentSettings.length === 0) {
-        console.log("Seeding global settings...");
-        await supabase.from("global_settings").insert([
-          { id: "settings", value: JSON.stringify(defaultSettings) },
-          { id: "contact", value: JSON.stringify(defaultContact) },
-        ]);
-      }
-    } catch (e) {
-      console.error("Database seeding exception:", e);
-    }
-  }, [supabase]);
 
   // Fetch all content from Supabase
   const refreshContent = useCallback(async () => {
@@ -334,14 +248,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         );
       }
 
-      // Check if we need to auto-seed
-      if (pujasList.length === 0 || pujarisList.length === 0 || deitiesList.length === 0) {
-        await seedDatabaseIfNeeded(pujasList.length, pujarisList.length, deitiesList.length);
-        // Re-run fetching after seeding
-        setTimeout(() => refreshContent(), 100);
-        return;
-      }
-
       setPujas(pujasList);
       setPujaris(pujarisList);
       setDeities(deitiesList);
@@ -353,7 +259,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [supabase, seedDatabaseIfNeeded, isAdmin]);
+  }, [supabase, isAdmin]);
 
   // Initial load
   useEffect(() => {
@@ -598,8 +504,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     await supabase.from("global_settings").delete().neq("id", "admin-key");
     await supabase.from("join_requests").delete().neq("status", "approved");
 
-    await seedDatabaseIfNeeded(0, 0, 0);
-  }, [supabase, ensureAdmin, seedDatabaseIfNeeded]);
+    // Seeding removed — use admin tools to re-populate if needed
+  }, [supabase, ensureAdmin]);
 
   const saveDeity = useCallback(
     async (deity: Deity) => {
