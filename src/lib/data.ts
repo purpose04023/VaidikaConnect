@@ -10,12 +10,30 @@ export interface Puja {
   imageHint: string;
   category: 'వ్రతాలు' | 'నోములు' | 'హోమాలు' | 'పూజలు' | 'కళ్యాణములు' | 'దోష పరిహార పూజలు' | 'దీక్ష పూజలు';
   category_en: 'Vratas' | 'Nomulu' | 'Homams' | 'Pujas' | 'Kalyanams' | 'Dosha Parihara Pujas' | 'Deeksha Pujas';
+  program_type?: 'VAIDIKA_POOJA' | 'LIFE_CYCLE_POOJA';
   required_items?: string[];
   sloka_tags?: { name: string; link: string }[];
   pdf_url?: string;
   categories?: string[];
 }
 
+
+export interface Region {
+  id: string;
+  name: string;
+}
+
+export interface Temple {
+  id: string;
+  name: string;
+  state: string;
+  location: string;
+  image: string;
+  banner_image: string;
+  description: string;
+  contact: string;
+  booking_link: string;
+}
 
 export interface Pujari {
   id: number | string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Puja, Pujari } from "@/lib/data";
+import type { Puja, Pujari, Temple, Region } from "@/lib/data";
 import type { Deity } from "@/lib/data/stotrams";
 import { useContent, type ContactContent, type GlobalSettings } from "@/lib/content-store";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen, Settings } from "lucide-react";
+import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen, Settings, Landmark, Map } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/hooks/use-auth";
 import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
@@ -24,6 +24,25 @@ import { compressImage } from "@/lib/utils";
 type PujaForm = Puja;
 type PujariForm = Pujari;
 type DeityForm = Deity;
+type TempleForm = Temple;
+type RegionForm = Region;
+
+const emptyRegion = (): RegionForm => ({
+  id: `region-${Date.now()}`,
+  name: "",
+});
+
+const emptyTemple = (): TempleForm => ({
+  id: `temple-${Date.now()}`,
+  name: "",
+  state: "Andhra Pradesh",
+  location: "",
+  image: "",
+  banner_image: "",
+  description: "",
+  contact: "",
+  booking_link: "",
+});
 
 const emptyDeity = (): DeityForm => ({
   id: `deity-${Date.now()}`,
@@ -44,6 +63,7 @@ const emptyPuja = (nextId: string | number): PujaForm => ({
   description_te: "",
   image: "https://images.unsplash.com/photo-1644233771847-adbb3b5aa580?auto=format&fit=crop&w=1200&q=80",
   imageHint: "puja ritual",
+  program_type: "VAIDIKA_POOJA",
   category: "" as Puja["category"],
   category_en: "Pujas",
   required_items: [],
@@ -100,6 +120,8 @@ export default function AdminPage() {
   const {
     pujas,
     pujaris,
+    temples,
+    regions,
     deities,
     requests,
     contact,
@@ -108,6 +130,10 @@ export default function AdminPage() {
     deletePuja,
     savePujari,
     deletePujari,
+    saveTemple,
+    deleteTemple,
+    saveRegion,
+    deleteRegion,
     saveDeity,
     deleteDeity,
     saveContact,
@@ -119,6 +145,8 @@ export default function AdminPage() {
   const [pujaForm, setPujaForm] = useState<PujaForm>(() => emptyPuja(nextId(pujas)));
   const [pujariForm, setPujariForm] = useState<PujariForm>(() => emptyPujari(nextId(pujaris), pujas.map(puja => puja.id)));
   const [deityForm, setDeityForm] = useState<DeityForm>(emptyDeity);
+  const [templeForm, setTempleForm] = useState<TempleForm>(emptyTemple);
+  const [regionForm, setRegionForm] = useState<RegionForm>(emptyRegion);
   const [contactForm, setContactForm] = useState<ContactContent>(contact);
   const [settingsForm, setSettingsForm] = useState<GlobalSettings>(settings || {});
   const [isSaving, setIsSaving] = useState(false);
@@ -243,6 +271,14 @@ export default function AdminPage() {
     setDeityForm(current => ({ ...current, [key]: value }));
   };
 
+  const updateTemple = <K extends keyof TempleForm>(key: K, value: TempleForm[K]) => {
+    setTempleForm(current => ({ ...current, [key]: value }));
+  };
+
+  const updateRegion = <K extends keyof RegionForm>(key: K, value: RegionForm[K]) => {
+    setRegionForm(current => ({ ...current, [key]: value }));
+  };
+
   const togglePujariPuja = (id: string | number) => {
     setPujariForm(current => ({
       ...current,
@@ -279,6 +315,20 @@ export default function AdminPage() {
     }, "Deity saved");
   };
 
+  const saveCurrentTemple = () => {
+    void runAdminAction(async () => {
+      await saveTemple(templeForm);
+      setTempleForm(emptyTemple());
+    }, "Temple saved");
+  };
+
+  const saveCurrentRegion = () => {
+    void runAdminAction(async () => {
+      await saveRegion(regionForm);
+      setRegionForm(emptyRegion());
+    }, "Region saved");
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -296,11 +346,141 @@ export default function AdminPage() {
         <TabsList className="h-auto flex flex-wrap justify-start">
           <TabsTrigger value="pujas"><FilePlus className="mr-2 h-4 w-4" />Pujas</TabsTrigger>
           <TabsTrigger value="pujaris"><BadgeCheck className="mr-2 h-4 w-4" />Pujaris</TabsTrigger>
+          <TabsTrigger value="regions"><Map className="mr-2 h-4 w-4" />Regions</TabsTrigger>
+          <TabsTrigger value="temples"><Landmark className="mr-2 h-4 w-4" />Temples</TabsTrigger>
           <TabsTrigger value="deities"><BookOpen className="mr-2 h-4 w-4" />Deities</TabsTrigger>
           <TabsTrigger value="requests"><UserPlus className="mr-2 h-4 w-4" />Requests ({requests.length})</TabsTrigger>
           <TabsTrigger value="contact"><Contact className="mr-2 h-4 w-4" />Contact</TabsTrigger>
           <TabsTrigger value="settings"><Settings className="mr-2 h-4 w-4" />Global Settings</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="regions" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
+            <div className="space-y-3 max-h-[80vh] overflow-y-auto pr-2">
+              {regions.map(region => (
+                <Card key={region.id}>
+                  <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-center">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-lg">{region.name}</h3>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setRegionForm(region)}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this region?") && void runAdminAction(() => deleteRegion(region.id), "Region deleted")}>
+                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <Card className="sticky top-4">
+              <CardHeader>
+                <CardTitle>{regions.some(r => r.id === regionForm.id) ? "Edit Region" : "Add Region"}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <fieldset disabled={isSaving} className="space-y-4">
+                  <Field label="Region Name"><Input value={regionForm.name} onChange={event => updateRegion("name", event.target.value)} placeholder="e.g. Karnataka" /></Field>
+                  <div className="flex gap-2 pt-2">
+                    <Button onClick={saveCurrentRegion} disabled={isSaving}>
+                      {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                      Save Region
+                    </Button>
+                    <Button variant="outline" onClick={() => setRegionForm(emptyRegion())}>New</Button>
+                  </div>
+                </fieldset>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="temples" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
+            <div className="space-y-3 max-h-[80vh] overflow-y-auto pr-2">
+              {temples.map(temple => (
+                <Card key={temple.id}>
+                  <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-center">
+                    <ManagedImage src={temple.image} alt={temple.name} width={120} height={80} className="h-20 w-32 rounded-md object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-semibold">{temple.name}</h3>
+                        <Badge variant="secondary">{temple.state}</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{temple.location}</p>
+                      <p className="line-clamp-2 text-sm text-muted-foreground mt-1">{temple.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setTempleForm(temple)}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="destructive" size="sm" disabled={isSaving} onClick={() => window.confirm("Delete this temple?") && void runAdminAction(() => deleteTemple(temple.id), "Temple deleted")}>
+                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <Card className="sticky top-4">
+              <CardHeader>
+                <CardTitle>{temples.some(t => t.id === templeForm.id) ? "Edit Temple" : "Add Temple"}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <fieldset disabled={isSaving} className="space-y-4 max-h-[70vh] overflow-y-auto px-1 pb-4">
+                  <Field label="Temple Name"><Input value={templeForm.name} onChange={event => updateTemple("name", event.target.value)} /></Field>
+                  <Field label="Region (State)">
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      value={templeForm.state}
+                      onChange={e => updateTemple("state", e.target.value)}
+                    >
+                      <option value="">Select Region</option>
+                      {regions.map(region => (
+                        <option key={region.id} value={region.name}>{region.name}</option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Location / City"><Input value={templeForm.location} onChange={event => updateTemple("location", event.target.value)} /></Field>
+                  
+                  <Field label="Grid Image (Square/Landscape)">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async event => {
+                        const file = event.target.files?.[0];
+                        if (file) updateTemple("image", await readUploadedImage(file));
+                      }}
+                    />
+                    {templeForm.image && <ManagedImage src={templeForm.image} alt="Temple preview" width={160} height={100} className="h-24 w-40 rounded-md object-cover mt-2" />}
+                  </Field>
+
+                  <Field label="Banner Image (Wide Header)">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async event => {
+                        const file = event.target.files?.[0];
+                        if (file) updateTemple("banner_image", await readUploadedImage(file));
+                      }}
+                    />
+                    {templeForm.banner_image && <ManagedImage src={templeForm.banner_image} alt="Banner preview" width={320} height={100} className="h-20 w-full rounded-md object-cover mt-2" />}
+                  </Field>
+
+                  <Field label="Description / History"><Textarea rows={4} value={templeForm.description} onChange={event => updateTemple("description", event.target.value)} /></Field>
+                  <Field label="Contact Details"><Textarea rows={2} value={templeForm.contact} onChange={event => updateTemple("contact", event.target.value)} /></Field>
+                  <Field label="External Booking Link"><Input value={templeForm.booking_link} onChange={event => updateTemple("booking_link", event.target.value)} /></Field>
+                  
+                  <div className="flex gap-2 pt-2">
+                    <Button onClick={saveCurrentTemple} disabled={isSaving}>
+                      {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                      Save Temple
+                    </Button>
+                    <Button variant="outline" onClick={() => setTempleForm(emptyTemple())}>New</Button>
+                  </div>
+                </fieldset>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
         <TabsContent value="pujas" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
@@ -336,17 +516,28 @@ export default function AdminPage() {
                   <Field label="English Name"><Input value={pujaForm.name_en} onChange={event => updatePuja("name_en", event.target.value)} /></Field>
                   <Field label="Telugu Name"><Input value={pujaForm.name} onChange={event => updatePuja("name", event.target.value)} /></Field>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <Field label="Category">
+                  <Field label="Program Type">
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      value={pujaForm.program_type || "VAIDIKA_POOJA"}
+                      onChange={e => updatePuja("program_type", e.target.value as any)}
+                    >
+                      <option value="VAIDIKA_POOJA">Vaidika Pooja (Regular Programs)</option>
+                      <option value="LIFE_CYCLE_POOJA">Life Cycle Pooja (Samskaras)</option>
+                    </select>
+                  </Field>
+                  
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <Field label="Sub-Category (English)">
                       <Input list="puja-categories" value={pujaForm.category_en} onChange={event => updatePuja("category_en", event.target.value as Puja["category_en"])} />
                       <datalist id="puja-categories">{categoryOptions.map(category => <option key={category} value={category} />)}</datalist>
                     </Field>
-                    <Field label="Telugu Category"><Input value={pujaForm.category} onChange={event => updatePuja("category", event.target.value as Puja["category"])} /></Field>
+                    <Field label="Sub-Category (Telugu)"><Input value={pujaForm.category} onChange={event => updatePuja("category", event.target.value as Puja["category"])} /></Field>
                   </div>
 
                   <Field label="Predefined Categories (Tags)">
                     <div className="grid grid-cols-2 gap-2 mt-1 border border-border/40 p-3 rounded-lg bg-muted/10">
-                      {["Deeksha Poojalu", "Prenatal", "Childhood", "Homams", "Kalyanams", "Vratas"].map(cat => (
+                      {["Deeksha Poojalu", "Prenatal", "Childhood", "Youth & Education", "Adulthood & Marriage", "General / Auspicious", "Homams", "Kalyanams", "Vratas"].map(cat => (
                         <label key={cat} className="flex items-center gap-2 text-sm cursor-pointer select-none">
                           <Checkbox
                             checked={(pujaForm.categories || []).includes(cat)}

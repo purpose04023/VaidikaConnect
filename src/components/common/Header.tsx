@@ -78,8 +78,17 @@ export function Header() {
                   </span>
                 </Link>
                 <nav className="flex flex-col space-y-4 text-sm font-medium">
-                  <Link href="/programs" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5 border-b border-border/40" onClick={() => setIsOpen(false)}>
-                    Programs
+                  <div className="flex flex-col space-y-2">
+                    <span className="text-foreground font-semibold py-1.5 border-b border-border/40">Programs</span>
+                    <Link href="/programs?category=VAIDIKA_POOJA" className="text-foreground/60 transition-colors hover:text-foreground/80 pl-4 py-1" onClick={() => setIsOpen(false)}>
+                      Vaidika Poojas
+                    </Link>
+                    <Link href="/programs?category=LIFE_CYCLE_POOJA" className="text-foreground/60 transition-colors hover:text-foreground/80 pl-4 py-1" onClick={() => setIsOpen(false)}>
+                      Life Cycle Poojas
+                    </Link>
+                  </div>
+                  <Link href="/pilgrimage/darshan" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5 border-b border-border/40" onClick={() => setIsOpen(false)}>
+                    Pilgrimage & Temples
                   </Link>
                   <Link href="/join-network" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5 border-b border-border/40" onClick={() => setIsOpen(false)}>
                     Join Network
@@ -110,8 +119,21 @@ export function Header() {
             </span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            <Link href="/programs" className="text-foreground/60 transition-colors hover:text-foreground/80">
-              Programs
+            <DropdownMenu>
+              <DropdownMenuTrigger className="text-foreground/60 transition-colors hover:text-foreground/80 outline-none">
+                Programs
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem asChild>
+                  <Link href="/programs?category=VAIDIKA_POOJA" className="w-full cursor-pointer">Vaidika Poojas</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA" className="w-full cursor-pointer">Life Cycle Poojas</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Link href="/pilgrimage/darshan" className="text-foreground/60 transition-colors hover:text-foreground/80">
+              Pilgrimage & Temples
             </Link>
             <Link href="/join-network" className="text-foreground/60 transition-colors hover:text-foreground/80">
               Join Network

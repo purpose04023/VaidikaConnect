@@ -47,14 +47,8 @@ export function Hero({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Left Column - Text Content (lg:col-span-7) */}
-          <div className="text-left flex flex-col items-start lg:col-span-7 space-y-6 md:space-y-8">
+          <div className="text-left flex flex-col items-start lg:col-span-7 space-y-6 md:space-y-8 -mt-4 lg:-mt-8">
             
-            {/* Trusted badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.08] backdrop-blur-md text-primary text-xs md:text-sm font-semibold tracking-wider uppercase animate-pulse-slow shadow-[0_0_15px_rgba(228,179,99,0.1)]">
-              <Sparkles className="h-4 w-4 text-primary animate-spin-slow" />
-              <span>✦ Trusted by 500+ families across Andhra Pradesh</span>
-            </div>
-
             {/* Massive Heading (Tightly tracked modern Sans-Serif font) */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter font-extrabold text-white leading-[1.05] break-words whitespace-normal font-sans">
               {title.includes(".") ? (
@@ -121,6 +115,7 @@ export function Hero({
                 <ManagedImage 
                   src="/images/deities/ganesha.png" 
                   alt="Lord Ganesha"
+                  fill
                   className="object-cover w-full h-full scale-105 hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
@@ -140,6 +135,7 @@ export function Hero({
                 <ManagedImage 
                   src="/images/deities/shiva.png" 
                   alt="Lord Shiva"
+                  fill
                   className="object-cover w-full h-full scale-105 hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

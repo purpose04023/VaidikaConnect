@@ -8,8 +8,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import type { Puja, Pujari } from "@/lib/data";
+import type { Puja, Pujari, Temple, Region } from "@/lib/data";
 import { defaultPujaris, defaultPujas } from "@/lib/data";
+import { defaultTemples } from "@/lib/data/temples";
 import type { Deity } from "@/lib/data/stotrams";
 import { stotramsData as defaultDeities } from "@/lib/data/stotrams";
 import { createClient } from "@/utils/supabase/client";
@@ -68,6 +69,8 @@ export interface PujariJoinRequest {
 interface ContentContextValue {
   pujas: Puja[];
   pujaris: Pujari[];
+  temples: Temple[];
+  regions: Region[];
   deities: Deity[];
   contact: ContactContent;
   settings: GlobalSettings;
@@ -77,6 +80,10 @@ interface ContentContextValue {
   deletePuja: (id: string | number) => Promise<void>;
   savePujari: (pujari: Pujari) => Promise<void>;
   deletePujari: (id: string | number) => Promise<void>;
+  saveTemple: (temple: Temple) => Promise<void>;
+  deleteTemple: (id: string) => Promise<void>;
+  saveRegion: (region: Region) => Promise<void>;
+  deleteRegion: (id: string) => Promise<void>;
   saveDeity: (deity: Deity) => Promise<void>;
   deleteDeity: (id: string) => Promise<void>;
   saveContact: (contact: ContactContent) => Promise<void>;
@@ -121,6 +128,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
   const [pujas, setPujas] = useState<Puja[]>([]);
   const [pujaris, setPujaris] = useState<Pujari[]>([]);
+  const [temples, setTemples] = useState<Temple[]>([]);
+  const [regions, setRegions] = useState<Region[]>([]);
   const [deities, setDeities] = useState<Deity[]>([]);
   const [contact, setContact] = useState<ContactContent>(defaultContact);
   const [settings, setSettings] = useState<GlobalSettings>(defaultSettings);
@@ -133,6 +142,37 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const refreshContent = useCallback(async () => {
     setIsLoading(true);
     try {
+      // 0a. Fetch regions
+      const { data: dbRegions } = await supabase.from("regions").select("*");
+      const regionsList: Region[] = (dbRegions || []).map((r) => ({
+        id: r.id,
+        name: r.name,
+      }));
+      if (regionsList.length === 0 && dbRegions !== null) {
+        regionsList.push({ id: "region-ap", name: "Andhra Pradesh" }, { id: "region-ts", name: "Telangana" });
+      }
+
+      // 0b. Fetch temples
+      const { data: dbTemples } = await supabase.from("temples").select("*");
+      const templesList: Temple[] = (dbTemples || []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        state: t.state,
+        location: t.location || "",
+        image: t.image || "",
+        banner_image: t.banner_image || "",
+        description: t.description || "",
+        contact: t.contact || "",
+        booking_link: t.booking_link || "",
+      }));
+
+      // Seed data if empty (since this is a new feature)
+      if (templesList.length === 0 && dbTemples !== null) {
+        // We might not have admin rights, but we can seed if RLS allows or we use defaults.
+        // For now, we will just use the hardcoded defaults if DB is completely empty.
+        templesList.push(...defaultTemples);
+      }
+
       // 1. Fetch programs
       const { data: dbPujas } = await supabase.from("programs").select("*");
       const pujasList: Puja[] = (dbPujas || []).map((p) => ({
@@ -145,6 +185,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         imageHint: p.image_hint || "ritual",
         category: p.category as any,
         category_en: p.category_en as any,
+        program_type: p.program_type as any,
         categories: p.categories || [],
         required_items: p.required_items || [],
         sloka_tags: p.sloka_tags || [],
@@ -228,21 +269,20 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           email: r.email || "",
           city: r.city || "",
           location: r.location || "",
-          qualifications: r.qualifications || [],
-          languages: r.languages || [],
+          qualifications: typeof r.qualifications === "string" ? fromCsv(r.qualifications) : r.qualifications || [],
+          languages: typeof r.languages === "string" ? fromCsv(r.languages) : r.languages || [],
           experience: r.experience || 0,
           basePrice: r.base_price || 5000,
           maxParticipants: r.max_participants || 50,
-          pujas: r.pujas || [],
+          pujas: typeof r.pujas === "string" ? fromCsv(r.pujas) : r.pujas || [],
           description: r.description || "",
-          whatsapp: r.whatsapp || "",
+          whatsapp: r.whatsapp || r.phone,
           availableTimings: r.available_timings || "",
-          lat: r.lat,
-          lng: r.lng,
-          status: r.status,
-          submittedAt: r.submitted_at,
+          lat: r.lat || 16.3067,
+          lng: r.lng || 80.4367,
+          status: r.status || "pending",
+          submittedAt: r.created_at || new Date().toISOString(),
         }));
-        // Sort newest first
         requestsList.sort(
           (a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
         );
@@ -250,6 +290,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
       setPujas(pujasList);
       setPujaris(pujarisList);
+      setTemples(templesList);
+      setRegions(regionsList);
       setDeities(deitiesList);
       setContact(parsedContact);
       setSettings(parsedSettings);
@@ -300,6 +342,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         image_hint: puja.imageHint,
         category: puja.category,
         category_en: puja.category_en,
+        program_type: puja.program_type || 'VAIDIKA_POOJA',
         categories: puja.categories || [],
         required_items: puja.required_items || [],
         sloka_tags: puja.sloka_tags || [],
@@ -507,6 +550,64 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     // Seeding removed — use admin tools to re-populate if needed
   }, [supabase, ensureAdmin]);
 
+  const saveTemple = useCallback(
+    async (temple: Temple) => {
+      ensureAdmin();
+
+      let compressedImage = temple.image;
+      if (temple.image && temple.image.startsWith("data:image/") && temple.image.length > 100000) {
+        try {
+          compressedImage = await compressImage(temple.image);
+        } catch (e) {
+          console.error("Failed to compress temple image:", e);
+        }
+      }
+
+      let compressedBanner = temple.banner_image;
+      if (temple.banner_image && temple.banner_image.startsWith("data:image/") && temple.banner_image.length > 100000) {
+        try {
+          compressedBanner = await compressImage(temple.banner_image);
+        } catch (e) {
+          console.error("Failed to compress temple banner:", e);
+        }
+      }
+
+      const idToUpsert = temple.id && typeof temple.id === 'string' && temple.id.includes('-') && !temple.id.startsWith('temple-') ? temple.id : undefined;
+
+      const payload = {
+        name: temple.name,
+        state: temple.state,
+        location: temple.location,
+        image: compressedImage,
+        banner_image: compressedBanner,
+        description: temple.description,
+        contact: temple.contact,
+        booking_link: temple.booking_link,
+      };
+
+      if (idToUpsert) {
+        await supabase.from("temples").update(payload).eq("id", idToUpsert);
+      } else {
+        await supabase.from("temples").insert({
+          ...payload,
+          id: undefined, // auto generate UUID
+        });
+      }
+
+      await refreshContent();
+    },
+    [supabase, ensureAdmin, refreshContent]
+  );
+
+  const deleteTemple = useCallback(
+    async (id: string) => {
+      ensureAdmin();
+      await supabase.from("temples").delete().eq("id", id);
+      await refreshContent();
+    },
+    [supabase, ensureAdmin, refreshContent]
+  );
+
   const saveDeity = useCallback(
     async (deity: Deity) => {
       ensureAdmin();
@@ -555,10 +656,45 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     [supabase, ensureAdmin, refreshContent]
   );
 
+  const saveRegion = useCallback(
+    async (region: Region) => {
+      ensureAdmin();
+
+      const idToUpsert = region.id && typeof region.id === 'string' && region.id.includes('-') && !region.id.startsWith('region-') ? region.id : undefined;
+
+      const payload = {
+        name: region.name,
+      };
+
+      if (idToUpsert) {
+        await supabase.from("regions").update(payload).eq("id", idToUpsert);
+      } else {
+        await supabase.from("regions").insert({
+          ...payload,
+          id: undefined, // auto generate UUID
+        });
+      }
+
+      await refreshContent();
+    },
+    [supabase, ensureAdmin, refreshContent]
+  );
+
+  const deleteRegion = useCallback(
+    async (id: string) => {
+      ensureAdmin();
+      await supabase.from("regions").delete().eq("id", id);
+      await refreshContent();
+    },
+    [supabase, ensureAdmin, refreshContent]
+  );
+
   const value = useMemo<ContentContextValue>(
     () => ({
       pujas,
       pujaris,
+      temples,
+      regions,
       deities,
       contact,
       settings,
@@ -568,6 +704,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       deletePuja,
       savePujari,
       deletePujari,
+      saveTemple,
+      deleteTemple,
       saveDeity,
       deleteDeity,
       saveContact,
@@ -580,6 +718,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     [
       pujas,
       pujaris,
+      temples,
+      regions,
       deities,
       contact,
       settings,
@@ -589,6 +729,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       deletePuja,
       savePujari,
       deletePujari,
+      saveTemple,
+      deleteTemple,
+      saveRegion,
+      deleteRegion,
       saveDeity,
       deleteDeity,
       saveContact,
