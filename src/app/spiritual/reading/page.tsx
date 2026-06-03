@@ -29,56 +29,56 @@ export default function SpiritualReadingPage() {
       nameEn: "Daily Chants",
       icon: Sun,
       color: "text-amber-500",
-      url: `${stotramanjariBase}/?category=daily`
+      url: `${stotramanjariBase}/readings/sri-rudram-laghunyasam`
     },
     {
       nameTe: "గణేశ స్తోత్రాలు",
       nameEn: "Ganesha Stotrams",
       icon: Sparkles,
       color: "text-amber-400",
-      url: `${stotramanjariBase}/?category=ganesha`
+      url: `${stotramanjariBase}/readings/ganesha-ashtottara-sata-namavali`
     },
     {
       nameTe: "శివ స్తోత్రాలు",
       nameEn: "Shiva Stotrams",
       icon: Flame,
       color: "text-[#FF8C00]",
-      url: `${stotramanjariBase}/?category=shiva`
+      url: `${stotramanjariBase}/readings/shivashtakam`
     },
     {
       nameTe: "విష్ణు స్తోత్రాలు",
       nameEn: "Vishnu Stotrams",
       icon: Star,
       color: "text-[#E4B363]",
-      url: `${stotramanjariBase}/?category=vishnu`
+      url: `${stotramanjariBase}/readings/vishnu-sahasra-nama-stotram`
     },
     {
       nameTe: "దేవీ స్తోత్రాలు",
       nameEn: "Devi Stotrams",
       icon: Heart,
       color: "text-rose-500",
-      url: `${stotramanjariBase}/?category=devi`
+      url: `${stotramanjariBase}/readings/lalitha-sahasra-nama-stotram`
     },
     {
       nameTe: "రామ స్తోత్రాలు",
       nameEn: "Rama Stotrams",
       icon: Flower,
       color: "text-emerald-400",
-      url: `${stotramanjariBase}/?category=rama`
+      url: `${stotramanjariBase}/readings/rama-ashtottara-sata-namavali`
     },
     {
       nameTe: "హనుమద్ స్తోత్రాలు",
       nameEn: "Hanuman Stotrams",
       icon: Compass,
       color: "text-blue-400",
-      url: `${stotramanjariBase}/?category=hanuman`
+      url: `${stotramanjariBase}/readings/hanuman-ashtottara-sata-namavali`
     },
     {
       nameTe: "వేద సూక్తములు",
       nameEn: "Vedic Suktams",
       icon: BookOpen,
       color: "text-purple-400",
-      url: `${stotramanjariBase}/?category=vedas`
+      url: `${stotramanjariBase}/readings/sri-rudram-namakam`
     }
   ];
 
@@ -201,7 +201,7 @@ export default function SpiritualReadingPage() {
                     {/* Navigation CTA button */}
                     <div className="mt-6 pt-4 border-t border-white/5">
                       <a
-                        href={`${stotramanjariBase}/?category=${deity.id}`}
+                        href={`${stotramanjariBase}/readings/${deity.readingSlug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-white/[0.02] hover:bg-gradient-to-r hover:from-[#FF8C00] hover:to-[#E4B363] border border-white/[0.08] hover:border-transparent text-white hover:text-black font-extrabold text-sm transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,140,0,0.3)] shadow-[inset_0_1px_2px_rgba(255,255,255,0.05)]"

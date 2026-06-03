@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { ManagedImage } from "@/components/common/ManagedImage";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+
 
 function TemplesList() {
   const { temples, regions } = useContent();
@@ -20,12 +20,12 @@ function TemplesList() {
   }, [regions, activeTab]);
 
   const TempleGrid = ({ regionName }: { regionName: string }) => {
-    const list = temples.filter(t => t.state === regionName);
+    const list = temples.filter(t => t.state === regionName && t.id !== "temple-vijayawada");
     if (list.length === 0) {
       return <div className="text-center p-8 text-muted-foreground bg-muted/20 rounded-xl border border-border/50">No temples available for this region yet.</div>;
     }
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {list.map(temple => (
           <Card key={temple.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col group border border-border/50 rounded-2xl bg-card">
             <Link href={`/pilgrimage/darshan/${temple.id}`} className="block flex-grow flex flex-col">
@@ -35,21 +35,18 @@ function TemplesList() {
                   alt={temple.name}
                   width={600}
                   height={400}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </CardHeader>
-              <CardContent className="p-6 flex-grow flex flex-col text-left space-y-2">
-                <CardTitle className="font-headline text-2xl mb-1 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed">
+              <CardContent className="p-4 flex-grow flex flex-col text-left">
+                <CardTitle className="font-headline text-base mb-0 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-snug">
                   {temple.name}
                 </CardTitle>
-                <div className="flex items-start text-muted-foreground gap-1.5 mt-1">
-                  <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
-                  <span className="text-sm line-clamp-2">{temple.location}</span>
-                </div>
+
               </CardContent>
             </Link>
-            <CardFooter className="pt-0 pb-5 px-6">
-              <Button asChild className="w-full flex items-center justify-center gap-2 rounded-xl py-5 font-bold shadow-md divine-button h-auto">
+            <CardFooter className="pt-0 pb-4 px-4">
+              <Button asChild className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold shadow-md divine-button h-auto">
                 <Link href={`/pilgrimage/darshan/${temple.id}`}>
                   View Details & Book
                 </Link>

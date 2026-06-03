@@ -67,12 +67,12 @@ export function Hero({
              </p>
  
              {/* Glowing Buttons Action Section */}
-             <div className="flex flex-wrap gap-4 pt-2 w-full sm:w-auto">
+             <div className="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto">
                {/* Highly stylized, glowing pill-shape "Explore Poojas" button */}
                <Link href="/explore" className="group relative rounded-full p-[1.5px] transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,140,0,0.6)] focus:outline-none focus:ring-2 focus:ring-primary inline-block">
                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF8C00] via-[#E4B363] to-[#FF8C00] p-[1.5px]" />
-                 <div className="px-8 py-4 rounded-full bg-gradient-to-r from-[#FF8C00] to-[#E4B363] flex items-center justify-center gap-3 relative z-10">
-                   <span className="text-black font-extrabold tracking-wide text-base">
+                 <div className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FF8C00] to-[#E4B363] flex items-center justify-center gap-2.5 relative z-10">
+                   <span className="text-black font-extrabold tracking-wide text-sm">
                      {t('home.hero_cta_explore') || (language === 'te' ? "పూజలను అన్వేషించండి" : "Explore Pujas")}
                    </span>
                    <ArrowRight className="h-5 w-5 text-black transition-transform duration-300 group-hover:translate-x-1" />
@@ -81,7 +81,7 @@ export function Hero({
  
  
                {/* Login Button with Glassmorphism */}
-               <Button asChild size="lg" className="rounded-full bg-secondary/50 border border-border text-foreground hover:bg-secondary/80 hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] px-8 py-6 text-base font-semibold tracking-wide transition-all h-auto">
+               <Button asChild className="rounded-full bg-secondary/50 border border-border text-foreground hover:bg-secondary/80 hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] px-6 py-2.5 text-sm font-semibold tracking-wide transition-all">
                  <Link href="/login">{t('home.hero_cta_login') || "Login / Sign Up"}</Link>
                </Button>
              </div>
