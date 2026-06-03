@@ -83,7 +83,8 @@ export default function SpiritualReadingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-foreground relative overflow-hidden py-16 md:py-24">
+    <div className="min-h-screen bg-[#050505] text-foreground relative overflow-hidden pt-6 pb-16 md:pt-10 md:pb-24">
+
       {/* Cinematic Divine Background Glows */}
       <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
         <div className="absolute w-[800px] h-[800px] rounded-full opacity-20 animate-pulse-slow" 

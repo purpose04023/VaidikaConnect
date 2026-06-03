@@ -30,8 +30,9 @@ export default function RootLayout({
           <ContentProvider>
             <Header />
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pt-28 md:pt-32">{children}</main>
             <Toaster />
+
           </ContentProvider>
         </LanguageProvider>
       </body>

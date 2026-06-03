@@ -42,8 +42,9 @@ export function Header() {
 
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="fixed top-0 left-0 w-full z-50 border-b border-white/10 bg-black/60 backdrop-blur-xl">
       <div className="container mx-auto flex h-14 max-w-screen-2xl items-center px-4">
+
         <div className="mr-4 flex items-center">
           {/* Mobile Navigation Hamburger */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
