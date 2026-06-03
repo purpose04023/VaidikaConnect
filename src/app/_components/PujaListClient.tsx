@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +16,8 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
   const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const subcategory = searchParams.get("subcategory");
 
   const categories = useMemo<string[]>(
     () => [...new Set(pujas.map(p => language === 'te' ? p.category : p.category_en))].sort(),
@@ -25,10 +27,12 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
   const [loadingPujaId, setLoadingPujaId] = useState<string | number | null>(null);
 
   useEffect(() => {
-    if (categories.length > 0 && (!activeTab || !categories.includes(activeTab))) {
+    if (subcategory && categories.includes(subcategory)) {
+      setActiveTab(subcategory);
+    } else if (categories.length > 0 && (!activeTab || !categories.includes(activeTab))) {
       setActiveTab(categories[0]);
     }
-  }, [categories, activeTab]);
+  }, [categories, activeTab, subcategory]);
 
   const handleFindPujaris = (puja: Puja) => {
     setLoadingPujaId(puja.id);

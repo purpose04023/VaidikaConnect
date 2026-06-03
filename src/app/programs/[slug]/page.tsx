@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ManagedImage } from "@/components/common/ManagedImage";
+import { defaultPujas } from "@/lib/data";
 import { 
   ArrowLeft, 
   Calendar, 
@@ -26,9 +27,32 @@ export default function ProgramDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { language, t } = useLanguage();
-  const { pujas } = useContent();
+  const { pujas: dbPujas } = useContent();
 
   const slug = params.slug as string;
+
+  const categoryMap: Record<string, string> = {
+    'deeksha-pujas': 'Deeksha Pujas',
+    'dosha-parihara-pujas': 'Dosha Parihara Pujas',
+    'homams': 'Homams',
+    'kalyanams': 'Kalyanams',
+    'nomulu': 'Nomulu',
+    'pujas': 'Pujas',
+    'vratas': 'Vratas'
+  };
+
+  const isCategorySlug = categoryMap[slug];
+
+  React.useEffect(() => {
+    if (isCategorySlug) {
+      router.replace(`/programs?category=VAIDIKA_POOJA&subcategory=${encodeURIComponent(categoryMap[slug])}`);
+    }
+  }, [isCategorySlug, slug, router]);
+
+  // Fallback to defaultPujas if dbPujas is empty (ensures details work even if db is empty)
+  const pujas = useMemo(() => {
+    return dbPujas.length ? dbPujas : defaultPujas;
+  }, [dbPujas]);
 
   // Resolve Puja by slugified name_en or numerical id
   const puja = useMemo(() => {
@@ -37,6 +61,17 @@ export default function ProgramDetailPage() {
       pujas.find((p) => p.id.toString() === slug)
     );
   }, [pujas, slug]);
+
+  if (isCategorySlug) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 divine-bg">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading category...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!puja) {
     return (

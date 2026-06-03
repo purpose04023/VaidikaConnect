@@ -18,6 +18,11 @@ import { isAdminEmail } from "@/lib/admin";
 import { compressImage } from "@/lib/utils";
 import { useUser } from "@/hooks/use-auth";
 
+const fromCsv = (str: string): string[] => {
+  if (!str) return [];
+  return str.split(",").map((s) => s.trim()).filter(Boolean);
+};
+
 export interface ContactContent {
   title: string;
   subtitle: string;
@@ -233,6 +238,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         imageUrl: d.image_url || "",
         ashtotharamUrl: d.ashtotharam_url || "",
         sahasranamamUrl: d.sahasranamam_url || "",
+        readingSlug: d.reading_slug || "",
       }));
 
       // 4. Fetch global settings
@@ -631,6 +637,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         image_url: compressedImageUrl,
         ashtotharam_url: deity.ashtotharamUrl,
         sahasranamam_url: deity.sahasranamamUrl,
+        reading_slug: deity.readingSlug,
       };
 
       if (idToUpsert) {
@@ -706,6 +713,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       deletePujari,
       saveTemple,
       deleteTemple,
+      saveRegion,
+      deleteRegion,
       saveDeity,
       deleteDeity,
       saveContact,

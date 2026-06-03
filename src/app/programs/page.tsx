@@ -12,6 +12,7 @@ function ProgramsPageContent() {
   const { pujas: editablePujas } = useContent();
   const searchParams = useSearchParams();
   const category = searchParams.get('category');
+  const stage = searchParams.get('stage');
 
   useEffect(() => {
     async function fetchPujas() {
@@ -21,15 +22,60 @@ function ProgramsPageContent() {
     fetchPujas();
   }, []);
 
-  const title = category === 'LIFE_CYCLE_POOJA' ? 'Life Cycle Poojas' : (category === 'VAIDIKA_POOJA' ? 'Vaidika Poojas' : 'Explore Our Sacred Programs');
+  const title = category === 'LIFE_CYCLE_POOJA' || category === 'Life Cycle Poojas' 
+    ? 'Life Cycle Poojas' 
+    : (category === 'VAIDIKA_POOJA' || category === 'Vaidika Poojas' ? 'Vaidika Poojas' : 'Explore Our Sacred Programs');
   
   const allPujas = editablePujas.length ? editablePujas : pujas;
   const filteredPujas = allPujas.filter(p => {
+    const categoriesToCheck: string[] = [];
+    
+    // Support category mapping
     if (category) {
-      return p.program_type === category;
+      if (category === 'VAIDIKA_POOJA' || category === 'Vaidika Poojas') {
+        categoriesToCheck.push('Vaidika Poojas');
+      } else if (category === 'LIFE_CYCLE_POOJA' || category === 'Life Cycle Poojas') {
+        categoriesToCheck.push('Life Cycle Poojas');
+      }
     }
-    // Default if no category is specified (optional behavior)
-    return !p.program_type || p.program_type === 'VAIDIKA_POOJA';
+    
+    // Support stage mapping
+    if (stage) {
+      const stageLower = stage.toLowerCase();
+      if (stageLower === 'prenatal') categoriesToCheck.push('Prenatal');
+      else if (stageLower === 'childhood') categoriesToCheck.push('Childhood');
+      else if (stageLower === 'youth' || stageLower === 'youth and education') categoriesToCheck.push('Youth and Education');
+      else if (stageLower === 'adulthood') categoriesToCheck.push('Adulthood');
+      else if (stageLower === 'general' || stageLower === 'general or auspicious') categoriesToCheck.push('General or Auspicious');
+    }
+
+    if (categoriesToCheck.length === 0) {
+      // Default to Vaidika Poojas if no filters are specified
+      if (p.categories && p.categories.length > 0) {
+        return p.categories.includes('Vaidika Poojas');
+      }
+      return !p.program_type || p.program_type === 'VAIDIKA_POOJA';
+    }
+
+    // If categories array is populated, check it
+    if (p.categories && p.categories.length > 0) {
+      return categoriesToCheck.every(cat => p.categories?.includes(cat));
+    }
+
+    // Otherwise, fall back to checking legacy program_type / category_en (for default data)
+    return categoriesToCheck.every(cat => {
+      if (cat === 'Vaidika Poojas') {
+        return !p.program_type || p.program_type === 'VAIDIKA_POOJA';
+      }
+      if (cat === 'Life Cycle Poojas') {
+        return p.program_type === 'LIFE_CYCLE_POOJA';
+      }
+      // For stages, check category_en
+      let normalizedCat = cat;
+      if (cat === 'Youth and Education') normalizedCat = 'Youth & Education';
+      if (cat === 'General or Auspicious') normalizedCat = 'General / Auspicious';
+      return p.category_en === normalizedCat;
+    });
   });
 
   return (

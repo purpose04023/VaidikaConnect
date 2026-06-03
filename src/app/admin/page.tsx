@@ -53,7 +53,18 @@ const emptyDeity = (): DeityForm => ({
   imageUrl: "",
   ashtotharamUrl: "",
   sahasranamamUrl: "",
+  readingSlug: "",
 });
+
+const allCategoriesList = [
+  "Vaidika Poojas",
+  "Life Cycle Poojas",
+  "Prenatal",
+  "Childhood",
+  "Youth and Education",
+  "Adulthood",
+  "General or Auspicious"
+];
 
 const emptyPuja = (nextId: string | number): PujaForm => ({
   id: nextId,
@@ -69,7 +80,7 @@ const emptyPuja = (nextId: string | number): PujaForm => ({
   required_items: [],
   sloka_tags: [],
   pdf_url: "",
-  categories: [],
+  categories: [...allCategoriesList, "All Programs"], // Checked by DEFAULT
 });
 
 const emptyPujari = (nextId: string | number, pujaIds: (string | number)[]): PujariForm => ({
@@ -185,10 +196,34 @@ export default function AdminPage() {
 
   const toggleCategoryTag = (categoryTag: string) => {
     const currentCategories = pujaForm.categories || [];
-    const updated = currentCategories.includes(categoryTag)
-      ? currentCategories.filter(c => c !== categoryTag)
-      : [...currentCategories, categoryTag];
+    let updated: string[] = [];
+    
+    if (categoryTag === "All Programs") {
+      const isCurrentlyAll = currentCategories.includes("All Programs");
+      if (isCurrentlyAll) {
+        updated = [];
+      } else {
+        updated = [...allCategoriesList, "All Programs"];
+      }
+    } else {
+      updated = currentCategories.includes(categoryTag)
+        ? currentCategories.filter(c => c !== categoryTag && c !== "All Programs")
+        : [...currentCategories, categoryTag];
+      
+      const allOthersChecked = allCategoriesList.every(cat => updated.includes(cat));
+      if (allOthersChecked && !updated.includes("All Programs")) {
+        updated.push("All Programs");
+      }
+    }
+    
     updatePuja("categories", updated);
+
+    // Sync program_type for DB compatibility
+    if (updated.includes("Vaidika Poojas")) {
+      updatePuja("program_type", "VAIDIKA_POOJA");
+    } else if (updated.includes("Life Cycle Poojas")) {
+      updatePuja("program_type", "LIFE_CYCLE_POOJA");
+    }
   };
 
   const categoryOptions = useMemo(() => [...new Set(pujas.map(puja => puja.category_en))], [pujas]);
@@ -516,15 +551,18 @@ export default function AdminPage() {
                   <Field label="English Name"><Input value={pujaForm.name_en} onChange={event => updatePuja("name_en", event.target.value)} /></Field>
                   <Field label="Telugu Name"><Input value={pujaForm.name} onChange={event => updatePuja("name", event.target.value)} /></Field>
                   
-                  <Field label="Program Type">
-                    <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      value={pujaForm.program_type || "VAIDIKA_POOJA"}
-                      onChange={e => updatePuja("program_type", e.target.value as any)}
-                    >
-                      <option value="VAIDIKA_POOJA">Vaidika Pooja (Regular Programs)</option>
-                      <option value="LIFE_CYCLE_POOJA">Life Cycle Pooja (Samskaras)</option>
-                    </select>
+                  <Field label="Visibility / Categories">
+                    <div className="grid grid-cols-2 gap-2.5 mt-1 border border-border/40 p-3 rounded-lg bg-muted/10">
+                      {[...allCategoriesList, "All Programs"].map(cat => (
+                        <label key={cat} className="flex items-center gap-2 text-sm cursor-pointer select-none py-1">
+                          <Checkbox
+                            checked={(pujaForm.categories || []).includes(cat)}
+                            onCheckedChange={() => toggleCategoryTag(cat)}
+                          />
+                          <span className={cat === "All Programs" ? "font-bold text-primary" : ""}>{cat}</span>
+                        </label>
+                      ))}
+                    </div>
                   </Field>
                   
                   <div className="grid grid-cols-2 gap-4 mt-4">
@@ -534,20 +572,6 @@ export default function AdminPage() {
                     </Field>
                     <Field label="Sub-Category (Telugu)"><Input value={pujaForm.category} onChange={event => updatePuja("category", event.target.value as Puja["category"])} /></Field>
                   </div>
-
-                  <Field label="Predefined Categories (Tags)">
-                    <div className="grid grid-cols-2 gap-2 mt-1 border border-border/40 p-3 rounded-lg bg-muted/10">
-                      {["Deeksha Poojalu", "Prenatal", "Childhood", "Youth & Education", "Adulthood & Marriage", "General / Auspicious", "Homams", "Kalyanams", "Vratas"].map(cat => (
-                        <label key={cat} className="flex items-center gap-2 text-sm cursor-pointer select-none">
-                          <Checkbox
-                            checked={(pujaForm.categories || []).includes(cat)}
-                            onCheckedChange={() => toggleCategoryTag(cat)}
-                          />
-                          <span>{cat}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </Field>
 
                   <Field label="Pooja Vidhanam PDF Link / URL">
                     <Input
@@ -791,6 +815,7 @@ export default function AdminPage() {
                   <Field label="Image Hint"><Input value={deityForm.imageHint} onChange={event => updateDeity("imageHint", event.target.value)} /></Field>
                   <Field label="Ashtotharam URL"><Input value={deityForm.ashtotharamUrl} onChange={event => updateDeity("ashtotharamUrl", event.target.value)} /></Field>
                   <Field label="Sahasranamam URL"><Input value={deityForm.sahasranamamUrl} onChange={event => updateDeity("sahasranamamUrl", event.target.value)} /></Field>
+                  <Field label="Reading Slug"><Input value={deityForm.readingSlug} onChange={event => updateDeity("readingSlug", event.target.value)} /></Field>
                   <div className="flex gap-2">
                     <Button onClick={saveCurrentDeity} disabled={isSaving}>
                       {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}

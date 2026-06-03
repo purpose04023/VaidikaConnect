@@ -54,43 +54,43 @@ export default function Navbar() {
               
               <div className="absolute left-0 top-full w-80 rounded-2xl border border-border bg-popover p-3 shadow-2xl transition-all duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 z-50">
                 <div className="grid grid-cols-2 gap-3">
-                  <Link href="/programs/deeksha-pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Deeksha Pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Sun className="h-4 w-4 text-amber-500 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "దీక్షా పూజలు" : "Deeksha Pujas"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/dosha-parihara-pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Dosha Parihara Pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Star className="h-4 w-4 text-amber-400 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "దోష పరిహార పూజలు" : "Dosha Parihara"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/homams" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Homams" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Flame className="h-4 w-4 text-[#b89045] shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "హోమాలు" : "Homams"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/kalyanams" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Kalyanams" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Heart className="h-4 w-4 text-rose-500/80 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "కల్యాణాలు" : "Kalyanams"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/nomulu" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Nomulu" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Users className="h-4 w-4 text-[#c8a261] shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "నోములు" : "Nomulu"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Pujas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Flower className="h-4 w-4 text-emerald-500/80 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "పూజలు" : "Pujas"}</p>
                     </div>
                   </Link>
-                  <Link href="/programs/vratas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary col-span-2">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Vratas" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary col-span-2">
                     <Sparkles className="h-4 w-4 text-amber-300 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "వ్రతాలు" : "Vratas"}</p>
@@ -116,35 +116,35 @@ export default function Navbar() {
                   <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5">
                     {language === "te" ? "జీవిత చక్ర దశలు" : "Samskara Stages"}
                   </p>
-                  <Link href="/life-cycle-poojas?stage=prenatal" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Prenatal" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Sparkles className="h-5 w-5 text-amber-400 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "జననానికి ముందు" : "Prenatal"}</p>
                       <p className="text-[11px] text-muted-foreground">{language === "te" ? "గర్భధారణ క్రియలు" : "Before birth rituals"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=childhood" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Childhood" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Baby className="h-5 w-5 text-[#c8a261] shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "బాల్యం" : "Childhood"}</p>
                       <p className="text-[11px] text-muted-foreground">{language === "te" ? "నామకరణము, అన్నప్రాసనము" : "Naming & feeding rituals"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=youth" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Youth+and+Education" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <BookOpen className="h-5 w-5 text-amber-500/80 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "విద్య & యవ్వనం" : "Youth & Education"}</p>
                       <p className="text-[11px] text-muted-foreground">{language === "te" ? "ఉపనయనము, వేదారంభము" : "Thread ceremony & studies"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=adulthood" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Adulthood" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Heart className="h-5 w-5 text-rose-500/80 shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "గృహస్థాశ్రమం" : "Adulthood & Marriage"}</p>
                       <p className="text-[11px] text-muted-foreground">{language === "te" ? "వివాహము, శుభకార్యాలు" : "Hindu wedding ceremonies"}</p>
                     </div>
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=general" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=General+or+Auspicious" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
                     <Flame className="h-5 w-5 text-[#b89045] shrink-0" />
                     <div>
                       <p className="font-semibold text-sm leading-tight">{language === "te" ? "శుభకార్యాలు & నిత్య పూజలు" : "General / Auspicious"}</p>
@@ -273,25 +273,25 @@ export default function Navbar() {
               
               {activeDropdown === "sacredPrograms" && (
                 <div className="pl-3 mt-2 space-y-2 text-sm text-muted-foreground">
-                  <Link href="/programs/deeksha-pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Deeksha Pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "దీక్షా పూజలు (Deeksha)" : "Deeksha Pujas"}
                   </Link>
-                  <Link href="/programs/dosha-parihara-pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Dosha Parihara Pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "దోష పరిహార పూజలు" : "Dosha Parihara"}
                   </Link>
-                  <Link href="/programs/homams" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Homams" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "హోమాలు (Homams)" : "Homams"}
                   </Link>
-                  <Link href="/programs/kalyanams" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Kalyanams" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "కల్యాణాలు (Kalyanams)" : "Kalyanams"}
                   </Link>
-                  <Link href="/programs/nomulu" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Nomulu" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "నోములు (Nomulu)" : "Nomulu"}
                   </Link>
-                  <Link href="/programs/pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Pujas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "పూజలు (Pujas)" : "Pujas"}
                   </Link>
-                  <Link href="/programs/vratas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=VAIDIKA_POOJA&subcategory=Vratas" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "వ్రతాలు (Vratas)" : "Vratas"}
                   </Link>
                 </div>
@@ -310,19 +310,19 @@ export default function Navbar() {
               
               {activeDropdown === "samskaras" && (
                 <div className="pl-3 mt-2 space-y-2 text-sm text-muted-foreground">
-                  <Link href="/life-cycle-poojas?stage=prenatal" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Prenatal" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "జననానికి ముందు (Prenatal)" : "Prenatal"}
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=childhood" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Childhood" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "బాల్యం (Childhood)" : "Childhood"}
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=youth" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Youth+and+Education" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "విద్య & యవ్వనం (Youth)" : "Youth & Education"}
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=adulthood" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=Adulthood" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "గృహస్థాశ్రమం (Adulthood)" : "Adulthood & Marriage"}
                   </Link>
-                  <Link href="/life-cycle-poojas?stage=general" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
+                  <Link href="/programs?category=LIFE_CYCLE_POOJA&stage=General+or+Auspicious" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "శుభకార్యాలు & నిత్య పూజలు" : "General / Auspicious"}
                   </Link>
                 </div>
