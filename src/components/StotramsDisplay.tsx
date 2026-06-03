@@ -29,6 +29,27 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Button } from "@/components/ui/button";
 import vignanamData from "@/lib/data/vignanam-categories.json";
 
+function getStotramanjariUrl(originalUrl: string): string {
+  if (!originalUrl) return "";
+  try {
+    const urlObj = new URL(originalUrl);
+    let pathname = urlObj.pathname;
+    if (pathname.endsWith('/')) {
+      pathname = pathname.slice(0, -1);
+    }
+    const segments = pathname.split('/');
+    let lastSegment = segments[segments.length - 1] || "";
+    if (lastSegment.endsWith('.html')) {
+      lastSegment = lastSegment.slice(0, -5);
+    }
+    return `https://master43721.github.io/stotramanjari/readings/${lastSegment}`;
+  } catch (e) {
+    const match = originalUrl.match(/\/([^\/]+?)(?:\.html)?\/?$/);
+    const slug = match ? match[1] : "";
+    return slug ? `https://master43721.github.io/stotramanjari/readings/${slug}` : originalUrl;
+  }
+}
+
 interface VignanamItem {
   title: string;
   url: string;
@@ -88,8 +109,8 @@ export default function StotramsDisplay() {
     return found ? {
       category: found.category,
       description: language === "te" 
-        ? "విజ్ఞానం.ఆర్గ్ సౌజన్యంతో వేలాది స్తోత్రాలు, మంత్రాలు, మరియు ఉపనిషత్తుల సేకరణ."
-        : "Authentic stotram, mantras and shlokas library parsed from Vignanam.org.",
+        ? "స్తోత్రమంజరి సౌజన్యంతో వేలాది స్తోత్రాలు, మంత్రాలు, మరియు ఉపనిషత్తుల పవిత్ర సేకరణ."
+        : "Authentic stotram, mantras and shlokas library read on Stotramanjari.",
       isSpecial: false,
       items: found.items
     } : {
@@ -457,7 +478,7 @@ function DeityCard({ deity, language }: { deity: Deity; language: string }) {
 
         <div className="border-t border-white/5 p-3 bg-white/5 flex flex-col gap-2">
           <a
-            href={deity.ashtotharamUrl}
+            href={getStotramanjariUrl(deity.ashtotharamUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl bg-white/5 hover:bg-amber-500/20 border border-white/5 hover:border-amber-500/30 text-foreground transition-all duration-300"
@@ -466,7 +487,7 @@ function DeityCard({ deity, language }: { deity: Deity; language: string }) {
             <ExternalLink className="w-3.5 h-3.5 opacity-60 shrink-0" />
           </a>
           <a
-            href={deity.sahasranamamUrl}
+            href={getStotramanjariUrl(deity.sahasranamamUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl bg-white/5 hover:bg-amber-500/20 border border-white/5 hover:border-amber-500/30 text-foreground transition-all duration-300"
@@ -485,7 +506,7 @@ function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: 
   
   return (
     <a
-      href={item.url}
+      href={getStotramanjariUrl(item.url)}
       target="_blank"
       rel="noopener noreferrer"
       className="glass-card flex flex-col overflow-hidden border-none bg-transparent"
@@ -509,7 +530,7 @@ function StotramCard({ item, categoryTag }: { item: VignanamItem; categoryTag?: 
 
       <div className="border-t border-white/5 px-4 py-2.5 bg-white/5 flex items-center justify-between text-muted-foreground group-hover:text-foreground transition-colors">
         <span className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-          {language === "te" ? "విజ్ఞానంలో చదవండి ↗" : "Read on Vignanam ↗"}
+          {language === "te" ? "స్తోత్రమంజరిలో చదవండి ↗" : "Read on Stotramanjari ↗"}
         </span>
         <ExternalLink className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all shrink-0" />
       </div>
