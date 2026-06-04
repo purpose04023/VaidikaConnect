@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useContent } from "@/lib/content-store";
+import { defaultPujas } from "@/lib/data";
 import { 
   BadgeCheck, 
   Send, 
@@ -37,6 +38,13 @@ const benefits = [
   { icon: BadgeCheck, title: "Direct Bookings", desc: "Receive puja requests directly from devotees in your region." },
   { icon: Sparkles, title: "Support & Training", desc: "Ongoing guidance and support from our experienced team." },
 ];
+
+const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div className="space-y-2">
+    <Label className="text-sm font-semibold">{label}</Label>
+    {children}
+  </div>
+);
 
 export default function JoinNetworkPage() {
   const { pujas, submitJoinRequest } = useContent();
@@ -72,12 +80,7 @@ export default function JoinNetworkPage() {
 
   const csv = (str: string) => str.split(",").map((s) => s.trim()).filter(Boolean);
 
-  const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <div className="space-y-2">
-      <Label className="text-sm font-semibold">{label}</Label>
-      {children}
-    </div>
-  );
+  const pujaList = pujas.length ? pujas : defaultPujas;
 
   const readUploadedImage = (file: File) => {
     return compressImage(file);
@@ -128,6 +131,63 @@ export default function JoinNetworkPage() {
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
+
+    const cleanPhone = form.phone.replace(/[^0-9]/g, "");
+    const cleanWhatsapp = form.whatsapp.replace(/[^0-9]/g, "");
+
+    if (cleanPhone.length < 10 || cleanPhone.length > 12) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Phone Number",
+        description: "Please enter a valid 10 to 12 digit calling number."
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (cleanWhatsapp.length < 10 || cleanWhatsapp.length > 12) {
+      toast({
+        variant: "destructive",
+        title: "Invalid WhatsApp Number",
+        description: "Please enter a valid 10 to 12 digit WhatsApp number."
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const expNum = Number(form.experience);
+    if (isNaN(expNum) || expNum < 0) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Experience",
+        description: "Years of experience must be a non-negative number."
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const priceNum = Number(form.basePrice);
+    if (isNaN(priceNum) || priceNum < 500) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Base Price",
+        description: "Base price must be a valid number (minimum ₹500)."
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (form.email && !emailRegex.test(form.email)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Email Address",
+        description: "Please enter a valid email address (e.g. name@domain.com)."
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       await submitJoinRequest({
         name: form.name,
@@ -279,7 +339,12 @@ export default function JoinNetworkPage() {
                         required
                         placeholder="+91 98765 43210"
                         value={form.phone}
-                        onChange={(e) => update("phone", e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (/^[0-9\s\-+]*$/.test(val)) {
+                            update("phone", val);
+                          }
+                        }}
                         className="divine-input pl-9"
                       />
                     </div>
@@ -292,7 +357,12 @@ export default function JoinNetworkPage() {
                         required
                         placeholder="+91 98765 43210"
                         value={form.whatsapp}
-                        onChange={(e) => update("whatsapp", e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (/^[0-9\s\-+]*$/.test(val)) {
+                            update("whatsapp", val);
+                          }
+                        }}
                         className="divine-input pl-9"
                       />
                     </div>
@@ -486,7 +556,7 @@ export default function JoinNetworkPage() {
 
                 <CardContent className="p-6">
                   <div className="grid max-h-72 gap-2 overflow-auto rounded-xl border border-border/40 p-4 sm:grid-cols-2 lg:grid-cols-3 bg-muted/10">
-                    {pujas.filter((puja) => puja.name_en && puja.name_en.trim() !== '').map((puja) => (
+                    {pujaList.filter((puja) => puja.name_en && puja.name_en.trim() !== '').map((puja) => (
                       <label
                         key={puja.id}
                         className="flex items-center gap-2.5 text-sm py-2 px-2.5 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors"
@@ -505,7 +575,7 @@ export default function JoinNetworkPage() {
                       <p className="text-xs text-muted-foreground mb-2">{selectedPujas.length} programs selected:</p>
                       <div className="flex flex-wrap gap-1.5">
                         {selectedPujas.map((id) => {
-                          const puja = pujas.find((item) => item.id.toString() === id.toString());
+                          const puja = pujaList.find((item) => item.id.toString() === id.toString());
                           return puja ? (
                             <Badge key={id} className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 font-semibold text-xs py-0.5 px-2">
                               {puja.name_en}
