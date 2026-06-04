@@ -123,6 +123,8 @@ export default function SpiritualReadingPage() {
                             <ManagedImage 
                               src={category.iconUrl} 
                               alt={language === "te" ? category.nameTe : category.nameEn}
+                              width={48}
+                              height={48}
                               className="object-cover w-full h-full"
                             />
                           </div>
