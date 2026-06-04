@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Header } from '@/components/common/Header';
 import Navbar from '@/components/common/Navbar';
+import { Footer } from '@/components/common/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/context/language-context';
 import { ContentProvider } from '@/lib/content-store';
@@ -32,6 +33,7 @@ export default function RootLayout({
             <Navbar />
             <main className="flex-1 pt-28 md:pt-32">{children}</main>
             <Toaster />
+            <Footer />
 
           </ContentProvider>
         </LanguageProvider>
