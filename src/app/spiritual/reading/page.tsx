@@ -1,86 +1,47 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/language-context";
-import { stotramsData } from "@/lib/data/stotrams";
+import { categoriesList, stotramsMap } from "@/lib/data/stotramanjari_data";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { ManagedImage } from "@/components/common/ManagedImage";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { 
-  BookOpen, 
-  ExternalLink, 
-  Sparkles, 
-  Flame, 
-  Heart, 
-  Sun, 
-  Star, 
-  Flower, 
-  Compass
+  Search, 
+  BookOpen
 } from "lucide-react";
 
 export default function SpiritualReadingPage() {
   const { language } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [openCategories, setOpenCategories] = useState<string[]>([]);
 
-  // Standalone Stotramanjari platform on GitHub Pages
-  const stotramanjariBase = "https://master43721.github.io/stotramanjari";
+  // Base URL for Stotramanjari on GitHub Pages
+  const stotramanjariBase = "https://master43721.github.io";
 
-  // Categories mapping directly to Stotramanjari navigation query params
-  const categories = [
-    {
-      nameTe: "నిత్య పారాయణ శ్లోకాలు",
-      nameEn: "Daily Chants",
-      icon: Sun,
-      color: "text-amber-500",
-      url: `${stotramanjariBase}/readings/sri-rudram-laghunyasam`
-    },
-    {
-      nameTe: "గణేశ స్తోత్రాలు",
-      nameEn: "Ganesha Stotrams",
-      icon: Sparkles,
-      color: "text-amber-400",
-      url: `${stotramanjariBase}/readings/ganesha-ashtottara-sata-namavali`
-    },
-    {
-      nameTe: "శివ స్తోత్రాలు",
-      nameEn: "Shiva Stotrams",
-      icon: Flame,
-      color: "text-[#FF8C00]",
-      url: `${stotramanjariBase}/readings/shivashtakam`
-    },
-    {
-      nameTe: "విష్ణు స్తోత్రాలు",
-      nameEn: "Vishnu Stotrams",
-      icon: Star,
-      color: "text-[#E4B363]",
-      url: `${stotramanjariBase}/readings/vishnu-sahasra-nama-stotram`
-    },
-    {
-      nameTe: "దేవీ స్తోత్రాలు",
-      nameEn: "Devi Stotrams",
-      icon: Heart,
-      color: "text-rose-500",
-      url: `${stotramanjariBase}/readings/lalitha-sahasra-nama-stotram`
-    },
-    {
-      nameTe: "రామ స్తోత్రాలు",
-      nameEn: "Rama Stotrams",
-      icon: Flower,
-      color: "text-emerald-400",
-      url: `${stotramanjariBase}/readings/rama-ashtottara-sata-namavali`
-    },
-    {
-      nameTe: "హనుమద్ స్తోత్రాలు",
-      nameEn: "Hanuman Stotrams",
-      icon: Compass,
-      color: "text-blue-400",
-      url: `${stotramanjariBase}/readings/hanuman-ashtottara-sata-namavali`
-    },
-    {
-      nameTe: "వేద సూక్తములు",
-      nameEn: "Vedic Suktams",
-      icon: BookOpen,
-      color: "text-purple-400",
-      url: `${stotramanjariBase}/readings/sri-rudram-namakam`
+  // Filter categories and their stotrams based on search query
+  const filteredCategories = categoriesList.map(category => {
+    const matchingSlugs = category.slugs.filter(slug => {
+      const stotram = stotramsMap[slug];
+      if (!stotram) return false;
+      return stotram.titleEng.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             stotram.titleTel.includes(searchQuery);
+    });
+    return {
+      ...category,
+      matchingSlugs
+    };
+  }).filter(category => category.matchingSlugs.length > 0);
+
+  // Auto-expand accordions when searching; collapse when search is cleared
+  useEffect(() => {
+    if (searchQuery.trim() !== "") {
+      setOpenCategories(filteredCategories.map(c => c.id));
+    } else {
+      setOpenCategories([]);
     }
-  ];
+  }, [searchQuery]);
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden pt-6 pb-16 md:pt-10 md:pb-24">
@@ -103,8 +64,9 @@ export default function SpiritualReadingPage() {
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
+        
         {/* Page Header */}
-        <div className="text-left max-w-4xl mb-16 space-y-4">
+        <div className="text-left max-w-4xl mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/30 border border-border text-primary text-xs md:text-sm font-semibold uppercase tracking-wider shadow-[0_0_15px_rgba(228,179,99,0.05)]">
             ✦ Standalone Digital Library
           </div>
@@ -118,105 +80,113 @@ export default function SpiritualReadingPage() {
           </p>
         </div>
 
-        {/* Asymmetric Sidebar & Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Left Sidebar - Categories Navigation (lg:col-span-4) */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="glass-card rounded-3xl p-6 shadow-2xl space-y-6">
-              <div>
-                <h3 className="font-headline text-lg font-bold text-foreground flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  {language === "te" ? "స్తోత్ర విభాగాలు" : "Chants Categories"}
-                </h3>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                  {language === "te" ? "వర్గం వారీగా శ్లోకాలు చదవడానికి ఎంచుకోండి" : "Browse filtered stotram collections externally"}
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                {categories.map((cat, idx) => {
-                  const Icon = cat.icon;
-                  return (
-                    <a
-                      key={idx}
-                      href={cat.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl bg-card hover:bg-muted border border-border hover:border-primary/20 text-muted-foreground hover:text-foreground transition-all duration-300 group"
-                    >
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <div className={`p-2 rounded-xl bg-secondary shrink-0 ${cat.color} group-hover:scale-110 transition-transform`}>
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <span className="font-semibold text-sm leading-loose break-words whitespace-normal font-sans">
-                          {language === "te" ? cat.nameTe : cat.nameEn}
-                        </span>
-                      </div>
-                      <ExternalLink className="h-4 w-4 opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all shrink-0" />
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
+        {/* Search Bar */}
+        <div className="max-w-xl mb-10 relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl blur-md opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Input
+              type="text"
+              placeholder={language === "te" ? "స్తోత్రము పేరుతో వెతకండి (తెలుగు లేదా English)..." : "Search stotrams by title (English or తెలుగు)..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-12 pr-4 py-6 rounded-2xl bg-card/50 border-border/60 hover:border-primary/30 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary backdrop-blur-xl transition-all shadow-lg text-sm sm:text-base font-sans"
+            />
           </div>
-
-          {/* Right Area - Deity Tiles Grid (lg:col-span-8) */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {stotramsData.map((deity) => (
-                <div key={deity.id} className="group relative">
-                  {/* Subtle hover gradient orb backdrop */}
-                  <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-primary/10 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-sm" />
-                  
-                  <Card className="glass-card flex flex-col h-full overflow-hidden rounded-3xl relative p-5 shadow-2xl">
-                    
-                    {/* Header icon / flower */}
-                    <div className="absolute top-4 right-4 opacity-25 group-hover:opacity-75 transition-all z-20">
-                      <Sparkles className="h-4 w-4 text-primary animate-spin-slow" />
-                    </div>
- 
-                    <div className="flex flex-col items-center text-center flex-grow space-y-4">
-                      {/* Avatar */}
-                      <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-full overflow-hidden border border-white/10 shadow-xl relative group-hover:scale-105 transition-transform duration-500 bg-muted shrink-0">
-                        <ManagedImage 
-                          src={deity.imageUrl || "/images/deities/ganesha.png"} 
-                          alt={deity.nameEn}
-                          data-ai-hint={deity.imageHint}
-                          className="object-cover w-full h-full"
-                        />
-                      </div>
-
-                      {/* Deity Titles */}
-                      <div className="space-y-1">
-                        <h4 className="font-headline text-xl sm:text-2xl font-bold text-foreground leading-loose break-words whitespace-normal">
-                          {deity.name}
-                        </h4>
-                        <p className="text-xs text-muted-foreground font-semibold tracking-widest uppercase">
-                          {deity.nameEn}
-                        </p>
-                      </div>
-                    </div>
- 
-                    {/* Navigation CTA button */}
-                    <div className="mt-6 pt-4 border-t border-border/40">
-                      <a
-                        href={`${stotramanjariBase}/readings/${deity.readingSlug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-secondary/50 hover:bg-gradient-to-r hover:from-[#FF8C00] hover:to-[#E4B363] border border-border hover:border-transparent text-foreground hover:text-black font-extrabold text-sm transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,140,0,0.3)] shadow-[inset_0_1px_2px_rgba(255,255,255,0.05)]"
-                      >
-                        <span className="tracking-wide">READ NOW</span>
-                        <ExternalLink className="w-3.5 h-3.5 opacity-60" />
-                      </a>
-                    </div>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </div>
-
         </div>
+
+        {/* Categories Accordion */}
+        <div className="max-w-5xl">
+          {filteredCategories.length > 0 ? (
+            <AccordionPrimitive.Root 
+              type="multiple" 
+              value={openCategories} 
+              onValueChange={setOpenCategories}
+              className="space-y-4"
+            >
+              {filteredCategories.map((category) => {
+                const isOpen = openCategories.includes(category.id);
+                return (
+                  <AccordionPrimitive.Item 
+                    key={category.id} 
+                    value={category.id}
+                    className="glass-card rounded-2xl overflow-hidden border border-border/40 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-primary/20"
+                  >
+                    <AccordionPrimitive.Header className="flex">
+                      <AccordionPrimitive.Trigger
+                        className="w-full flex items-center justify-between px-5 py-4 text-left font-medium transition-all group outline-none"
+                      >
+                        <div className="flex items-center gap-4 min-w-0">
+                          
+                          {/* Category Avatar */}
+                          <div className="h-12 w-12 rounded-xl overflow-hidden border border-white/10 shadow-md shrink-0 relative bg-muted">
+                            <ManagedImage 
+                              src={category.iconUrl} 
+                              alt={language === "te" ? category.nameTe : category.nameEn}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                          
+                          {/* Collapse indicator [+] / [-] */}
+                          <div className="h-5 w-5 border border-primary/30 dark:border-primary/50 flex items-center justify-center rounded text-primary text-xs font-mono font-bold shrink-0 select-none bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                            {isOpen ? "−" : "+"}
+                          </div>
+
+                          {/* Title */}
+                          <span className="font-bold text-sm sm:text-base md:text-lg tracking-wide uppercase text-slate-800 dark:text-slate-100 font-sans group-hover:text-primary transition-colors leading-tight truncate">
+                            {language === "te" ? category.nameTe : category.nameEn}
+                            <span className="text-primary/70 ml-2 font-mono text-xs md:text-sm normal-case font-bold">
+                              ({category.slugs.length})
+                            </span>
+                          </span>
+                        </div>
+                      </AccordionPrimitive.Trigger>
+                    </AccordionPrimitive.Header>
+                    
+                    <AccordionPrimitive.Content
+                      className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+                    >
+                      <div className="px-5 pb-6 pt-2 border-t border-border/10 bg-card/10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
+                          {category.matchingSlugs.map((slug) => {
+                            const stotram = stotramsMap[slug];
+                            if (!stotram) return null;
+                            const fullUrl = `${stotramanjariBase}${stotram.href}`;
+                            return (
+                              <a
+                                key={slug}
+                                href={fullUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-start group/link text-[13px] sm:text-sm text-emerald-700 dark:text-emerald-400 hover:text-primary dark:hover:text-primary transition-colors py-0.5"
+                              >
+                                {/* Square bullet point */}
+                                <span className="h-1.5 w-1.5 bg-amber-600 dark:bg-amber-500 rounded-sm inline-block mr-2.5 mt-2 shrink-0 group-hover/link:bg-primary transition-colors" />
+                                <span className="underline decoration-emerald-700/20 group-hover/link:decoration-primary group-hover/link:translate-x-0.5 transition-all leading-relaxed font-sans font-medium">
+                                  {language === "te" ? stotram.titleTel : stotram.titleEng}
+                                </span>
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </AccordionPrimitive.Content>
+                  </AccordionPrimitive.Item>
+                );
+              })}
+            </AccordionPrimitive.Root>
+          ) : (
+            <Card className="glass-card p-8 text-center rounded-2xl border border-border/40 shadow-xl">
+              <BookOpen className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm sm:text-base font-sans">
+                {language === "te" 
+                  ? "ఏ శ్లోకాలు కనుగొనబడలేదు. దయచేసి మీ శోధనను సరిచూసుకోండి." 
+                  : "No chants found matching your search. Please check your spelling."}
+              </p>
+            </Card>
+          )}
+        </div>
+
       </div>
     </div>
   );
