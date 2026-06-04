@@ -43,29 +43,96 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
+      let authResult = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
       
+      let user = authResult.data.user;
+      let authError = authResult.error;
+
+      // Auto-register admin email dynamically on first login attempt if credentials mismatch
+      const isAdminEmailAddr = values.email.trim().toLowerCase() === 'purpose04023@gmail.com' || 
+                               values.email.trim().toLowerCase() === 'sudhee.sripada@gmail.com';
+      
+      if (authError && (authError.message.toLowerCase().includes("invalid login credentials") || authError.status === 400) && isAdminEmailAddr) {
+        console.log("Admin account not found in Auth. Attempting auto-registration...");
+        const signUpResult = await supabase.auth.signUp({
+          email: values.email,
+          password: values.password,
+          options: {
+            data: {
+              full_name: "Chief Admin",
+            }
+          }
+        });
+        
+        if (!signUpResult.error && signUpResult.data.user) {
+          user = signUpResult.data.user;
+          authError = null;
+          console.log("Admin account auto-registered successfully.");
+        } else if (signUpResult.error) {
+          console.error("Auto-registration failed:", signUpResult.error);
+        }
+      }
+
       if (authError) {
-        console.error("SUPABASE DB ERROR: ", JSON.stringify(authError, null, 2));
+        console.error("SUPABASE AUTH ERROR: ", JSON.stringify(authError, null, 2));
         throw authError;
       }
 
       if (user) {
-        // Query the user's profile data immediately to capture any table schema or permission issues
-        const { data: profileData, error: profileError } = await supabase
+        // Query the user's profile data (using maybeSingle to handle missing rows gracefully)
+        let { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         if (profileError) {
-          console.error("SUPABASE DB ERROR: ", JSON.stringify(profileError, null, 2));
+          console.error("SUPABASE PROFILE FETCH ERROR: ", JSON.stringify(profileError, null, 2));
           throw profileError;
         }
-        console.log("Successfully retrieved user profile schema:", profileData);
+
+        // Auto-create or elevate profile to admin role
+        if (!profileData) {
+          const defaultFullName = user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
+          const newProfile = {
+            id: user.id,
+            email: user.email || values.email,
+            role: isAdminEmailAddr ? 'admin' : 'user',
+            full_name: defaultFullName,
+          };
+          const { data: insertedData, error: insertError } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error("SUPABASE PROFILE INSERT ERROR: ", JSON.stringify(insertError, null, 2));
+            throw insertError;
+          }
+          profileData = insertedData;
+          console.log("Successfully created missing user profile:", profileData);
+        } else if (isAdminEmailAddr && profileData.role !== 'admin') {
+          // If the profile exists but was marked as 'user' by the default trigger, elevate it to 'admin'
+          const { data: updatedData, error: updateError } = await supabase
+            .from('profiles')
+            .update({ role: 'admin' })
+            .eq('id', user.id)
+            .select()
+            .single();
+            
+          if (updateError) {
+            console.error("SUPABASE PROFILE ROLE UPDATE ERROR: ", JSON.stringify(updateError, null, 2));
+          } else {
+            profileData = updatedData;
+            console.log("Successfully elevated user profile to admin:", profileData);
+          }
+        } else {
+          console.log("Successfully retrieved user profile:", profileData);
+        }
       }
 
       router.push('/');
@@ -75,10 +142,7 @@ export default function LoginPage() {
       });
     } catch (error: any) {
       console.error("AUTH/DB CATCH ERROR:", error);
-      
-      // Construct a detailed error message displaying raw message or code details
       const errorMsg = error.message || error.details || (error.code ? `Error Code: ${error.code}` : JSON.stringify(error));
-      
       toast({
         variant: 'destructive',
         title: 'Uh oh! Something went wrong.',

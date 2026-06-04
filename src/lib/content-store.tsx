@@ -266,7 +266,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       // 5. Fetch join requests (only loaded if admin is logged in)
       let requestsList: PujariJoinRequest[] = [];
       if (isAdmin) {
-        const { data: dbRequests } = await supabase.from("join_requests").select("*");
+        const { data: dbRequests } = await supabase.from("requests").select("*");
         requestsList = (dbRequests || []).map((r) => ({
           id: r.id,
           name: r.name,
@@ -468,7 +468,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
   const submitJoinRequest = useCallback(
     async (request: Omit<PujariJoinRequest, "id" | "submittedAt">) => {
+      const generatedId = typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID 
+        ? window.crypto.randomUUID() 
+        : typeof crypto !== 'undefined' && crypto.randomUUID 
+          ? crypto.randomUUID() 
+          : stableUuid(Date.now().toString() + Math.random().toString());
+
       const data = {
+        id: generatedId,
         name: request.name,
         photo: request.photo || fallbackPhoto,
         phone: request.phone,
@@ -488,7 +495,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         lng: request.lng || 80.4367,
         status: "pending",
       };
-      await supabase.from("join_requests").insert(data);
+      await supabase.from("requests").insert(data);
       await refreshContent();
     },
     [supabase, refreshContent]
@@ -529,7 +536,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       };
 
       await supabase.from("profiles").insert(newPujariPayload);
-      await supabase.from("join_requests").delete().eq("id", id);
+      await supabase.from("requests").delete().eq("id", id);
       await refreshContent();
     },
     [supabase, ensureAdmin, requests, refreshContent]
@@ -538,7 +545,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const rejectJoinRequest = useCallback(
     async (id: string) => {
       ensureAdmin();
-      await supabase.from("join_requests").delete().eq("id", id);
+      await supabase.from("requests").delete().eq("id", id);
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -551,7 +558,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     await supabase.from("profiles").delete().neq("role", "admin");
     await supabase.from("stotrams").delete().neq("id", stableUuid(0));
     await supabase.from("global_settings").delete().neq("id", "admin-key");
-    await supabase.from("join_requests").delete().neq("status", "approved");
+    await supabase.from("requests").delete().neq("status", "approved");
 
     // Seeding removed — use admin tools to re-populate if needed
   }, [supabase, ensureAdmin]);
