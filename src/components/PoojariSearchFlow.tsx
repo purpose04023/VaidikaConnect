@@ -201,8 +201,8 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
 
     if (actionType === "book") {
       toast({
-        title: "📅 Booking Initialized!",
-        description: "Contact details expanded. Confirm your slots below."
+        title: language === "te" ? "📅 పూజారి సంప్రదింపు వివరాలు!" : "📅 Pujari Contact Details!",
+        description: language === "te" ? "వివరాలు విస్తరించబడ్డాయి. సమయాల కొరకు పూజారితో మాట్లాడండి." : "Contact details expanded. Discuss timings directly with Pujari."
       });
     }
   };
@@ -422,38 +422,36 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
                         )}
 
                         {activeAction === "book" && (
-                          <div className="space-y-2">
-                            <p className="text-[11px] text-muted-foreground px-1">Choose your ritual timing slot:</p>
-                            <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-3">
+                            <p className="text-xs sm:text-sm font-semibold text-center text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 py-2.5 px-3 rounded-xl font-sans">
+                              {language === "te" 
+                                ? "సమయం మరియు పూజా రుసుము గురించి పూజారితో మాట్లాడండి" 
+                                : "Discuss the time slots and rates directly with Pujari"}
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
                               <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="text-xs rounded-lg border-border/60 hover:bg-background"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toast({
-                                    title: "🙏 Booking Request Sent!",
-                                    description: `Request sent to ${poojari.nameEn} for Morning Slot.`
-                                  });
-                                  toggleAction(poojari.id, "book");
-                                }}
+                                asChild
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 shadow-md h-10 text-xs sm:text-sm font-bold"
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                Morning Slot
+                                <a href={`tel:${poojari.phone}`}>
+                                  <Phone className="h-4 w-4 fill-white" />
+                                  <span>{language === "te" ? "కాల్ చేయండి" : "Call Now"}</span>
+                                </a>
                               </Button>
                               <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="text-xs rounded-lg border-border/60 hover:bg-background"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toast({
-                                    title: "🙏 Booking Request Sent!",
-                                    description: `Request sent to ${poojari.nameEn} for Evening Slot.`
-                                  });
-                                  toggleAction(poojari.id, "book");
-                                }}
+                                asChild
+                                className="bg-[#25d366] hover:bg-[#20ba5a] text-white rounded-xl gap-2 shadow-md h-10 text-xs sm:text-sm font-bold"
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                Evening Slot
+                                <a 
+                                  href={`https://wa.me/91${poojari.phone.replace(/[^0-9]/g, "")}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <MessageCircle className="h-4 w-4 fill-white" />
+                                  <span>{language === "te" ? "మెసేజ్ చేయండి" : "Message Now"}</span>
+                                </a>
                               </Button>
                             </div>
                           </div>
