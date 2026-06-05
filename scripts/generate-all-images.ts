@@ -15,35 +15,69 @@ async function generateImage(nameEn: string, description: string): Promise<strin
 
   // 1. Try Hugging Face free API if configured
   if (hfApiKey) {
-    try {
-      console.log(` -> Using Hugging Face free stable diffusion for "${nameEn}"...`);
-      const hfUrl = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
-      const hfResponse = await fetch(hfUrl, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${hfApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ inputs: promptText }),
-      });
+    const hfModels = [
+      "black-forest-labs/FLUX.1-schnell",
+      "stabilityai/stable-diffusion-xl-base-1.0",
+      "CompVis/stable-diffusion-v1-4"
+    ];
+    
+    let lastError = "";
+    
+    for (const hfModel of hfModels) {
+      try {
+        console.log(` -> Using Hugging Face model (${hfModel}) for "${nameEn}"...`);
+        const hfUrl = `https://api-inference.huggingface.co/models/${hfModel}`;
+        
+        let retries = 3;
+        let hfResponse: Response | null = null;
+        
+        while (retries > 0) {
+          hfResponse = await fetch(hfUrl, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${hfApiKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ inputs: promptText }),
+          });
 
-      if (hfResponse.ok) {
-        const arrayBuffer = await hfResponse.arrayBuffer();
-        return Buffer.from(arrayBuffer).toString("base64");
-      } else {
-        const errorText = await hfResponse.text();
-        console.warn(`Hugging Face failed with status ${hfResponse.status}: ${errorText}. Falling back to Gemini...`);
-        // if gemini is not available, throw error
-        if (!apiKey) {
-          throw new Error(`Hugging Face error: ${errorText || hfResponse.statusText}`);
+          if (hfResponse.ok) {
+            break;
+          }
+
+          const errorText = await hfResponse.text();
+          
+          if (hfResponse.status === 503 || errorText.includes("loading") || errorText.includes("estimated_time")) {
+            let estimatedTime = 15;
+            try {
+              const parsed = JSON.parse(errorText);
+              estimatedTime = Math.ceil(parsed.estimated_time || 15);
+            } catch (e) {}
+            
+            console.log(`    Model is loading. Waiting ${estimatedTime} seconds before retrying (retries left: ${retries - 1})...`);
+            await new Promise(resolve => setTimeout(resolve, estimatedTime * 1000));
+            retries--;
+            continue;
+          }
+          
+          throw new Error(`HF Error status ${hfResponse.status}: ${errorText}`);
         }
-      }
-    } catch (err) {
-      console.warn("Hugging Face fetch failed, attempting Gemini fallback...", err);
-      if (!apiKey) {
-        throw err;
+
+        if (hfResponse && hfResponse.ok) {
+          const arrayBuffer = await hfResponse.arrayBuffer();
+          return Buffer.from(arrayBuffer).toString("base64");
+        }
+      } catch (hfErr) {
+        console.warn(`    Model ${hfModel} failed:`, hfErr instanceof Error ? hfErr.message : String(hfErr));
+        lastError = hfErr instanceof Error ? hfErr.message : String(hfErr);
       }
     }
+    
+    // If HF failed and Gemini key is missing, throw HF error
+    if (!apiKey) {
+      throw new Error(`Hugging Face generation failed: ${lastError}`);
+    }
+    console.log(" -> All Hugging Face models failed. Attempting Gemini fallback...");
   }
 
   // 2. Fall back to Gemini Imagen 4
