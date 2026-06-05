@@ -12,7 +12,7 @@ const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENAI_API_KEY ||
 async function generateImage(nameEn: string, description: string): Promise<string> {
   const promptText = `An authentic, high-quality, professional photograph of a Hindu sacred ritual: ${nameEn}. ${description || ""}. Featuring traditional elements like flowers, oil lamps (diyas), coconuts, mango leaves, and sacred vessels, beautifully arranged on a clean altar, with warm divine lighting and spiritual atmosphere. Detailed, respectful, saffron and gold tones, 4:3 aspect ratio.`;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:generateImages?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
   
   const response = await fetch(url, {
     method: 'POST',
@@ -20,23 +20,40 @@ async function generateImage(nameEn: string, description: string): Promise<strin
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: promptText,
-      numberOfImages: 1,
-      outputMimeType: 'image/jpeg',
-      aspectRatio: '4:3',
+      instances: [
+        {
+          prompt: promptText,
+        }
+      ],
+      parameters: {
+        sampleCount: 1,
+        outputMimeType: 'image/jpeg',
+        aspectRatio: '4:3',
+      },
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Gemini API returned status ${response.status}: ${await response.text()}`);
+    const errorText = await response.text();
+    let msg = errorText;
+    try {
+      const parsed = JSON.parse(errorText);
+      if (parsed.error && parsed.error.message) {
+        msg = parsed.error.message;
+        if (msg.includes("only available on paid plans") || msg.includes("upgrade your account")) {
+          msg = "AI Image Generation requires a Google AI Studio account with billing enabled. Please upgrade your plan at https://aistudio.google.com/";
+        }
+      }
+    } catch {}
+    throw new Error(`Gemini API returned status ${response.status}: ${msg}`);
   }
 
   const data = (await response.json()) as any;
-  if (!data.generatedImages || data.generatedImages.length === 0) {
+  if (!data.predictions || data.predictions.length === 0) {
     throw new Error("No images returned by Gemini Imagen API.");
   }
 
-  return data.generatedImages[0].image.imageBytes; // base64 bytes
+  return data.predictions[0].bytesBase64Encoded; // base64 bytes
 }
 
 async function main() {
