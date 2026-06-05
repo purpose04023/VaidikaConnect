@@ -13,13 +13,14 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen, Settings, Landmark, Map } from "lucide-react";
+import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen, Settings, Landmark, Map, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/hooks/use-auth";
 import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
 import { ManagedImage } from "@/components/common/ManagedImage";
 import { useToast } from "@/hooks/use-toast";
 import { compressImage } from "@/lib/utils";
+import { generatePujaImageAction } from "@/app/actions/generateImage";
 
 type PujaForm = Puja;
 type PujariForm = Pujari;
@@ -63,7 +64,13 @@ const allCategoriesList = [
   "Childhood",
   "Youth and Education",
   "Adulthood",
-  "General or Auspicious"
+  "General or Auspicious",
+  "Deeksha Poojalu",
+  "Homams",
+  "Dosha Parihara",
+  "Kalyanams",
+  "Nomulu",
+  "Vratas"
 ];
 
 const emptyPuja = (nextId: string | number): PujaForm => ({
@@ -161,6 +168,7 @@ export default function AdminPage() {
   const [contactForm, setContactForm] = useState<ContactContent>(contact);
   const [settingsForm, setSettingsForm] = useState<GlobalSettings>(settings || {});
   const [isSaving, setIsSaving] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Dynamic lists helper states
   const [newRequiredItem, setNewRequiredItem] = useState("");
@@ -328,6 +336,52 @@ export default function AdminPage() {
       const projectedPujas = pujas.some(puja => puja.id === savedPuja.id) ? pujas : [...pujas, savedPuja];
       setPujaForm(emptyPuja(nextId(projectedPujas)));
     }, "Puja saved");
+  };
+
+  const handleGenerateImageWithAI = async () => {
+    if (!pujaForm.name_en) {
+      toast({
+        variant: "destructive",
+        title: "Name is required",
+        description: "Please enter the English Name before generating an image.",
+      });
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    const generatingToast = toast({
+      title: "Generating image with AI...",
+      description: "Calling Gemini Imagen to create a matching ritual image. This may take up to 10 seconds.",
+    });
+
+    try {
+      const res = await generatePujaImageAction(pujaForm.name_en, pujaForm.description);
+      generatingToast.dismiss();
+      if (res.success && res.image) {
+        updatePuja("image", res.image);
+        updatePuja("imageHint", `AI generated image for ${pujaForm.name_en}`);
+        toast({
+          title: "Image generated successfully!",
+          description: "AI image has been inserted as the program image.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Generation failed",
+          description: res.error || "Failed to generate image.",
+        });
+      }
+    } catch (err) {
+      generatingToast.dismiss();
+      console.error("AI image generation error:", err);
+      toast({
+        variant: "destructive",
+        title: "Error generating image",
+        description: err instanceof Error ? err.message : "An unexpected error occurred.",
+      });
+    } finally {
+      setIsGeneratingImage(false);
+    }
   };
 
   const saveCurrentPujari = () => {
@@ -547,9 +601,11 @@ export default function AdminPage() {
                 <CardTitle>{pujas.some(puja => puja.id === pujaForm.id) ? "Edit Puja" : "Add Puja"}</CardTitle>
               </CardHeader>
               <CardContent>
-                <fieldset disabled={isSaving} className="space-y-4">
+                <fieldset disabled={isSaving || isGeneratingImage} className="space-y-4">
                   <Field label="English Name"><Input value={pujaForm.name_en} onChange={event => updatePuja("name_en", event.target.value)} /></Field>
                   <Field label="Telugu Name"><Input value={pujaForm.name} onChange={event => updatePuja("name", event.target.value)} /></Field>
+                  <Field label="English Description"><Textarea value={pujaForm.description} onChange={event => updatePuja("description", event.target.value)} /></Field>
+                  <Field label="Telugu Description"><Textarea value={pujaForm.description_te} onChange={event => updatePuja("description_te", event.target.value)} /></Field>
                   
                   <Field label="Visibility / Categories">
                     <div className="grid grid-cols-2 gap-2.5 mt-1 border border-border/40 p-3 rounded-lg bg-muted/10">
@@ -635,30 +691,49 @@ export default function AdminPage() {
                   </Field>
 
                   <Field label="Program Image">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={async event => {
-                        const file = event.target.files?.[0];
-                        if (file) {
-                          updatePuja("image", await readUploadedImage(file));
-                          updatePuja("imageHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
-                        }
-                      }}
-                    />
-                    {pujaForm.image && <ManagedImage src={pujaForm.image} alt="Program preview" width={160} height={100} className="h-24 w-40 rounded-md object-cover" />}
+                    <div className="flex flex-col gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={async event => {
+                          const file = event.target.files?.[0];
+                          if (file) {
+                            updatePuja("image", await readUploadedImage(file));
+                            updatePuja("imageHint", file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
+                          }
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="bg-primary/10 border-primary/20 hover:bg-primary/20 text-primary gap-2"
+                        onClick={handleGenerateImageWithAI}
+                        disabled={isGeneratingImage || isSaving}
+                      >
+                        {isGeneratingImage ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Generating Image with AI...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4" />
+                            Generate appropriate image with AI
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    {pujaForm.image && <ManagedImage src={pujaForm.image} alt="Program preview" width={160} height={100} className="h-24 w-40 rounded-md object-cover mt-2" />}
                   </Field>
                   
                   <Field label="Image Hint"><Input value={pujaForm.imageHint} onChange={event => updatePuja("imageHint", event.target.value)} /></Field>
-                  <Field label="English Description"><Textarea value={pujaForm.description} onChange={event => updatePuja("description", event.target.value)} /></Field>
-                  <Field label="Telugu Description"><Textarea value={pujaForm.description_te} onChange={event => updatePuja("description_te", event.target.value)} /></Field>
                   
                   <div className="flex gap-2 pt-2">
-                    <Button onClick={saveCurrentPuja} disabled={isSaving}>
+                    <Button onClick={saveCurrentPuja} disabled={isSaving || isGeneratingImage}>
                       {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
                       Save Puja
                     </Button>
-                    <Button variant="outline" onClick={() => setPujaForm(emptyPuja(nextId(pujas)))}>New</Button>
+                    <Button variant="outline" onClick={() => setPujaForm(emptyPuja(nextId(pujas)))} disabled={isSaving || isGeneratingImage}>New</Button>
                   </div>
                 </fieldset>
               </CardContent>

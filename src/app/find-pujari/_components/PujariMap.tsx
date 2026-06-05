@@ -37,7 +37,7 @@ export function PujariMap({ pujaris, selectedPujariId, setSelectedPujariId, caro
         const scale = isSelected ? 1.25 : 1;
         
         return L.divIcon({
-            html: `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="%23${color}" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="transform: scale(${scale});"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+            html: `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="#${color}" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="transform: scale(${scale});"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
             className: 'bg-transparent border-0 transition-transform duration-200',
             iconSize: [48, 48],
             iconAnchor: [24, 48],

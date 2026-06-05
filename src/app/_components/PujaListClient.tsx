@@ -26,13 +26,49 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
   const [activeTab, setActiveTab] = useState<string | undefined>();
   const [loadingPujaId, setLoadingPujaId] = useState<string | number | null>(null);
 
+  const targetCategoryName = useMemo(() => {
+    if (!subcategory) return null;
+    const cleanSub = subcategory.trim().toLowerCase();
+    
+    // Find a puja where category_en or category matches
+    const matchedPuja = pujas.find(p => {
+      const catEn = p.category_en.toLowerCase();
+      const catTe = p.category.toLowerCase();
+      return catEn === cleanSub || 
+             catTe === cleanSub ||
+             catEn.replace('pujas', '').trim() === cleanSub.replace('pujas', '').trim() ||
+             catEn.replace('poojas', '').trim() === cleanSub.replace('poojas', '').trim();
+    });
+    
+    if (matchedPuja) {
+      return language === 'te' ? matchedPuja.category : matchedPuja.category_en;
+    }
+    return subcategory;
+  }, [pujas, subcategory, language]);
+
   useEffect(() => {
-    if (subcategory && categories.includes(subcategory)) {
-      setActiveTab(subcategory);
+    if (targetCategoryName && categories.includes(targetCategoryName)) {
+      setActiveTab(targetCategoryName);
     } else if (categories.length > 0 && (!activeTab || !categories.includes(activeTab))) {
       setActiveTab(categories[0]);
     }
-  }, [categories, activeTab, subcategory]);
+  }, [categories, activeTab, targetCategoryName]);
+
+  // Effect to automatically scroll to the subcategory section when page loads in sections mode
+  useEffect(() => {
+    if (targetCategoryName) {
+      const elementId = `category-${targetCategoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+      
+      const timer = setTimeout(() => {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 300); // Small delay to ensure items have rendered
+      
+      return () => clearTimeout(timer);
+    }
+  }, [targetCategoryName]);
 
   const handleFindPujaris = (puja: Puja) => {
     setLoadingPujaId(puja.id);
@@ -175,8 +211,10 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
                 
                 if (categoryPujas.length === 0) return null;
 
+                const categoryId = `category-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
                 return (
-                    <div key={category}>
+                    <div key={category} id={categoryId} className="scroll-mt-24">
                         <h2 className="font-headline text-3xl border-b pb-2 mb-6 text-primary">{category}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {categoryPujas.map(puja => (
