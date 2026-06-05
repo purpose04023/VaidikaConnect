@@ -13,14 +13,6 @@ export async function generatePujaImageAction(
   description: string
 ): Promise<{ success: boolean; image?: string; error?: string }> {
   try {
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENAI_API_KEY || process.env.GOOGLE_API_KEY;
-    if (!apiKey) {
-      return {
-        success: false,
-        error: "GEMINI_API_KEY is not defined in the environment variables. Please add it to your .env.local file."
-      };
-    }
-
     if (!nameEn) {
       return {
         success: false,
@@ -30,6 +22,57 @@ export async function generatePujaImageAction(
 
     // A detailed, premium-quality prompt designed to match the saffron/gold spiritual aesthetic of VaidikaConnect
     const promptText = `An authentic, high-quality, professional photograph of a Hindu sacred ritual: ${nameEn}. ${description || ""}. Featuring traditional elements like flowers, oil lamps (diyas), coconuts, mango leaves, and sacred vessels, beautifully arranged on a clean altar, with warm divine lighting and spiritual atmosphere. Detailed, respectful, saffron and gold tones, 4:3 aspect ratio.`;
+
+    // 1. Try Hugging Face first if the free API Key is defined
+    const hfApiKey = process.env.HF_API_KEY;
+    if (hfApiKey) {
+      try {
+        console.log("Generating image using Hugging Face free Stable Diffusion API...");
+        const hfUrl = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
+        const hfResponse = await fetch(hfUrl, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${hfApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ inputs: promptText }),
+        });
+
+        if (hfResponse.ok) {
+          const arrayBuffer = await hfResponse.arrayBuffer();
+          const base64Image = Buffer.from(arrayBuffer).toString("base64");
+          return {
+            success: true,
+            image: `data:image/jpeg;base64,${base64Image}`
+          };
+        } else {
+          const errorText = await hfResponse.text();
+          console.error("Hugging Face API error response:", errorText);
+          // Fall through to Gemini if Gemini API key is available, else return error
+          if (!process.env.GEMINI_API_KEY) {
+            return {
+              success: false,
+              error: `Hugging Face API error (Status ${hfResponse.status}): ${errorText || hfResponse.statusText}`
+            };
+          }
+        }
+      } catch (hfErr) {
+        console.error("Hugging Face generation failed, attempting Gemini fallback...", hfErr);
+        // Fall through to Gemini if key is available, otherwise rethrow
+        if (!process.env.GEMINI_API_KEY) {
+          throw hfErr;
+        }
+      }
+    }
+
+    // 2. Fall back to Gemini Imagen 4
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENAI_API_KEY || process.env.GOOGLE_API_KEY;
+    if (!apiKey) {
+      return {
+        success: false,
+        error: "No active image generation API key found. Please define HF_API_KEY or GEMINI_API_KEY in your environment variables (.env.local)."
+      };
+    }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
     
@@ -61,7 +104,7 @@ export async function generatePujaImageAction(
         if (parsed.error && parsed.error.message) {
           errorMessage = parsed.error.message;
           if (errorMessage.includes("only available on paid plans") || errorMessage.includes("upgrade your account")) {
-            errorMessage = "AI Image Generation requires a Google AI Studio account with billing enabled. Please upgrade your plan at https://aistudio.google.com/ to use this feature.";
+            errorMessage = "AI Image Generation requires a Google AI Studio account with billing enabled. Please upgrade your plan at https://aistudio.google.com/ to use this feature, or use a free Hugging Face API key (HF_API_KEY).";
           }
         }
       } catch (e) {

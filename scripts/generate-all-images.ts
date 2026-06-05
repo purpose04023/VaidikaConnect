@@ -7,11 +7,46 @@ import { defaultPujas } from '../src/lib/data';
 const envPath = path.resolve(process.cwd(), '.env.local');
 config({ path: envPath });
 
+const hfApiKey = process.env.HF_API_KEY;
 const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENAI_API_KEY || process.env.GOOGLE_API_KEY;
 
 async function generateImage(nameEn: string, description: string): Promise<string> {
   const promptText = `An authentic, high-quality, professional photograph of a Hindu sacred ritual: ${nameEn}. ${description || ""}. Featuring traditional elements like flowers, oil lamps (diyas), coconuts, mango leaves, and sacred vessels, beautifully arranged on a clean altar, with warm divine lighting and spiritual atmosphere. Detailed, respectful, saffron and gold tones, 4:3 aspect ratio.`;
 
+  // 1. Try Hugging Face free API if configured
+  if (hfApiKey) {
+    try {
+      console.log(` -> Using Hugging Face free stable diffusion for "${nameEn}"...`);
+      const hfUrl = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
+      const hfResponse = await fetch(hfUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${hfApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ inputs: promptText }),
+      });
+
+      if (hfResponse.ok) {
+        const arrayBuffer = await hfResponse.arrayBuffer();
+        return Buffer.from(arrayBuffer).toString("base64");
+      } else {
+        const errorText = await hfResponse.text();
+        console.warn(`Hugging Face failed with status ${hfResponse.status}: ${errorText}. Falling back to Gemini...`);
+        // if gemini is not available, throw error
+        if (!apiKey) {
+          throw new Error(`Hugging Face error: ${errorText || hfResponse.statusText}`);
+        }
+      }
+    } catch (err) {
+      console.warn("Hugging Face fetch failed, attempting Gemini fallback...", err);
+      if (!apiKey) {
+        throw err;
+      }
+    }
+  }
+
+  // 2. Fall back to Gemini Imagen 4
   const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
   
   const response = await fetch(url, {
@@ -41,7 +76,7 @@ async function generateImage(nameEn: string, description: string): Promise<strin
       if (parsed.error && parsed.error.message) {
         msg = parsed.error.message;
         if (msg.includes("only available on paid plans") || msg.includes("upgrade your account")) {
-          msg = "AI Image Generation requires a Google AI Studio account with billing enabled. Please upgrade your plan at https://aistudio.google.com/";
+          msg = "AI Image Generation requires a Google AI Studio account with billing enabled. Please upgrade your plan at https://aistudio.google.com/ or use a free Hugging Face API key (HF_API_KEY).";
         }
       }
     } catch {}
@@ -57,9 +92,9 @@ async function generateImage(nameEn: string, description: string): Promise<strin
 }
 
 async function main() {
-  if (!apiKey) {
-    console.error("❌ ERROR: GEMINI_API_KEY is not defined in your environment or .env.local file.");
-    console.error("Please add 'GEMINI_API_KEY=your_key' to .env.local and run the script again.");
+  if (!hfApiKey && !apiKey) {
+    console.error("❌ ERROR: Neither HF_API_KEY nor GEMINI_API_KEY is defined in your environment or .env.local file.");
+    console.error("Please add 'HF_API_KEY=your_hugging_face_token' to .env.local and run the script again.");
     process.exit(1);
   }
 
