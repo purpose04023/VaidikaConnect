@@ -351,10 +351,96 @@ export default function AdminPage() {
     setIsGeneratingImage(true);
     const generatingToast = toast({
       title: "Generating image with AI...",
-      description: "Calling Gemini Imagen to create a matching ritual image. This may take up to 10 seconds.",
+      description: "Generating a custom ritual image. This may take up to 15 seconds.",
     });
 
     try {
+      // 1. Try browser-side Hugging Face Generation first (bypasses server firewall block!)
+      const hfKey = process.env.NEXT_PUBLIC_HF_API_KEY;
+      if (hfKey) {
+        const hfModels = [
+          "black-forest-labs/FLUX.1-schnell",
+          "stabilityai/stable-diffusion-xl-base-1.0",
+          "CompVis/stable-diffusion-v1-4"
+        ];
+        
+        let lastError = "";
+        let success = false;
+        let base64Image = "";
+
+        const promptText = `An authentic, high-quality, professional photograph of a Hindu sacred ritual: ${pujaForm.name_en}. ${pujaForm.description || ""}. Featuring traditional elements like flowers, oil lamps (diyas), coconuts, mango leaves, and sacred vessels, beautifully arranged on a clean altar, with warm divine lighting and spiritual atmosphere. Detailed, respectful, saffron and gold tones, 4:3 aspect ratio.`;
+
+        for (const hfModel of hfModels) {
+          try {
+            console.log(`Generating client-side image using Hugging Face (${hfModel})...`);
+            const hfUrl = `https://api-inference.huggingface.co/models/${hfModel}`;
+            
+            let retries = 3;
+            let hfResponse: Response | null = null;
+            
+            while (retries > 0) {
+              hfResponse = await fetch(hfUrl, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${hfKey}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ inputs: promptText }),
+              });
+
+              if (hfResponse.ok) {
+                break;
+              }
+
+              const errorText = await hfResponse.text();
+              
+              if (hfResponse.status === 503 || errorText.includes("loading") || errorText.includes("estimated_time")) {
+                let estimatedTime = 15;
+                try {
+                  const parsed = JSON.parse(errorText);
+                  estimatedTime = Math.ceil(parsed.estimated_time || 15);
+                } catch (e) {}
+                
+                console.log(`Model ${hfModel} is loading. Waiting ${estimatedTime} seconds...`);
+                await new Promise(resolve => setTimeout(resolve, estimatedTime * 1000));
+                retries--;
+                continue;
+              }
+              
+              throw new Error(`HF Error: ${errorText}`);
+            }
+
+            if (hfResponse && hfResponse.ok) {
+              const blob = await hfResponse.blob();
+              base64Image = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+              });
+              success = true;
+              break;
+            }
+          } catch (err) {
+            console.warn(`Hugging Face client-side model ${hfModel} failed:`, err);
+            lastError = err instanceof Error ? err.message : String(err);
+          }
+        }
+
+        if (success && base64Image) {
+          generatingToast.dismiss();
+          updatePuja("image", base64Image);
+          updatePuja("imageHint", `AI generated image for ${pujaForm.name_en}`);
+          toast({
+            title: "Image generated successfully!",
+            description: "AI image has been generated in your browser and inserted as the program image.",
+          });
+          return;
+        }
+        console.warn("Client-side Hugging Face failed. Falling back to Server Action...", lastError);
+      }
+
+      // 2. Fall back to Server Action (Gemini Imagen)
       const res = await generatePujaImageAction(pujaForm.name_en, pujaForm.description);
       generatingToast.dismiss();
       if (res.success && res.image) {
