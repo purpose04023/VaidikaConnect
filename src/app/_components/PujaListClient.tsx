@@ -121,7 +121,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
         </Link>
         <CardFooter className="pt-0 pb-5 px-6">
           <Button 
-            className="w-full flex items-center justify-center gap-2 rounded-xl py-5 font-bold shadow-md divine-button h-auto" 
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold shadow-md divine-button h-auto" 
             onClick={() => handleFindPujaris(puja)}
             disabled={loadingPujaId !== null}
           >

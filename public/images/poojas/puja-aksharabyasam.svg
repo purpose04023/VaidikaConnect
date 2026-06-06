@@ -1,0 +1,31 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <rect x="150" y="150" width="400" height="400" fill="#f97316"/>
+    <rect x="150" y="150" width="400" height="400" fill="#881337"/>
+    <rect x="150" y="150" width="400" height="400" fill="url(#grad)"/>
+
+    <!-- Geometric Patterns -->
+    <path d="M 200,200 L 600,200 A 400,400 0 1 1 200,600"/>
+    <path d="M 200,200 L 600,200 A 400,400 0 1 1 200,600"/>
+
+    <!-- Traditional Border -->
+    <rect x="150" y="150" width="800" height="600" fill="#eab308"/>
+    
+    <!-- Corner Motifs -->
+    <path d="M 400,200 L 440,240 A 40,40 0 1 1 400,280"/>
+    <path d="M 400,200 L 360,240 A 40,40 0 1 1 320,280"/>
+
+    <!-- Lamp with Soft Glow -->
+    <rect x="50" y="50" width="700" height="500" fill="#f97316"/>
+    <circle cx="350" cy="250" r="40" fill="#eab308"/>
+
+    <!-- Text "Aksharabyasam" -->
+    <text x="400" y="300" font-family="Serif" font-size="72">Aksharabyasam</text>
+    
+    <!-- Gradient for the Lamp Glow -->
+    <defs>
+        <linearGradient id="grad">
+            <stop offset="0%" stop-color="#ca8a04"/>
+            <stop offset="100%" stop-color="#eab308"/>
+        </linearGradient>
+    </defs>
+</svg>
