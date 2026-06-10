@@ -248,7 +248,7 @@ export function CustomPoojaForm() {
         {/* Error State */}
         {status === "error" && (
           <div className="p-4 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-xl">
-            Something went wrong. Please call us directly at <span className="font-semibold text-white">{adminPhone}</span>.
+            Something went wrong. Please call us directly at <strong className="font-bold underline">{adminPhone}</strong>.
           </div>
         )}
 
