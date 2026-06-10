@@ -111,17 +111,9 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
       if (isCustom) {
         e.preventDefault();
         e.stopPropagation();
-        if (!user) {
-          toast({
-            variant: "destructive",
-            title: language === 'te' ? "లాగిన్ అవసరం" : "Login Required",
-            description: language === 'te'
-              ? "అనుకూల పూజను బుక్ చేయడానికి దయచేసి ఖాతాను సృష్టించండి లేదా లాగిన్ చేయండి."
-              : "Please create an account or login to request a custom pooja.",
-          });
-          router.push("/login");
-        } else {
-          router.push(`/programs/custom-request?category=${encodeURIComponent(puja.category_en)}`);
+        const element = document.getElementById("custom-pooja-form-section");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
         }
       }
     };
