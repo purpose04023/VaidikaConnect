@@ -223,15 +223,20 @@ export default function AdminPage() {
   const handleUpdateStatus = async (orderId: string, newStatus: string) => {
     setUpdatingOrderId(orderId);
     try {
-      const supabaseClient = createClient();
-      const { error } = await supabaseClient
-        .from("custom_pooja_requests")
-        .update({ status: newStatus })
-        .eq("id", orderId);
+      // 1. Call API route to update status and trigger notifications
+      const response = await fetch("/api/custom-pooja-request/status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: orderId, status: newStatus })
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error("Failed to update status");
+      }
 
-      // Sync with localStorage
+      // 2. Sync with localStorage
       try {
         const localRequests = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
         const idx = localRequests.findIndex((o: any) => o.id === orderId);
@@ -250,7 +255,7 @@ export default function AdminPage() {
 
       await fetchCustomOrders();
     } catch (err: any) {
-      console.warn("DB update failed, updating local cache as fallback:", err.message || err);
+      console.warn("API status update failed, updating local cache as fallback:", err.message || err);
       
       let updatedLocally = false;
       try {
@@ -260,6 +265,12 @@ export default function AdminPage() {
           localRequests[idx].status = newStatus;
           localStorage.setItem("mock_custom_pooja_requests", JSON.stringify(localRequests));
           updatedLocally = true;
+
+          // Trigger mock WhatsApp on client side for offline testing if completed
+          if (newStatus === "completed") {
+            const req = localRequests[idx];
+            console.log(`%c[WHATSAPP MESSAGE SENT] TO: ${req.phone}\nMESSAGE:\nNamaste ${req.name}! 🙏\n\nYour pooja booking for *${req.pooja_description}* on *${req.preferred_date}* is completed, we are contacting you.\n\nDhanyavadah,\n*VaidikaConnect Support*`, "background: #25D366; color: black; padding: 4px; border-radius: 4px; font-weight: bold;");
+          }
         }
       } catch (localErr) {
         console.error("Failed to fallback update locally:", localErr);
