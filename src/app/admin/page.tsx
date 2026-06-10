@@ -6,7 +6,8 @@ import type { Deity } from "@/lib/data/stotrams";
 import { useContent, type ContactContent, type GlobalSettings } from "@/lib/content-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { createClient } from "@/utils/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -173,6 +174,68 @@ export default function AdminPage() {
   // Dynamic lists helper states
   const [newRequiredItem, setNewRequiredItem] = useState("");
   const [newSlokaName, setNewSlokaName] = useState("");
+
+  // Custom pooja requests states
+  const [customOrders, setCustomOrders] = useState<any[]>([]);
+  const [priceQuotes, setPriceQuotes] = useState<Record<string, string>>({});
+  const [pricingOrderId, setPricingOrderId] = useState<string | null>(null);
+
+  const fetchCustomOrders = async () => {
+    const supabaseClient = createClient();
+    const { data } = await supabaseClient
+      .from("custom_ritual_orders")
+      .select("*")
+      .eq("status", "pending_review")
+      .order("created_at", { ascending: false });
+    setCustomOrders(data || []);
+  };
+
+  useEffect(() => {
+    if (user && isAdminEmail(user?.email)) {
+      fetchCustomOrders();
+    }
+  }, [user]);
+
+  const handleAssignPrice = async (orderId: string) => {
+    const price = priceQuotes[orderId];
+    if (!price || isNaN(parseFloat(price))) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Price",
+        description: "Please enter a valid numeric price."
+      });
+      return;
+    }
+
+    setPricingOrderId(orderId);
+    try {
+      const res = await fetch("/api/admin-price-custom-pooja", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, price: parseFloat(price) })
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to assign price");
+      }
+
+      toast({
+        title: "Price Assigned Successfully",
+        description: `Offer of ₹${parseFloat(price).toLocaleString()} submitted to client and WhatsApp alert simulated.`
+      });
+
+      // Refresh list
+      await fetchCustomOrders();
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Operation Failed",
+        description: err.message || "An unexpected error occurred."
+      });
+    } finally {
+      setPricingOrderId(null);
+    }
+  };
   const [newSlokaLink, setNewSlokaLink] = useState("");
 
   const addRequiredItem = () => {
@@ -521,6 +584,7 @@ export default function AdminPage() {
         <TabsList className="h-auto flex flex-wrap justify-start">
           <TabsTrigger value="pujas"><FilePlus className="mr-2 h-4 w-4" />Pujas</TabsTrigger>
           <TabsTrigger value="pujaris"><BadgeCheck className="mr-2 h-4 w-4" />Pujaris</TabsTrigger>
+          <TabsTrigger value="custom-requests"><Sparkles className="mr-2 h-4 w-4 text-primary" />Custom Requests ({customOrders.length})</TabsTrigger>
           <TabsTrigger value="regions"><Map className="mr-2 h-4 w-4" />Regions</TabsTrigger>
           <TabsTrigger value="temples"><Landmark className="mr-2 h-4 w-4" />Temples</TabsTrigger>
           <TabsTrigger value="deities"><BookOpen className="mr-2 h-4 w-4" />Deities</TabsTrigger>
@@ -528,6 +592,89 @@ export default function AdminPage() {
           <TabsTrigger value="contact"><Contact className="mr-2 h-4 w-4" />Contact</TabsTrigger>
           <TabsTrigger value="settings"><Settings className="mr-2 h-4 w-4" />Global Settings</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="custom-requests" className="space-y-6">
+          <div className="space-y-4 max-w-4xl">
+            {customOrders.length === 0 ? (
+              <Card className="text-center p-8 bg-muted/10 border-dashed">
+                <CardContent className="pt-6">
+                  <p className="text-muted-foreground">No pending custom pooja requests found.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              customOrders.map((order) => (
+                <Card key={order.id} className="overflow-hidden border-border bg-card shadow-md">
+                  <CardHeader className="bg-muted/10 border-b py-3 px-5 flex flex-row items-center justify-between">
+                    <div>
+                      <span className="text-xs text-muted-foreground">Order ID: {order.id.slice(0, 8)}...</span>
+                      <h3 className="font-bold text-foreground text-lg leading-snug mt-0.5">
+                        {order.interpreted_deity} {order.ritual_archetype}
+                      </h3>
+                    </div>
+                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-500 border-amber-500/30">Pending Review</Badge>
+                  </CardHeader>
+                  
+                  <CardContent className="p-5 space-y-4 text-sm text-muted-foreground">
+                    <div className="bg-secondary/20 p-3 rounded-lg border border-border/40 text-foreground">
+                      <p className="font-medium text-xs text-muted-foreground mb-1">Raw Request:</p>
+                      <p className="italic">"{order.raw_user_input}"</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Client Details:</span>
+                        <span className="font-semibold text-foreground">ID: {order.user_id.slice(0, 8)}...</span>
+                        <span className="text-xs text-muted-foreground block">WhatsApp: {order.whatsapp_number}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground block">Timing & Location:</span>
+                        <span className="font-semibold text-foreground">{order.preferred_date} @ {order.preferred_time}</span>
+                        <span className="text-xs text-muted-foreground block">Address ({order.location_type}): {order.location_address || "Online"}</span>
+                      </div>
+                    </div>
+
+                    {order.generated_materials && order.generated_materials.length > 0 && (
+                      <div className="border-t pt-3 mt-3">
+                        <span className="text-xs font-semibold text-foreground block mb-1">Parsed Materials:</span>
+                        <p className="text-xs leading-relaxed">{order.generated_materials.join(", ")}</p>
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="bg-muted/5 border-t py-4 px-5 flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                      <div className="flex-1 sm:w-48">
+                        <Label htmlFor={`price-${order.id}`} className="sr-only">Quote Price</Label>
+                        <Input
+                          id={`price-${order.id}`}
+                          type="number"
+                          placeholder="Quote price in ₹"
+                          value={priceQuotes[order.id] || ""}
+                          onChange={(e) => setPriceQuotes(prev => ({ ...prev, [order.id]: e.target.value }))}
+                          className="h-10 bg-background"
+                        />
+                      </div>
+                      <Button
+                        onClick={() => handleAssignPrice(order.id)}
+                        disabled={pricingOrderId === order.id}
+                        className="bg-primary text-black font-bold h-10 px-5"
+                      >
+                        {pricingOrderId === order.id ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                            <span>Pricing...</span>
+                          </>
+                        ) : (
+                          <span>Submit Quote</span>
+                        )}
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))
+            )}
+          </div>
+        </TabsContent>
 
         <TabsContent value="regions" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-[1fr_420px]">

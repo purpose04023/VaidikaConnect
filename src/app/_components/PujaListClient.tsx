@@ -11,9 +11,13 @@ import { Search, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/context/language-context";
 import { ManagedImage } from "@/components/common/ManagedImage";
+import { useUser } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[], variant?: "tabs" | "sections" }) {
   const { t, language } = useLanguage();
+  const { user } = useUser();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -100,41 +104,98 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
   }, [filteredPujas, language]);
 
   const PujaCard = ({ puja }: { puja: Puja }) => {
+    const isCustom = puja.id.toString().startsWith('custom-');
     const pujaSlug = puja.name_en.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    const handleClickCard = (e: React.MouseEvent) => {
+      if (isCustom) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+          toast({
+            variant: "destructive",
+            title: language === 'te' ? "లాగిన్ అవసరం" : "Login Required",
+            description: language === 'te'
+              ? "అనుకూల పూజను బుక్ చేయడానికి దయచేసి ఖాతాను సృష్టించండి లేదా లాగిన్ చేయండి."
+              : "Please create an account or login to request a custom pooja.",
+          });
+          router.push("/login");
+        } else {
+          router.push(`/programs/custom-request?category=${encodeURIComponent(puja.category_en)}`);
+        }
+      }
+    };
+
     return (
-      <Card key={puja.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col group cursor-pointer border border-border/50 rounded-2xl bg-card">
-        <Link href={`/programs/${pujaSlug}`} className="block flex-grow flex flex-col">
-          <CardHeader className="p-0 overflow-hidden">
-            <ManagedImage
-                src={puja.image}
-                alt={puja.name}
-                width={600}
-                height={400}
-                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                data-ai-hint={puja.imageHint}
-            />
-          </CardHeader>
-          <CardContent className="p-6 flex-grow flex flex-col text-left space-y-2">
-            <CardTitle className="font-headline text-2xl mb-1 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.name : puja.name_en}</CardTitle>
-            <p className="text-muted-foreground line-clamp-3 text-sm break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.description_te : puja.description}</p>
-          </CardContent>
-        </Link>
-        <CardFooter className="pt-0 pb-5 px-6">
-          <Button 
-            className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold shadow-md divine-button h-auto" 
-            onClick={() => handleFindPujaris(puja)}
-            disabled={loadingPujaId !== null}
-          >
-            {loadingPujaId === puja.id ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Loading...</span>
-              </>
-            ) : (
-              t('home.select_program')
-            )}
-          </Button>
-        </CardFooter>
+      <Card 
+        key={puja.id}
+        onClick={handleClickCard}
+        className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col group cursor-pointer border border-border/50 rounded-2xl bg-card"
+      >
+        {isCustom ? (
+          <div className="block flex-grow flex flex-col">
+            <CardHeader className="p-0 overflow-hidden">
+              <ManagedImage
+                  src="/logo.jpg"
+                  alt={puja.name}
+                  width={600}
+                  height={400}
+                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  data-ai-hint="Custom Request Logo"
+              />
+            </CardHeader>
+            <CardContent className="p-6 flex-grow flex flex-col text-left space-y-2">
+              <CardTitle className="font-headline text-2xl mb-1 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed text-primary">
+                {language === 'te' ? puja.name : puja.name_en}
+              </CardTitle>
+              <p className="text-muted-foreground line-clamp-3 text-sm break-words whitespace-normal leading-relaxed">
+                {language === 'te' ? puja.description_te : puja.description}
+              </p>
+            </CardContent>
+            <CardFooter className="pt-0 pb-5 px-6 mt-auto">
+              <Button 
+                className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold shadow-md divine-button h-auto"
+              >
+                {language === 'te' ? "ఇప్పుడే అభ్యర్థించండి" : "Request Now"}
+              </Button>
+            </CardFooter>
+          </div>
+        ) : (
+          <>
+            <Link href={`/programs/${pujaSlug}`} className="block flex-grow flex flex-col">
+              <CardHeader className="p-0 overflow-hidden">
+                <ManagedImage
+                    src={puja.image}
+                    alt={puja.name}
+                    width={600}
+                    height={400}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    data-ai-hint={puja.imageHint}
+                />
+              </CardHeader>
+              <CardContent className="p-6 flex-grow flex flex-col text-left space-y-2">
+                <CardTitle className="font-headline text-2xl mb-1 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.name : puja.name_en}</CardTitle>
+                <p className="text-muted-foreground line-clamp-3 text-sm break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.description_te : puja.description}</p>
+              </CardContent>
+            </Link>
+            <CardFooter className="pt-0 pb-5 px-6">
+              <Button 
+                className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold shadow-md divine-button h-auto" 
+                onClick={(e) => { e.stopPropagation(); handleFindPujaris(puja); }}
+                disabled={loadingPujaId !== null}
+              >
+                {loadingPujaId === puja.id ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Loading...</span>
+                  </>
+                ) : (
+                  t('home.select_program')
+                )}
+              </Button>
+            </CardFooter>
+          </>
+        )}
       </Card>
     );
   };
@@ -186,11 +247,24 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
               {categories.map(category => {
                   const categoryPujas = pujas.filter(puja => (language === 'te' ? puja.category : puja.category_en) === category);
                   
+                  const customCategoryPuja: Puja = {
+                    id: `custom-${category}`,
+                    name: `ఇతర ${category}`,
+                    name_en: `Other ${category}`,
+                    category: category as any,
+                    category_en: category as any,
+                    description: `Request a custom ${category} ritual not listed above. Our AI will verify and assign pricing.`,
+                    description_te: `పైన జాబితా చేయని ఇతర ${category} పూజా విధానాన్ని అభ్యర్థించండి. మా AI ధృవీకరించి ధరను కేటాయిస్తుంది.`,
+                    image: "/logo.jpg",
+                    imageHint: "Custom Request"
+                  };
+                  const displayedPujas = [...categoryPujas, customCategoryPuja];
+
                   return (
                     <TabsContent key={category} value={category}>
-                        {categoryPujas.length > 0 ? (
+                        {displayedPujas.length > 0 ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {categoryPujas.map(puja => (
+                            {displayedPujas.map(puja => (
                                 <PujaCard key={puja.id} puja={puja} />
                             ))}
                           </div>
@@ -213,11 +287,24 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
 
                 const categoryId = `category-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
+                const customCategoryPuja: Puja = {
+                  id: `custom-${category}`,
+                  name: `ఇతర ${category}`,
+                  name_en: `Other ${category}`,
+                  category: category as any,
+                  category_en: category as any,
+                  description: `Request a custom ${category} ritual not listed above. Our AI will verify and assign pricing.`,
+                  description_te: `పైన జాబితా చేయని ఇతర ${category} పూజా విధానాన్ని అభ్యర్థించండి. మా AI ధృవీకరించి ధరను కేటాయిస్తుంది.`,
+                  image: "/logo.jpg",
+                  imageHint: "Custom Request"
+                };
+                const displayedPujas = [...categoryPujas, customCategoryPuja];
+
                 return (
                     <div key={category} id={categoryId} className="scroll-mt-24">
                         <h2 className="font-headline text-3xl border-b pb-2 mb-6 text-primary">{category}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {categoryPujas.map(puja => (
+                            {displayedPujas.map(puja => (
                                 <PujaCard key={puja.id} puja={puja} />
                             ))}
                         </div>

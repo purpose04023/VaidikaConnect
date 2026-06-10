@@ -26,6 +26,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
+  whatsappNumber: z.string().min(10, { message: 'WhatsApp number must be at least 10 digits.' }),
   password: z.string().min(6, {
     message: 'Password must be at least 6 characters.',
   }),
@@ -42,6 +43,7 @@ export default function SignupPage() {
       firstName: '',
       lastName: '',
       email: '',
+      whatsappNumber: '',
       password: '',
     },
   });
@@ -72,7 +74,8 @@ export default function SignupPage() {
         const { error: profileError } = await supabase.from('profiles').upsert({
           id: user.id,
           role: 'user',
-          full_name: `${values.firstName} ${values.lastName}`
+          full_name: `${values.firstName} ${values.lastName}`,
+          phone_whatsapp: values.whatsappNumber
         });
         if (profileError) throw profileError;
       }
@@ -138,6 +141,19 @@ export default function SignupPage() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="you@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="whatsappNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>WhatsApp Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. 9876543210" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
