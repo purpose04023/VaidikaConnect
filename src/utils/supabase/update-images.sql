@@ -4,44 +4,44 @@
 -- Update Ganesha Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/ganesha.png' 
-WHERE deity_name = 'Ganesha' OR id = '00000000-0000-0000-0000-00000ganesha';
+WHERE deity_name = 'Ganesha';
 
 -- Update Shiva Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/shiva.png' 
-WHERE deity_name = 'Shiva' OR id = '00000000-0000-0000-0000-0000000shiva';
+WHERE deity_name = 'Shiva';
 
 -- Update Vishnu Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/vishnu.png' 
-WHERE deity_name = 'Vishnu' OR id = '00000000-0000-0000-0000-000000vishnu';
+WHERE deity_name = 'Vishnu';
 
 -- Update Rama Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/rama.png' 
-WHERE deity_name = 'Rama' OR id = '00000000-0000-0000-0000-00000000rama';
+WHERE deity_name = 'Rama';
 
 -- Update Hanuman Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/hanuman.png' 
-WHERE deity_name = 'Hanuman' OR id = '00000000-0000-0000-0000-000hanuman';
+WHERE deity_name = 'Hanuman';
 
 -- Update Lalitha Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/lalitha.png' 
-WHERE deity_name = 'Lalitha' OR id = '00000000-0000-0000-0000-0000lalitha';
+WHERE deity_name = 'Lalitha';
 
 -- Update Lakshmi Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/lakshmi.png' 
-WHERE deity_name = 'Lakshmi' OR id = '00000000-0000-0000-0000-0000lakshmi';
+WHERE deity_name = 'Lakshmi';
 
 -- Update Saraswati Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/saraswati.png' 
-WHERE deity_name = 'Saraswati' OR id = '00000000-0000-0000-0000-0saraswati';
+WHERE deity_name = 'Saraswati';
 
 -- Update Durga Image
 UPDATE public.stotrams 
 SET image_url = '/images/deities/durga.png' 
-WHERE deity_name = 'Durga' OR id = '00000000-0000-0000-0000-0000000durga';
+WHERE deity_name = 'Durga';

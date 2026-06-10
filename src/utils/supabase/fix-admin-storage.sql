@@ -78,7 +78,7 @@ using (
         profiles.role = 'admin'
         or (
           profiles.role = 'poojari'
-          and owner = auth.uid()::text
+          and owner = auth.uid()
           and (storage.foldername(name))[1] = 'aalaya-sannidi'
         )
       )
@@ -114,7 +114,7 @@ using (
         profiles.role = 'admin'
         or (
           profiles.role = 'poojari'
-          and owner = auth.uid()::text
+          and owner = auth.uid()
           and (storage.foldername(name))[1] = 'aalaya-sannidi'
         )
       )

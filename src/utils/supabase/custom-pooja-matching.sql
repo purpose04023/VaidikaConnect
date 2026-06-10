@@ -20,10 +20,12 @@ CREATE TABLE IF NOT EXISTS public.pooja_embeddings (
 -- Enable RLS for Pooja Embeddings
 ALTER TABLE public.pooja_embeddings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access to embeddings" ON public.pooja_embeddings;
 CREATE POLICY "Allow public read access to embeddings"
   ON public.pooja_embeddings FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Allow service role full access to embeddings" ON public.pooja_embeddings;
 CREATE POLICY "Allow service role full access to embeddings"
   ON public.pooja_embeddings FOR ALL
   USING (true); -- Managed through service role key in Edge Functions
@@ -55,10 +57,12 @@ CREATE TABLE IF NOT EXISTS public.regional_deity_aliases (
 
 ALTER TABLE public.regional_deity_aliases ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access to aliases" ON public.regional_deity_aliases;
 CREATE POLICY "Allow public read access to aliases"
   ON public.regional_deity_aliases FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Allow admin full access to aliases" ON public.regional_deity_aliases;
 CREATE POLICY "Allow admin full access to aliases"
   ON public.regional_deity_aliases FOR ALL
   USING (
@@ -116,16 +120,19 @@ CREATE TABLE IF NOT EXISTS public.custom_ritual_orders (
 ALTER TABLE public.custom_ritual_orders ENABLE ROW LEVEL SECURITY;
 
 -- Users can see their own custom orders
+DROP POLICY IF EXISTS "Allow users to view their own custom orders" ON public.custom_ritual_orders;
 CREATE POLICY "Allow users to view their own custom orders"
   ON public.custom_ritual_orders FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Users can insert their own custom orders
+DROP POLICY IF EXISTS "Allow users to insert their own custom orders" ON public.custom_ritual_orders;
 CREATE POLICY "Allow users to insert their own custom orders"
   ON public.custom_ritual_orders FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Admins can view and update all custom orders
+DROP POLICY IF EXISTS "Allow admins full access to custom orders" ON public.custom_ritual_orders;
 CREATE POLICY "Allow admins full access to custom orders"
   ON public.custom_ritual_orders FOR ALL
   USING (
