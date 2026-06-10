@@ -59,20 +59,13 @@ export function Header() {
             <SheetContent side="left" className="w-[240px] sm:w-[300px]">
               <div className="flex flex-col space-y-6 pt-4">
                 <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                  {logo ? (
-                    <div className="h-8 w-8 flex items-center justify-center">
-                      <ManagedImage 
-                        src={logo.imageUrl}
-                        alt="VaidikaConnect Logo" 
-                        width={32} 
-                        height={32} 
-                        data-ai-hint={logo.imageHint}
-                        className="object-contain"
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-8 w-8 bg-primary rounded-sm" />
-                  )}
+                  <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm">
+                    <img 
+                      src="/logo.jpg" 
+                      alt="VaidikaConnect Logo" 
+                      className="h-full w-full object-cover rounded-full"
+                    />
+                  </div>
                   <span className="font-bold font-headline text-lg">
                     {t('header.vaidikaconnect')}
                   </span>
@@ -105,14 +98,12 @@ export function Header() {
           </Sheet>
 
           <Link href="/" className="mr-6 flex items-center space-x-2 group">
-            {/* Simple, premium Om logo */}
-            <div className="flex items-center justify-center">
-              <span 
-                style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
-                className="text-3xl font-bold text-primary group-hover:text-primary/80 transition-colors"
-              >
-                ॐ
-              </span>
+            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm transition-transform group-hover:scale-105">
+              <img 
+                src="/logo.jpg" 
+                alt="VaidikaConnect Logo" 
+                className="h-full w-full object-cover rounded-full"
+              />
             </div>
             <span className="font-bold font-headline text-xl hidden sm:inline-block text-foreground">
               {t('header.vaidikaconnect')}

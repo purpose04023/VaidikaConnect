@@ -20,7 +20,8 @@ import {
   Star,
   Users,
   Sun,
-  Flower
+  Flower,
+  MessageCircle
 } from "lucide-react";
 
 export default function Navbar() {
@@ -40,6 +41,10 @@ export default function Navbar() {
           
           {/* Main Desktop Navigation Items */}
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+            <Link href="/aalaya-sannidi" className="flex items-center gap-1 py-3 text-foreground/80 transition-colors hover:text-[#d4af37] focus:outline-none font-medium">
+              <MessageCircle className="h-4 w-4 text-amber-500/80" />
+              <span>AalayaSannidi</span>
+            </Link>
             
             {/* Dropdown 0: Vaidika Poojas */}
             <div 

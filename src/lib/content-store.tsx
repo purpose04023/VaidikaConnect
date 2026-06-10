@@ -14,6 +14,7 @@ import { defaultTemples } from "@/lib/data/temples";
 import type { Deity } from "@/lib/data/stotrams";
 import { stotramsData as defaultDeities } from "@/lib/data/stotrams";
 import { createClient } from "@/utils/supabase/client";
+import { uploadAsset } from "@/utils/supabase/storage";
 import { isAdminEmail } from "@/lib/admin";
 import { compressImage } from "@/lib/utils";
 import { useUser } from "@/hooks/use-auth";
@@ -123,6 +124,46 @@ const stableUuid = (num: number | string): string => {
   if (isNaN(n)) return "00000000-0000-0000-0000-" + String(num).slice(0, 12).padStart(12, '0');
   return "00000000-0000-0000-0000-" + String(n).padStart(12, '0');
 };
+
+const slugifyAssetName = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "asset";
+
+const imageExtensionFromDataUrl = (value: string) => {
+  const match = value.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,/);
+  const ext = match?.[1]?.toLowerCase();
+  return ext === "jpeg" ? "jpg" : ext || "jpg";
+};
+
+async function persistImageAsset(
+  image: string | undefined,
+  folder: string,
+  id: string | number | undefined,
+  label: string
+) {
+  if (!image || !image.startsWith("data:image/")) return image || "";
+
+  const extension = imageExtensionFromDataUrl(image);
+  const path = `${folder}/${slugifyAssetName(String(id || label))}-${Date.now()}.${extension}`;
+  try {
+    return await uploadAsset(path, image);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Image upload failed. Confirm the Supabase Storage bucket and admin upload policies are installed. ${message}`
+    );
+  }
+}
+
+function throwOnSupabaseError(error: { message?: string } | null, action: string) {
+  if (error) {
+    throw new Error(`${action} failed: ${error.message || "Unknown Supabase error"}`);
+  }
+}
 
 const ContentContext = createContext<ContentContextValue | undefined>(undefined);
 
@@ -337,14 +378,21 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      const idToUpsert = puja.id && typeof puja.id === 'string' && puja.id.includes('-') ? puja.id : undefined;
+      const idToUpsert = pujas.some((item) => String(item.id) === String(puja.id)) ? String(puja.id) : undefined;
+
+      const storedImage = await persistImageAsset(
+        compressedImage,
+        "pujas",
+        puja.id,
+        puja.name_en || puja.name
+      );
 
       const payload = {
         title: puja.name_en,
         title_te: puja.name,
         description: puja.description,
         description_te: puja.description_te,
-        image_url: compressedImage,
+        image_url: storedImage,
         image_hint: puja.imageHint,
         category: puja.category,
         category_en: puja.category_en,
@@ -356,23 +404,26 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       };
 
       if (idToUpsert) {
-        await supabase.from("programs").update(payload).eq("id", idToUpsert);
+        const { error } = await supabase.from("programs").update(payload).eq("id", idToUpsert);
+        throwOnSupabaseError(error, "Puja update");
       } else {
-        await supabase.from("programs").insert({
+        const { error } = await supabase.from("programs").insert({
           ...payload,
           id: undefined, // auto generate UUID
         });
+        throwOnSupabaseError(error, "Puja insert");
       }
 
       await refreshContent();
     },
-    [supabase, ensureAdmin, refreshContent]
+    [supabase, ensureAdmin, refreshContent, pujas]
   );
 
   const deletePuja = useCallback(
     async (id: string | number) => {
       ensureAdmin();
-      await supabase.from("programs").delete().eq("id", String(id));
+      const { error } = await supabase.from("programs").delete().eq("id", String(id));
+      throwOnSupabaseError(error, "Puja delete");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -391,12 +442,19 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      const idToUpsert = pujari.id && typeof pujari.id === 'string' && pujari.id.includes('-') ? pujari.id : undefined;
+      const idToUpsert = pujaris.some((item) => String(item.id) === String(pujari.id)) ? String(pujari.id) : undefined;
+
+      const storedPhoto = await persistImageAsset(
+        compressedPhoto,
+        "pujaris",
+        pujari.id,
+        pujari.name
+      );
 
       const payload = {
         role: "poojari",
         full_name: pujari.name,
-        photo: compressedPhoto || fallbackPhoto,
+        photo: storedPhoto || fallbackPhoto,
         photo_hint: pujari.photoHint || "verified pujari",
         verified: pujari.verified ?? false,
         verified_by: pujari.verifiedBy || "VaidikaConnect",
@@ -420,23 +478,26 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       };
 
       if (idToUpsert) {
-        await supabase.from("profiles").update(payload).eq("id", idToUpsert);
+        const { error } = await supabase.from("profiles").update(payload).eq("id", idToUpsert);
+        throwOnSupabaseError(error, "Pujari update");
       } else {
-        await supabase.from("profiles").insert({
+        const { error } = await supabase.from("profiles").insert({
           ...payload,
           id: crypto.randomUUID(), // generate valid random UUID for profiles primary key
         });
+        throwOnSupabaseError(error, "Pujari insert");
       }
 
       await refreshContent();
     },
-    [supabase, ensureAdmin, refreshContent]
+    [supabase, ensureAdmin, refreshContent, pujaris]
   );
 
   const deletePujari = useCallback(
     async (id: string | number) => {
       ensureAdmin();
-      await supabase.from("profiles").delete().eq("id", String(id));
+      const { error } = await supabase.from("profiles").delete().eq("id", String(id));
+      throwOnSupabaseError(error, "Pujari delete");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -445,10 +506,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const saveContact = useCallback(
     async (newContact: ContactContent) => {
       ensureAdmin();
-      await supabase.from("global_settings").upsert({
+      const { error } = await supabase.from("global_settings").upsert({
         id: "contact",
         value: JSON.stringify(newContact),
       });
+      throwOnSupabaseError(error, "Contact update");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -457,10 +519,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const saveSettings = useCallback(
     async (newSettings: GlobalSettings) => {
       ensureAdmin();
-      await supabase.from("global_settings").upsert({
+      const { error } = await supabase.from("global_settings").upsert({
         id: "settings",
         value: JSON.stringify(newSettings),
       });
+      throwOnSupabaseError(error, "Settings update");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -495,7 +558,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         lng: request.lng || 80.4367,
         status: "pending",
       };
-      await supabase.from("requests").insert(data);
+      const { error } = await supabase.from("requests").insert(data);
+      throwOnSupabaseError(error, "Join request insert");
       await refreshContent();
     },
     [supabase, refreshContent]
@@ -535,8 +599,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         reviews: [],
       };
 
-      await supabase.from("profiles").insert(newPujariPayload);
-      await supabase.from("requests").delete().eq("id", id);
+      const { error: insertError } = await supabase.from("profiles").insert(newPujariPayload);
+      throwOnSupabaseError(insertError, "Join request approval");
+      const { error: deleteError } = await supabase.from("requests").delete().eq("id", id);
+      throwOnSupabaseError(deleteError, "Join request cleanup");
       await refreshContent();
     },
     [supabase, ensureAdmin, requests, refreshContent]
@@ -545,7 +611,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const rejectJoinRequest = useCallback(
     async (id: string) => {
       ensureAdmin();
-      await supabase.from("requests").delete().eq("id", id);
+      const { error } = await supabase.from("requests").delete().eq("id", id);
+      throwOnSupabaseError(error, "Join request rejection");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -554,11 +621,16 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const resetContent = useCallback(async () => {
     ensureAdmin();
     // Wipe tables
-    await supabase.from("programs").delete().neq("id", stableUuid(0));
-    await supabase.from("profiles").delete().neq("role", "admin");
-    await supabase.from("stotrams").delete().neq("id", stableUuid(0));
-    await supabase.from("global_settings").delete().neq("id", "admin-key");
-    await supabase.from("requests").delete().neq("status", "approved");
+    const { error: programsError } = await supabase.from("programs").delete().neq("id", stableUuid(0));
+    throwOnSupabaseError(programsError, "Programs reset");
+    const { error: profilesError } = await supabase.from("profiles").delete().neq("role", "admin");
+    throwOnSupabaseError(profilesError, "Profiles reset");
+    const { error: stotramsError } = await supabase.from("stotrams").delete().neq("id", stableUuid(0));
+    throwOnSupabaseError(stotramsError, "Stotrams reset");
+    const { error: settingsError } = await supabase.from("global_settings").delete().neq("id", "admin-key");
+    throwOnSupabaseError(settingsError, "Settings reset");
+    const { error: requestsError } = await supabase.from("requests").delete().neq("status", "approved");
+    throwOnSupabaseError(requestsError, "Requests reset");
 
     // Seeding removed — use admin tools to re-populate if needed
   }, [supabase, ensureAdmin]);
@@ -585,37 +657,53 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      const idToUpsert = temple.id && typeof temple.id === 'string' && temple.id.includes('-') && !temple.id.startsWith('temple-') ? temple.id : undefined;
+      const idToUpsert = temples.some((item) => String(item.id) === String(temple.id)) ? String(temple.id) : undefined;
+
+      const storedImage = await persistImageAsset(
+        compressedImage,
+        "temples",
+        temple.id,
+        temple.name
+      );
+      const storedBanner = await persistImageAsset(
+        compressedBanner,
+        "temple-banners",
+        temple.id,
+        temple.name
+      );
 
       const payload = {
         name: temple.name,
         state: temple.state,
         location: temple.location,
-        image: compressedImage,
-        banner_image: compressedBanner,
+        image: storedImage,
+        banner_image: storedBanner,
         description: temple.description,
         contact: temple.contact,
         booking_link: temple.booking_link,
       };
 
       if (idToUpsert) {
-        await supabase.from("temples").update(payload).eq("id", idToUpsert);
+        const { error } = await supabase.from("temples").update(payload).eq("id", idToUpsert);
+        throwOnSupabaseError(error, "Temple update");
       } else {
-        await supabase.from("temples").insert({
+        const { error } = await supabase.from("temples").insert({
           ...payload,
           id: undefined, // auto generate UUID
         });
+        throwOnSupabaseError(error, "Temple insert");
       }
 
       await refreshContent();
     },
-    [supabase, ensureAdmin, refreshContent]
+    [supabase, ensureAdmin, refreshContent, temples]
   );
 
   const deleteTemple = useCallback(
     async (id: string) => {
       ensureAdmin();
-      await supabase.from("temples").delete().eq("id", id);
+      const { error } = await supabase.from("temples").delete().eq("id", id);
+      throwOnSupabaseError(error, "Temple delete");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -634,37 +722,47 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      const idToUpsert = deity.id && typeof deity.id === 'string' && deity.id.includes('-') ? deity.id : undefined;
+      const idToUpsert = deities.some((item) => String(item.id) === String(deity.id)) ? String(deity.id) : undefined;
+
+      const storedImageUrl = await persistImageAsset(
+        compressedImageUrl,
+        "deities",
+        deity.id,
+        deity.nameEn || deity.name
+      );
 
       const payload = {
         deity_name: deity.nameEn,
         name_te: deity.name,
         gender: deity.gender,
         image_hint: deity.imageHint,
-        image_url: compressedImageUrl,
+        image_url: storedImageUrl,
         ashtotharam_url: deity.ashtotharamUrl,
         sahasranamam_url: deity.sahasranamamUrl,
         reading_slug: deity.readingSlug,
       };
 
       if (idToUpsert) {
-        await supabase.from("stotrams").update(payload).eq("id", idToUpsert);
+        const { error } = await supabase.from("stotrams").update(payload).eq("id", idToUpsert);
+        throwOnSupabaseError(error, "Deity update");
       } else {
-        await supabase.from("stotrams").insert({
+        const { error } = await supabase.from("stotrams").insert({
           ...payload,
           id: undefined, // auto generate UUID
         });
+        throwOnSupabaseError(error, "Deity insert");
       }
 
       await refreshContent();
     },
-    [supabase, ensureAdmin, refreshContent]
+    [supabase, ensureAdmin, refreshContent, deities]
   );
 
   const deleteDeity = useCallback(
     async (id: string) => {
       ensureAdmin();
-      await supabase.from("stotrams").delete().eq("id", id);
+      const { error } = await supabase.from("stotrams").delete().eq("id", id);
+      throwOnSupabaseError(error, "Deity delete");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]
@@ -674,30 +772,33 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     async (region: Region) => {
       ensureAdmin();
 
-      const idToUpsert = region.id && typeof region.id === 'string' && region.id.includes('-') && !region.id.startsWith('region-') ? region.id : undefined;
+      const idToUpsert = regions.some((item) => String(item.id) === String(region.id)) ? String(region.id) : undefined;
 
       const payload = {
         name: region.name,
       };
 
       if (idToUpsert) {
-        await supabase.from("regions").update(payload).eq("id", idToUpsert);
+        const { error } = await supabase.from("regions").update(payload).eq("id", idToUpsert);
+        throwOnSupabaseError(error, "Region update");
       } else {
-        await supabase.from("regions").insert({
+        const { error } = await supabase.from("regions").insert({
           ...payload,
           id: undefined, // auto generate UUID
         });
+        throwOnSupabaseError(error, "Region insert");
       }
 
       await refreshContent();
     },
-    [supabase, ensureAdmin, refreshContent]
+    [supabase, ensureAdmin, refreshContent, regions]
   );
 
   const deleteRegion = useCallback(
     async (id: string) => {
       ensureAdmin();
-      await supabase.from("regions").delete().eq("id", id);
+      const { error } = await supabase.from("regions").delete().eq("id", id);
+      throwOnSupabaseError(error, "Region delete");
       await refreshContent();
     },
     [supabase, ensureAdmin, refreshContent]

@@ -49,17 +49,22 @@ export function Hero({
            {/* Left Column - Text Content (lg:col-span-7) */}
            <div className="text-left flex flex-col items-start lg:col-span-7 space-y-6 md:space-y-8 -mt-4 lg:-mt-8">
              
-             {/* Balanced Heading (Sized perfectly for laptops/desktops) */}
-             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl tracking-tighter font-extrabold text-foreground leading-[1.1] break-words whitespace-normal font-sans">
-               {title.includes(".") ? (
-                 <>
-                   {title.split(".")[0]}.<br />
-                   <span className="gold-gradient-text">{title.split(".")[1]}</span>
-                 </>
-               ) : (
-                 title
-               )}
-             </h1>
+              {/* Balanced Heading with Logo (Sized perfectly for laptops/desktops) */}
+              <div className="flex items-center gap-4 md:gap-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-1 border border-border shadow-md">
+                  <img src="/logo.jpg" alt="VaidikaConnect Logo" className="w-full h-full object-cover rounded-full" />
+                </div>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl tracking-tighter font-extrabold text-foreground leading-[1.1] break-words whitespace-normal font-sans">
+                  {title.includes(".") ? (
+                    <>
+                      {title.split(".")[0]}.<br />
+                      <span className="gold-gradient-text">{title.split(".")[1]}</span>
+                    </>
+                  ) : (
+                    title
+                  )}
+                </h1>
+              </div>
  
              {/* Dynamic Content Subtitle */}
              <p className="max-w-2xl text-lg md:text-xl text-muted-foreground leading-relaxed font-light font-sans tracking-wide">
@@ -104,8 +109,14 @@ export function Hero({
  
            {/* Right Column - Sacred Overlapping Glassmorphic Showcase (lg:col-span-5) */}
            <div className="hidden lg:flex lg:col-span-5 relative justify-center items-center h-[550px] w-full">
+            
+              {/* Background Logo Watermark */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-[0.12] dark:opacity-[0.06] z-0 pointer-events-none">
+                <img src="/logo.jpg" alt="Background Watermark Logo" className="w-[480px] h-[480px] max-w-full object-cover rounded-full grayscale" />
+              </div>
+
              {/* Background divine light ring */}
-             <div className="absolute w-[420px] h-[420px] rounded-full border border-primary/20 opacity-30 animate-spin-slow pointer-events-none flex items-center justify-center">
+             <div className="absolute w-[420px] h-[420px] rounded-full border border-primary/20 opacity-30 animate-spin-slow pointer-events-none flex items-center justify-center z-0">
                <div className="w-[380px] h-[380px] rounded-full border border-dashed border-accent/20" />
              </div>
  
