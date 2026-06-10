@@ -53,6 +53,29 @@ export function CustomPoojaForm() {
         throw new Error("Failed to submit request");
       }
 
+      // Save a mock request in localStorage for local testing
+      try {
+        const mockReq = {
+          id: "mock-uuid-" + Math.random().toString(36).substring(2, 11),
+          name,
+          phone,
+          pooja_description: poojaDescription,
+          preferred_date: preferredDate,
+          preferred_time: preferredTime,
+          pandit_count: panditCount,
+          location,
+          budget,
+          notes: notes || null,
+          status: "new",
+          created_at: new Date().toISOString()
+        };
+        const existing = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
+        existing.push(mockReq);
+        localStorage.setItem("mock_custom_pooja_requests", JSON.stringify(existing));
+      } catch (e) {
+        console.error("Local storage error:", e);
+      }
+
       setStatus("success");
     } catch (error) {
       console.error("Custom pooja request submission error:", error);

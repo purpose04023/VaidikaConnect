@@ -177,32 +177,29 @@ export default function AdminPage() {
 
   // Custom pooja requests states
   const [customOrders, setCustomOrders] = useState<any[]>([]);
-  const [priceQuotes, setPriceQuotes] = useState<Record<string, string>>({});
-  const [pricingOrderId, setPricingOrderId] = useState<string | null>(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
   const fetchCustomOrders = async () => {
     let orders: any[] = [];
     try {
       const supabaseClient = createClient();
       const { data, error } = await supabaseClient
-        .from("custom_ritual_orders")
+        .from("custom_pooja_requests")
         .select("*")
-        .eq("status", "pending_review")
         .order("created_at", { ascending: false });
       
       if (!error && data) {
         orders = data;
       }
-    } catch (dbErr) {
-      console.warn("custom_ritual_orders table missing. Loading pending requests from client cache.");
+    } catch (dbErr: any) {
+      console.warn("custom_pooja_requests table missing. Loading requests from client cache.", dbErr.message || dbErr);
     }
 
     // Merge mock orders from localStorage
     try {
-      const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
-      const pendingLocalOrders = localOrders.filter((o: any) => o.status === "pending_review");
+      const localOrders = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
       
-      pendingLocalOrders.forEach((lo: any) => {
+      localOrders.forEach((lo: any) => {
         if (!orders.some(uo => uo.id === lo.id)) {
           orders.push(lo);
         }
@@ -211,7 +208,7 @@ export default function AdminPage() {
       // Sort by created_at desc
       orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     } catch (localErr) {
-      console.error("Failed to merge localStorage mock custom orders:", localErr);
+      console.error("Failed to merge localStorage mock custom requests:", localErr);
     }
 
     setCustomOrders(orders);
@@ -223,82 +220,66 @@ export default function AdminPage() {
     }
   }, [user]);
 
-  const handleAssignPrice = async (orderId: string) => {
-    const price = priceQuotes[orderId];
-    if (!price || isNaN(parseFloat(price))) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Price",
-        description: "Please enter a valid numeric price."
-      });
-      return;
-    }
-
-    setPricingOrderId(orderId);
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+    setUpdatingOrderId(orderId);
     try {
-      const res = await fetch("/api/admin-price-custom-pooja", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, price: parseFloat(price) })
-      });
+      const supabaseClient = createClient();
+      const { error } = await supabaseClient
+        .from("custom_pooja_requests")
+        .update({ status: newStatus })
+        .eq("id", orderId);
 
-      if (!res.ok) {
-        throw new Error("Failed to assign price");
-      }
+      if (error) throw error;
 
-      // Sync pricing update to localStorage mock order cache
+      // Sync with localStorage
       try {
-        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
-        const idx = localOrders.findIndex((o: any) => o.id === orderId);
+        const localRequests = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
+        const idx = localRequests.findIndex((o: any) => o.id === orderId);
         if (idx !== -1) {
-          localOrders[idx].status = "price_assigned";
-          localOrders[idx].total_amount = parseFloat(price);
-          localOrders[idx].updated_at = new Date().toISOString();
-          localStorage.setItem("mock_custom_orders", JSON.stringify(localOrders));
+          localRequests[idx].status = newStatus;
+          localStorage.setItem("mock_custom_pooja_requests", JSON.stringify(localRequests));
         }
-      } catch (localErr) {
-        console.error("Failed to update pricing in localStorage:", localErr);
+      } catch (e) {
+        console.error("Local storage update error:", e);
       }
 
       toast({
-        title: "Price Assigned Successfully",
-        description: `Offer of ₹${parseFloat(price).toLocaleString()} submitted to client and WhatsApp alert simulated.`
+        title: "Status Updated",
+        description: `Request status updated to "${newStatus}".`
       });
 
-      // Refresh list
       await fetchCustomOrders();
     } catch (err: any) {
-      // If direct fetch API failed, we can still fallback to pricing locally if order exists in localStorage
-      let pricedLocally = false;
+      console.warn("DB update failed, updating local cache as fallback:", err.message || err);
+      
+      let updatedLocally = false;
       try {
-        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
-        const idx = localOrders.findIndex((o: any) => o.id === orderId);
+        const localRequests = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
+        const idx = localRequests.findIndex((o: any) => o.id === orderId);
         if (idx !== -1) {
-          localOrders[idx].status = "price_assigned";
-          localOrders[idx].total_amount = parseFloat(price);
-          localOrders[idx].updated_at = new Date().toISOString();
-          localStorage.setItem("mock_custom_orders", JSON.stringify(localOrders));
-          pricedLocally = true;
+          localRequests[idx].status = newStatus;
+          localStorage.setItem("mock_custom_pooja_requests", JSON.stringify(localRequests));
+          updatedLocally = true;
         }
       } catch (localErr) {
-        console.error("Failed to fallback price locally:", localErr);
+        console.error("Failed to fallback update locally:", localErr);
       }
 
-      if (pricedLocally) {
+      if (updatedLocally) {
         toast({
-          title: "Price Assigned (Local Cache Fallback)",
-          description: `Offer of ₹${parseFloat(price).toLocaleString()} saved locally. WhatsApp alert simulated in console.`
+          title: "Status Updated (Local Cache)",
+          description: `Request status updated to "${newStatus}" locally.`
         });
         await fetchCustomOrders();
       } else {
         toast({
           variant: "destructive",
-          title: "Operation Failed",
-          description: err.message || "An unexpected error occurred."
+          title: "Update Failed",
+          description: err.message || "Failed to update status."
         });
       }
     } finally {
-      setPricingOrderId(null);
+      setUpdatingOrderId(null);
     }
   };
   const [newSlokaLink, setNewSlokaLink] = useState("");
@@ -663,7 +644,7 @@ export default function AdminPage() {
             {customOrders.length === 0 ? (
               <Card className="text-center p-8 bg-muted/10 border-dashed">
                 <CardContent className="pt-6">
-                  <p className="text-muted-foreground">No pending custom pooja requests found.</p>
+                  <p className="text-muted-foreground">No custom pooja requests found.</p>
                 </CardContent>
               </Card>
             ) : (
@@ -671,68 +652,103 @@ export default function AdminPage() {
                 <Card key={order.id} className="overflow-hidden border-border bg-card shadow-md">
                   <CardHeader className="bg-muted/10 border-b py-3 px-5 flex flex-row items-center justify-between">
                     <div>
-                      <span className="text-xs text-muted-foreground">Order ID: {order.id.slice(0, 8)}...</span>
+                      <span className="text-xs text-muted-foreground">Request ID: {order.id.slice(0, 8)}...</span>
                       <h3 className="font-bold text-foreground text-lg leading-snug mt-0.5">
-                        {order.interpreted_deity} {order.ritual_archetype}
+                        {order.name} &mdash; Custom Request
                       </h3>
                     </div>
-                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-500 border-amber-500/30">Pending Review</Badge>
+                    {order.status === 'new' && (
+                      <Badge variant="secondary" className="bg-blue-500/10 text-blue-500 border-blue-500/30">New</Badge>
+                    )}
+                    {order.status === 'wait' && (
+                      <Badge variant="secondary" className="bg-amber-500/10 text-amber-500 border-amber-500/30">Wait / Pending</Badge>
+                    )}
+                    {order.status === 'completed' && (
+                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30">Completed</Badge>
+                    )}
+                    {!['new', 'wait', 'completed'].includes(order.status) && (
+                      <Badge variant="secondary" className="bg-gray-500/10 text-gray-500 border-gray-500/30 capitalize">{order.status}</Badge>
+                    )}
                   </CardHeader>
                   
                   <CardContent className="p-5 space-y-4 text-sm text-muted-foreground">
                     <div className="bg-secondary/20 p-3 rounded-lg border border-border/40 text-foreground">
-                      <p className="font-medium text-xs text-muted-foreground mb-1">Raw Request:</p>
-                      <p className="italic">"{order.raw_user_input}"</p>
+                      <p className="font-medium text-xs text-muted-foreground mb-1">Pooja Name / Description:</p>
+                      <p className="italic whitespace-pre-wrap">"{order.pooja_description}"</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="text-xs text-muted-foreground block">Client Details:</span>
-                        <span className="font-semibold text-foreground">ID: {order.user_id.slice(0, 8)}...</span>
-                        <span className="text-xs text-muted-foreground block">WhatsApp: {order.whatsapp_number}</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground block font-medium">Customer Info:</span>
+                        <div className="text-foreground font-semibold text-sm">{order.name}</div>
+                        <div className="text-xs">Phone: <strong className="text-foreground">{order.phone}</strong></div>
+                        <div className="text-xs">Budget: <strong className="text-foreground">{order.budget}</strong></div>
                       </div>
-                      <div>
-                        <span className="text-xs text-muted-foreground block">Timing & Location:</span>
-                        <span className="font-semibold text-foreground">{order.preferred_date} @ {order.preferred_time}</span>
-                        <span className="text-xs text-muted-foreground block">Address ({order.location_type}): {order.location_address || "Online"}</span>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground block font-medium">Timing & Location:</span>
+                        <div className="text-foreground font-semibold text-sm">{order.preferred_date} &bull; {order.preferred_time}</div>
+                        <div className="text-xs">Location: <strong className="text-foreground">{order.location}</strong></div>
+                        <div className="text-xs">Pandits Needed: <strong className="text-foreground">{order.pandit_count}</strong></div>
                       </div>
                     </div>
 
-                    {order.generated_materials && order.generated_materials.length > 0 && (
+                    {order.notes && (
                       <div className="border-t pt-3 mt-3">
-                        <span className="text-xs font-semibold text-foreground block mb-1">Parsed Materials:</span>
-                        <p className="text-xs leading-relaxed">{order.generated_materials.join(", ")}</p>
+                        <span className="text-xs font-semibold text-foreground block mb-1">Additional Notes:</span>
+                        <p className="text-xs leading-relaxed whitespace-pre-wrap">{order.notes}</p>
                       </div>
                     )}
                   </CardContent>
 
-                  <CardFooter className="bg-muted/5 border-t py-4 px-5 flex items-center justify-between flex-wrap gap-4">
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                      <div className="flex-1 sm:w-48">
-                        <Label htmlFor={`price-${order.id}`} className="sr-only">Quote Price</Label>
-                        <Input
-                          id={`price-${order.id}`}
-                          type="number"
-                          placeholder="Quote price in ₹"
-                          value={priceQuotes[order.id] || ""}
-                          onChange={(e) => setPriceQuotes(prev => ({ ...prev, [order.id]: e.target.value }))}
-                          className="h-10 bg-background"
-                        />
-                      </div>
-                      <Button
-                        onClick={() => handleAssignPrice(order.id)}
-                        disabled={pricingOrderId === order.id}
-                        className="bg-primary text-black font-bold h-10 px-5"
-                      >
-                        {pricingOrderId === order.id ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                            <span>Pricing...</span>
-                          </>
-                        ) : (
-                          <span>Submit Quote</span>
-                        )}
-                      </Button>
+                  <CardFooter className="bg-muted/5 border-t py-4 px-5 flex items-center justify-end flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2">
+                      {order.status !== 'new' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={updatingOrderId === order.id}
+                          onClick={() => handleUpdateStatus(order.id, 'new')}
+                          className="border-blue-500/30 text-blue-500 hover:bg-blue-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
+                        >
+                          {updatingOrderId === order.id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <span>Revert to New</span>
+                          )}
+                        </Button>
+                      )}
+
+                      {order.status !== 'wait' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={updatingOrderId === order.id}
+                          onClick={() => handleUpdateStatus(order.id, 'wait')}
+                          className="border-amber-500/30 text-amber-500 hover:bg-amber-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
+                        >
+                          {updatingOrderId === order.id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <span>Mark as Wait</span>
+                          )}
+                        </Button>
+                      )}
+
+                      {order.status !== 'completed' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={updatingOrderId === order.id}
+                          onClick={() => handleUpdateStatus(order.id, 'completed')}
+                          className="border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
+                        >
+                          {updatingOrderId === order.id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <span>Mark as Completed</span>
+                          )}
+                        </Button>
+                      )}
                     </div>
                   </CardFooter>
                 </Card>
