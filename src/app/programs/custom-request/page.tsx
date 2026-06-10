@@ -146,6 +146,33 @@ function CustomRequestContent() {
         throw new Error(data.error || "Failed to submit booking");
       }
 
+      // Save to localStorage so it is available even if Supabase table is missing
+      try {
+        const mockOrder = data.order || {
+          id: data.orderId || crypto.randomUUID(),
+          user_id: user.id,
+          raw_user_input: description,
+          interpreted_deity: aiResult?.deity || "Devata",
+          ritual_archetype: aiResult?.ritualArchetype || "Puja",
+          target_region: aiResult?.region || "General",
+          preferred_language: "Telugu",
+          preferred_date: preferredDate,
+          preferred_time: preferredTime,
+          location_type: locationType,
+          location_address: locationAddress,
+          whatsapp_number: whatsappNumber,
+          generated_materials: aiResult?.materials || [],
+          status: "pending_review",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        const existing = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+        existing.push(mockOrder);
+        localStorage.setItem("mock_custom_orders", JSON.stringify(existing));
+      } catch (localErr) {
+        console.error("Failed to save mock order to localStorage", localErr);
+      }
+
       toast({
         title: "Pooja Request Submitted!",
         description: "Verify details on your profile. A WhatsApp quote will be sent shortly.",

@@ -23,31 +23,66 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user) return;
     const userId = user.id;
+    const userEmail = user.email || "";
+    const userFullName = user.user_metadata?.full_name || userEmail.split("@")[0] || "Devotee";
 
     async function fetchData() {
+      setIsLoadingData(true);
+      
+      // 1. Fetch user profile with fallback
       try {
-        // Fetch user profile
-        const { data: profileData } = await supabase
+        const { data: profileData, error: profileError } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", userId)
           .single();
         
+        if (profileError) throw profileError;
         setProfile(profileData);
+      } catch (err) {
+        console.warn("Profiles table missing or profile not found. Using local profile fallback.");
+        setProfile({
+          id: userId,
+          full_name: userFullName,
+          phone_whatsapp: "Not set",
+          role: "user"
+        });
+      }
 
-        // Fetch user custom pooja orders
-        const { data: ordersData } = await supabase
+      // 2. Fetch custom pooja orders with localStorage fallback
+      let userOrders: any[] = [];
+      try {
+        const { data: ordersData, error: ordersError } = await supabase
           .from("custom_ritual_orders")
           .select("*")
           .eq("user_id", userId)
           .order("created_at", { ascending: false });
 
-        setOrders(ordersData || []);
+        if (ordersError) throw ordersError;
+        userOrders = ordersData || [];
       } catch (err) {
-        console.error("Failed to load profile data:", err);
-      } finally {
-        setIsLoadingData(false);
+        console.warn("custom_ritual_orders table missing. Loading orders from client cache.");
       }
+
+      // Merge mock orders from localStorage
+      try {
+        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+        const userLocalOrders = localOrders.filter((o: any) => o.user_id === userId);
+        
+        userLocalOrders.forEach((lo: any) => {
+          if (!userOrders.some(uo => uo.id === lo.id)) {
+            userOrders.push(lo);
+          }
+        });
+
+        // Sort by created_at descending
+        userOrders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      } catch (localErr) {
+        console.error("Failed to load mock orders from localStorage:", localErr);
+      }
+
+      setOrders(userOrders);
+      setIsLoadingData(false);
     }
     fetchData();
   }, [user]);
@@ -57,12 +92,36 @@ export default function ProfilePage() {
     setIsConfirmingOrderId(orderId);
 
     try {
-      const { error } = await supabase
-        .from("custom_ritual_orders")
-        .update({ status: "completed" })
-        .eq("id", orderId);
+      let isDbUpdateSuccess = false;
+      try {
+        const { error } = await supabase
+          .from("custom_ritual_orders")
+          .update({ status: "completed" })
+          .eq("id", orderId);
+        
+        if (error) throw error;
+        isDbUpdateSuccess = true;
+      } catch (dbErr) {
+        console.warn("Could not update order status in Supabase. Attempting localStorage update.");
+      }
 
-      if (error) throw error;
+      // If database update failed or skipped, try updating client-side cache
+      let updatedLocal = false;
+      try {
+        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+        const idx = localOrders.findIndex((o: any) => o.id === orderId);
+        if (idx !== -1) {
+          localOrders[idx].status = "completed";
+          localStorage.setItem("mock_custom_orders", JSON.stringify(localOrders));
+          updatedLocal = true;
+        }
+      } catch (localErr) {
+        console.error("Failed to update status in localStorage:", localErr);
+      }
+
+      if (!isDbUpdateSuccess && !updatedLocal) {
+        throw new Error("Could not find order to confirm.");
+      }
 
       // Update local state
       setOrders(current =>

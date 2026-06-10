@@ -94,7 +94,7 @@ export default function AalayaSannidiPage() {
         description: error.message,
       });
     } else {
-      setPosts((data || []) as AalayaPost[]);
+      setPosts((data || []) as unknown as AalayaPost[]);
     }
     setIsLoading(false);
   }, [supabase, toast]);

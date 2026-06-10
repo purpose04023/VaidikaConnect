@@ -181,13 +181,40 @@ export default function AdminPage() {
   const [pricingOrderId, setPricingOrderId] = useState<string | null>(null);
 
   const fetchCustomOrders = async () => {
-    const supabaseClient = createClient();
-    const { data } = await supabaseClient
-      .from("custom_ritual_orders")
-      .select("*")
-      .eq("status", "pending_review")
-      .order("created_at", { ascending: false });
-    setCustomOrders(data || []);
+    let orders: any[] = [];
+    try {
+      const supabaseClient = createClient();
+      const { data, error } = await supabaseClient
+        .from("custom_ritual_orders")
+        .select("*")
+        .eq("status", "pending_review")
+        .order("created_at", { ascending: false });
+      
+      if (!error && data) {
+        orders = data;
+      }
+    } catch (dbErr) {
+      console.warn("custom_ritual_orders table missing. Loading pending requests from client cache.");
+    }
+
+    // Merge mock orders from localStorage
+    try {
+      const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+      const pendingLocalOrders = localOrders.filter((o: any) => o.status === "pending_review");
+      
+      pendingLocalOrders.forEach((lo: any) => {
+        if (!orders.some(uo => uo.id === lo.id)) {
+          orders.push(lo);
+        }
+      });
+
+      // Sort by created_at desc
+      orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    } catch (localErr) {
+      console.error("Failed to merge localStorage mock custom orders:", localErr);
+    }
+
+    setCustomOrders(orders);
   };
 
   useEffect(() => {
@@ -219,6 +246,20 @@ export default function AdminPage() {
         throw new Error("Failed to assign price");
       }
 
+      // Sync pricing update to localStorage mock order cache
+      try {
+        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+        const idx = localOrders.findIndex((o: any) => o.id === orderId);
+        if (idx !== -1) {
+          localOrders[idx].status = "price_assigned";
+          localOrders[idx].total_amount = parseFloat(price);
+          localOrders[idx].updated_at = new Date().toISOString();
+          localStorage.setItem("mock_custom_orders", JSON.stringify(localOrders));
+        }
+      } catch (localErr) {
+        console.error("Failed to update pricing in localStorage:", localErr);
+      }
+
       toast({
         title: "Price Assigned Successfully",
         description: `Offer of ₹${parseFloat(price).toLocaleString()} submitted to client and WhatsApp alert simulated.`
@@ -227,11 +268,35 @@ export default function AdminPage() {
       // Refresh list
       await fetchCustomOrders();
     } catch (err: any) {
-      toast({
-        variant: "destructive",
-        title: "Operation Failed",
-        description: err.message || "An unexpected error occurred."
-      });
+      // If direct fetch API failed, we can still fallback to pricing locally if order exists in localStorage
+      let pricedLocally = false;
+      try {
+        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+        const idx = localOrders.findIndex((o: any) => o.id === orderId);
+        if (idx !== -1) {
+          localOrders[idx].status = "price_assigned";
+          localOrders[idx].total_amount = parseFloat(price);
+          localOrders[idx].updated_at = new Date().toISOString();
+          localStorage.setItem("mock_custom_orders", JSON.stringify(localOrders));
+          pricedLocally = true;
+        }
+      } catch (localErr) {
+        console.error("Failed to fallback price locally:", localErr);
+      }
+
+      if (pricedLocally) {
+        toast({
+          title: "Price Assigned (Local Cache Fallback)",
+          description: `Offer of ₹${parseFloat(price).toLocaleString()} saved locally. WhatsApp alert simulated in console.`
+        });
+        await fetchCustomOrders();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Operation Failed",
+          description: err.message || "An unexpected error occurred."
+        });
+      }
     } finally {
       setPricingOrderId(null);
     }
