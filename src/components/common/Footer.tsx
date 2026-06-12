@@ -9,7 +9,7 @@ export function Footer() {
 
         {/* Left — Brand mark */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-primary font-semibold text-base leading-none select-none" aria-hidden="true">ॐ</span>
+          <img src="/logo.jpg" alt="" className="w-5 h-5 rounded-full object-cover shrink-0" aria-hidden="true" />
           <span className="font-semibold text-foreground/70">VaidikaConnect</span>
         </div>
 

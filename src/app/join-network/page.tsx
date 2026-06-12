@@ -253,9 +253,9 @@ export default function JoinNetworkPage() {
       {/* Hero Section */}
       <section className="divine-bg relative overflow-hidden py-20 md:py-28 text-center">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <span className="absolute top-8 left-[10%] text-primary/5 text-[180px] font-serif select-none leading-none">ॐ</span>
-          <span className="absolute bottom-0 right-[8%] text-primary/5 text-[150px] font-serif select-none leading-none">ॐ</span>
-          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary/3 text-[320px] font-serif select-none leading-none">ॐ</span>
+          <img src="/logo.jpg" alt="" className="absolute top-8 left-[10%] w-[180px] h-[180px] rounded-full object-cover grayscale opacity-[0.03] select-none pointer-events-none" />
+          <img src="/logo.jpg" alt="" className="absolute bottom-0 right-[8%] w-[150px] h-[150px] rounded-full object-cover grayscale opacity-[0.03] select-none pointer-events-none" />
+          <img src="/logo.jpg" alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] rounded-full object-cover grayscale opacity-[0.02] select-none pointer-events-none" />
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-medium mb-6">

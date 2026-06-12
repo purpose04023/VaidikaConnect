@@ -38,8 +38,8 @@ export function Hero({
                 filter: 'blur(70px)'
               }}
          />
-         {/* Decorative subtle Om in Sanskrit watermark */}
-         <span className="absolute right-[8%] top-[12%] text-foreground/[0.015] text-[280px] font-bold select-none pointer-events-none font-serif leading-none animate-float">ॐ</span>
+         {/* Decorative subtle Logo watermark */}
+         <img src="/logo.jpg" alt="" className="absolute right-[8%] top-[12%] w-[280px] h-[280px] rounded-full object-cover grayscale opacity-[0.015] select-none pointer-events-none animate-float" />
        </div>
  
        <div className="container mx-auto px-6 relative z-10">
@@ -161,12 +161,12 @@ export function Hero({
              </div>
  
              {/* Decorative floaters */}
-             <div className="absolute top-[10%] right-[10%] text-primary/40 text-xl font-bold animate-float z-0">
-               ॐ
-             </div>
-             <div className="absolute bottom-[20%] left-[10%] text-accent/30 text-lg font-bold animate-pulse-slow z-0" style={{ animationDelay: '2s' }}>
-               ✦
-             </div>
+              <div className="absolute top-[10%] right-[10%] z-0 select-none pointer-events-none animate-float">
+                <img src="/logo.jpg" alt="" className="w-6 h-6 rounded-full object-cover grayscale opacity-40" />
+              </div>
+              <div className="absolute bottom-[20%] left-[10%] text-accent/30 text-lg font-bold animate-pulse-slow z-0" style={{ animationDelay: '2s' }}>
+                ✦
+              </div>
  
            </div>
  

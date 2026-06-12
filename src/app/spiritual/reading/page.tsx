@@ -60,7 +60,7 @@ export default function SpiritualReadingPage() {
                filter: 'blur(60px)'
              }}
         />
-        <span className="absolute left-[5%] bottom-[10%] text-foreground/[0.01] text-[200px] font-bold select-none pointer-events-none">ॐ</span>
+        <img src="/logo.jpg" alt="" className="absolute left-[5%] bottom-[10%] w-[200px] h-[200px] rounded-full object-cover grayscale opacity-[0.01] select-none pointer-events-none" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
