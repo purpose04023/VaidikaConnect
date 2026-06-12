@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from 'react';
 import type { Puja } from '@/lib/data';
 import { useContent } from '@/lib/content-store';
 import { useSearchParams } from 'next/navigation';
+import { CustomPoojaForm } from '@/components/custom-pooja-form';
 
 function ProgramsPageContent() {
   const [pujas, setPujas] = useState<Puja[]>([]);
@@ -79,14 +80,24 @@ function ProgramsPageContent() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="font-headline text-4xl text-center mb-2 text-primary">
-        {title}
-      </h1>
-      <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-        Search and select from our comprehensive list of authentic Vedic rituals.
-      </p>
-      <PujaListClient pujas={filteredPujas} />
+    <div className="container mx-auto px-4 py-8 space-y-16">
+      <div>
+        <h1 className="font-headline text-4xl text-center mb-2 text-primary">
+          {title}
+        </h1>
+        <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Search and select from our comprehensive list of authentic Vedic rituals.
+        </p>
+        <PujaListClient pujas={filteredPujas} />
+      </div>
+
+      <div id="custom-pooja-form-section" className="border-t border-border/40 pt-16 text-center scroll-mt-24">
+        <h2 className="font-headline text-3xl mb-3 text-primary">Can't find your Pooja?</h2>
+        <p className="text-muted-foreground mb-8 max-w-lg mx-auto text-base">
+          Describe it below — any regional name, any language. We'll match you with the right pandit.
+        </p>
+        <CustomPoojaForm />
+      </div>
     </div>
   );
 }
