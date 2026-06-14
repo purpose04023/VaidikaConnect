@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Puja, Pujari, Temple, Region } from "@/lib/data";
-import type { Deity } from "@/lib/data/stotrams";
+import type { Deity } from "@/features/reading/data/stotrams";
 import { useContent, type ContactContent, type GlobalSettings } from "@/lib/content-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

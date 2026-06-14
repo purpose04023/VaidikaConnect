@@ -1,4 +1,4 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/pujari-recommendation.ts';
+import '@/features/pujari/services/pujari-recommendation.ts';

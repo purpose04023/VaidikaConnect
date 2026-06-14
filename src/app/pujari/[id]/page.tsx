@@ -1,5 +1,5 @@
 import { getPujariById, getPujas } from "@/lib/data";
-import { PujariProfileClient } from "./PujariProfileClient";
+import { PujariProfileClient } from "@/features/pujari/components/PujariProfileClient";
 
 export default async function PujariProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

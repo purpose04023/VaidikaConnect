@@ -1,4 +1,4 @@
-import { Temple } from '../data';
+import { Temple } from '@/lib/data';
 
 export const defaultTemples: Temple[] = [
   {

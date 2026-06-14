@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/context/language-context";
 
 // Dynamic import of Leaflet Map component with no SSR to prevent builds breaking
-const LocationMap = dynamic(() => import("./LocationMap"), {
+const LocationMap = dynamic(() => import("@/components/LocationMap"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex flex-col items-center justify-center bg-muted/20 min-h-[350px] rounded-2xl border border-border/50">

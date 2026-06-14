@@ -4,7 +4,7 @@ import type { Pujari } from "@/lib/data";
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles } from "lucide-react";
-import PoojariSearchFlow from "@/components/PoojariSearchFlow";
+import PoojariSearchFlow from "./PoojariSearchFlow";
 
 export function PujariDiscoveryClient({
   pujaris,

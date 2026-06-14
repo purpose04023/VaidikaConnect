@@ -40,7 +40,7 @@ async function run() {
   const ashtotharam = await fetchStotram("https://stotranidhi.com/te/sri-maha-ganapati-sahasranamavali-in-telugu/");
   
   if (sahasranamam && ashtotharam) {
-    let tsCode = fs.readFileSync('src/lib/data/stotrams.ts', 'utf8');
+    let tsCode = fs.readFileSync('src/features/reading/data/stotrams.ts', 'utf8');
     
     // Escape backticks and dollars
     const safeSahasranamam = sahasranamam.replace(/`/g, '\\`').replace(/\$/g, '\\$');
@@ -50,7 +50,7 @@ async function run() {
     tsCode = tsCode.replace(/ashtotharam: `ఓం గజాననాయ నమః[^`]+`/g, `ashtotharam: \`${safeAshtotharam}\``);
     tsCode = tsCode.replace(/sahasranamam: `శ్రీ గణేశ సహస్రనామ స్తోత్రం[^`]+`/g, `sahasranamam: \`${safeSahasranamam}\``);
     
-    fs.writeFileSync('src/lib/data/stotrams.ts', tsCode);
+    fs.writeFileSync('src/features/reading/data/stotrams.ts', tsCode);
     console.log("Successfully scraped and updated Ganesha stotrams.");
   } else {
     console.log("Failed to scrape text.");

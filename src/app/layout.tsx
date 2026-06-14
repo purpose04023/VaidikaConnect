@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/context/language-context';
 import { ContentProvider } from '@/lib/content-store';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: 'VaidikaConnect',
@@ -29,7 +30,7 @@ export default function RootLayout({
             <main className="flex-1 pt-28 md:pt-32">{children}</main>
             <Toaster />
             <Footer />
-
+            <Analytics />
           </ContentProvider>
         </LanguageProvider>
       </body>

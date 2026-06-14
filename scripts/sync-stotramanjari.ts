@@ -13,7 +13,7 @@ import * as path from 'path';
 
 // ── Paths ──────────────────────────────────────────────────────────────────
 const STOTRA_MANJARI_DIR = 'c:\\StotraManjari\\src\\data';
-const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'lib', 'data', 'stotramanjari_data.ts');
+const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'features', 'reading', 'data', 'stotramanjari_data.ts');
 
 const VIGNANAM_DATA_PATH = path.join(STOTRA_MANJARI_DIR, 'vignanam-data.json');
 const CATEGORY_MAPPINGS_PATH = path.join(STOTRA_MANJARI_DIR, 'category-mappings.json');

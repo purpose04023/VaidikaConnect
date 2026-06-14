@@ -10,9 +10,9 @@ import React, {
 } from "react";
 import type { Puja, Pujari, Temple, Region } from "@/lib/data";
 import { defaultPujaris, defaultPujas } from "@/lib/data";
-import { defaultTemples } from "@/lib/data/temples";
-import type { Deity } from "@/lib/data/stotrams";
-import { stotramsData as defaultDeities } from "@/lib/data/stotrams";
+import { defaultTemples } from "@/features/temple/data/temples";
+import type { Deity } from "@/features/reading/data/stotrams";
+import { stotramsData as defaultDeities } from "@/features/reading/data/stotrams";
 import { createClient } from "@/utils/supabase/client";
 import { uploadAsset } from "@/utils/supabase/storage";
 import { isAdminEmail } from "@/lib/admin";

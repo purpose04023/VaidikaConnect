@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/language-context";
-import { categoriesList, stotramsMap } from "@/lib/data/stotramanjari_data";
+import { categoriesList, stotramsMap } from "@/features/reading/data/stotramanjari_data";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ManagedImage } from "@/components/common/ManagedImage";

@@ -14,7 +14,7 @@ import { ManagedImage } from '@/components/common/ManagedImage';
 import { Hero } from '@/components/Hero';
 
 const HomePujariMap = dynamic(
-  () => import('./HomePujariMap').then(mod => mod.HomePujariMap),
+  () => import('@/features/pujari/components/HomePujariMap').then(mod => mod.HomePujariMap),
   {
     ssr: false,
     loading: () => <Skeleton className="h-[500px] w-full" />,

@@ -1,12 +1,12 @@
 "use client";
 
-import { PujaListClient } from '@/app/_components/PujaListClient';
+import { PujaListClient } from '@/features/pooja/components/PujaListClient';
 import { getPujas } from '@/lib/data';
 import { Suspense, useEffect, useState } from 'react';
 import type { Puja } from '@/lib/data';
 import { useContent } from '@/lib/content-store';
 import { useSearchParams } from 'next/navigation';
-import { CustomPoojaForm } from '@/components/custom-pooja-form';
+import { CustomPoojaForm } from '@/features/pooja/components/custom-pooja-form';
 
 function ProgramsPageContent() {
   const [pujas, setPujas] = useState<Puja[]>([]);

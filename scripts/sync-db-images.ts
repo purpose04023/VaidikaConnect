@@ -3,9 +3,9 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 // Import local data sources
-import { defaultTemples } from '../src/lib/data/temples';
+import { defaultTemples } from '../src/features/temple/data/temples';
 import { defaultPujas } from '../src/lib/data';
-import { stotramsData } from '../src/lib/data/stotrams';
+import { stotramsData } from '../src/features/reading/data/stotrams';
 
 // Load env variables
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });

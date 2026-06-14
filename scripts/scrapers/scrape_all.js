@@ -48,7 +48,7 @@ const deities = [
 ];
 
 async function run() {
-  let tsCode = fs.readFileSync('src/lib/data/stotrams.ts', 'utf8');
+  let tsCode = fs.readFileSync('src/features/reading/data/stotrams.ts', 'utf8');
   let updated = false;
 
   for (const deity of deities) {
@@ -90,7 +90,7 @@ async function run() {
   }
 
   if (updated) {
-    fs.writeFileSync('src/lib/data/stotrams.ts', tsCode);
+    fs.writeFileSync('src/features/reading/data/stotrams.ts', tsCode);
     console.log("All done!");
   }
 }

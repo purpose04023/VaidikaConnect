@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { getPujaris, getPujaById } from "@/lib/data";
-import { recommendPujari } from "@/ai/flows/pujari-recommendation";
-import { PujariDiscoveryClient } from "./_components/PujariDiscoveryClient";
+import { recommendPujari } from "@/features/pujari/services/pujari-recommendation";
+import { PujariDiscoveryClient } from "@/features/pujari/components/PujariDiscoveryClient";
 
 export default async function FindPujariPage({
   searchParams,
