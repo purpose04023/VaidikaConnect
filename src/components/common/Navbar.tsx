@@ -34,7 +34,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-16 md:top-20 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full border border-border bg-background/60 backdrop-blur-xl shadow-2xl z-40 transition-all duration-300">
+    <nav className="hidden md:block fixed top-16 md:top-20 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full border border-border bg-background/60 backdrop-blur-xl shadow-2xl z-40 transition-all duration-300">
 
       <div className="w-full px-6">
         <div className="flex h-12 items-center justify-between">

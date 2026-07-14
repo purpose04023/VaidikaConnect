@@ -71,6 +71,9 @@ export function Header() {
                   </span>
                 </Link>
                 <nav className="flex flex-col space-y-4 text-sm font-medium">
+                  <Link href="/aalaya-sannidi" className="text-foreground/60 transition-colors hover:text-foreground/80 py-1.5 border-b border-border/40" onClick={() => setIsOpen(false)}>
+                    AalayaSannidi
+                  </Link>
                   <div className="flex flex-col space-y-2">
                     <span className="text-foreground font-semibold py-1.5 border-b border-border/40">Programs</span>
                     <Link href="/programs?category=VAIDIKA_POOJA" className="text-foreground/60 transition-colors hover:text-foreground/80 pl-4 py-1" onClick={() => setIsOpen(false)}>
