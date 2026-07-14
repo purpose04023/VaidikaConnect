@@ -113,8 +113,8 @@ export default function ProgramDetailPage() {
       <section className="container mx-auto px-4 py-8">
         <div className="glass-card border border-border/50 rounded-3xl overflow-hidden shadow-xl grid md:grid-cols-[1fr_400px] gap-8 p-6 md:p-8 divine-bg relative">
           <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
-            <img src="/logo.jpg" alt="" className="absolute top-4 left-[2%] w-[180px] h-[180px] rounded-full object-cover grayscale opacity-[0.02] pointer-events-none" />
-            <img src="/logo.jpg" alt="" className="absolute bottom-0 right-[2%] w-[140px] h-[140px] rounded-full object-cover grayscale opacity-[0.02] pointer-events-none" />
+            <img src="/logo.png" alt="" className="absolute top-4 left-[2%] w-[180px] h-[180px] rounded-full object-cover grayscale opacity-[0.02] pointer-events-none" />
+            <img src="/logo.png" alt="" className="absolute bottom-0 right-[2%] w-[140px] h-[140px] rounded-full object-cover grayscale opacity-[0.02] pointer-events-none" />
           </div>
 
           <div className="flex flex-col justify-center space-y-6 relative z-10 text-left">
@@ -282,7 +282,7 @@ export default function ProgramDetailPage() {
             <Card className="border border-border/50 rounded-3xl bg-card/60 backdrop-blur-md shadow-lg overflow-hidden sticky top-6 text-left">
               <div className="bg-gradient-to-r from-amber-500 to-orange-600 p-6 text-white relative">
                 <div className="pointer-events-none absolute inset-0 overflow-hidden select-none opacity-20">
-                  <img src="/logo.jpg" alt="" className="absolute bottom-[-20px] right-[-10px] w-[120px] h-[120px] rounded-full object-cover grayscale opacity-[0.03] pointer-events-none" />
+                  <img src="/logo.png" alt="" className="absolute bottom-[-20px] right-[-10px] w-[120px] h-[120px] rounded-full object-cover grayscale opacity-[0.03] pointer-events-none" />
                 </div>
                 <div className="relative z-10">
                   <p className="text-xs uppercase tracking-widest font-bold text-amber-100 flex items-center gap-1.5 mb-1.5">

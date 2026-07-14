@@ -128,7 +128,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
           <div className="block flex-grow flex flex-col">
             <CardHeader className="p-0 overflow-hidden">
               <ManagedImage
-                  src="/logo.jpg"
+                  src="/logo.png"
                   alt={puja.name}
                   width={600}
                   height={400}
@@ -247,7 +247,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
                     category_en: category as any,
                     description: `Request a custom ${category} ritual not listed above. Our AI will verify and assign pricing.`,
                     description_te: `పైన జాబితా చేయని ఇతర ${category} పూజా విధానాన్ని అభ్యర్థించండి. మా AI ధృవీకరించి ధరను కేటాయిస్తుంది.`,
-                    image: "/logo.jpg",
+                    image: "/logo.png",
                     imageHint: "Custom Request"
                   };
                   const displayedPujas = [...categoryPujas, customCategoryPuja];
@@ -287,7 +287,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
                   category_en: category as any,
                   description: `Request a custom ${category} ritual not listed above. Our AI will verify and assign pricing.`,
                   description_te: `పైన జాబితా చేయని ఇతర ${category} పూజా విధానాన్ని అభ్యర్థించండి. మా AI ధృవీకరించి ధరను కేటాయిస్తుంది.`,
-                  image: "/logo.jpg",
+                  image: "/logo.png",
                   imageHint: "Custom Request"
                 };
                 const displayedPujas = [...categoryPujas, customCategoryPuja];

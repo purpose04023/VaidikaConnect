@@ -61,7 +61,7 @@ export function Header() {
                 <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm">
                     <img 
-                      src="/logo.jpg" 
+                      src="/logo.png" 
                       alt="VaidikaConnect Logo" 
                       className="h-full w-full object-cover rounded-full"
                     />
@@ -100,7 +100,7 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2 group">
             <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm transition-transform group-hover:scale-105">
               <img 
-                src="/logo.jpg" 
+                src="/logo.png" 
                 alt="VaidikaConnect Logo" 
                 className="h-full w-full object-cover rounded-full"
               />

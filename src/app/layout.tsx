@@ -7,6 +7,7 @@ import { Footer } from '@/components/common/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/context/language-context';
 import { ContentProvider } from '@/lib/content-store';
+import { ComplaintBot } from '@/components/common/ComplaintBot';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -30,6 +31,7 @@ export default function RootLayout({
             <main className="flex-1 pt-28 md:pt-32">{children}</main>
             <Toaster />
             <Footer />
+            <ComplaintBot />
             <Analytics />
           </ContentProvider>
         </LanguageProvider>

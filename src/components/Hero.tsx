@@ -39,7 +39,7 @@ export function Hero({
               }}
          />
          {/* Decorative subtle Logo watermark */}
-         <img src="/logo.jpg" alt="" className="absolute right-[8%] top-[12%] w-[280px] h-[280px] rounded-full object-cover grayscale opacity-[0.015] select-none pointer-events-none animate-float" />
+         <img src="/logo.png" alt="" className="absolute right-[8%] top-[12%] w-[280px] h-[280px] rounded-full object-cover grayscale opacity-[0.015] select-none pointer-events-none animate-float" />
        </div>
  
        <div className="container mx-auto px-6 relative z-10">
@@ -52,7 +52,7 @@ export function Hero({
               {/* Balanced Heading with Logo (Sized perfectly for laptops/desktops) */}
               <div className="flex items-center gap-4 md:gap-6">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-1 border border-border shadow-md">
-                  <img src="/logo.jpg" alt="VaidikaConnect Logo" className="w-full h-full object-cover rounded-full" />
+                  <img src="/logo.png" alt="VaidikaConnect Logo" className="w-full h-full object-cover rounded-full" />
                 </div>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl tracking-tighter font-extrabold text-foreground leading-[1.1] break-words whitespace-normal font-sans">
                   {title.includes(".") ? (
@@ -112,7 +112,7 @@ export function Hero({
             
               {/* Background Logo Watermark */}
               <div className="absolute inset-0 flex items-center justify-center opacity-[0.12] dark:opacity-[0.06] z-0 pointer-events-none">
-                <img src="/logo.jpg" alt="Background Watermark Logo" className="w-[480px] h-[480px] max-w-full object-cover rounded-full grayscale" />
+                <img src="/logo.png" alt="Background Watermark Logo" className="w-[480px] h-[480px] max-w-full object-cover rounded-full grayscale" />
               </div>
 
              {/* Background divine light ring */}
@@ -162,7 +162,7 @@ export function Hero({
  
              {/* Decorative floaters */}
               <div className="absolute top-[10%] right-[10%] z-0 select-none pointer-events-none animate-float">
-                <img src="/logo.jpg" alt="" className="w-6 h-6 rounded-full object-cover grayscale opacity-40" />
+                <img src="/logo.png" alt="" className="w-6 h-6 rounded-full object-cover grayscale opacity-40" />
               </div>
               <div className="absolute bottom-[20%] left-[10%] text-accent/30 text-lg font-bold animate-pulse-slow z-0" style={{ animationDelay: '2s' }}>
                 ✦

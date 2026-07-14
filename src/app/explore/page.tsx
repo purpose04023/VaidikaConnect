@@ -55,8 +55,8 @@ export default function ExplorePoojasPage() {
       {/* Hero Banner Section */}
       <section className="w-full divine-bg relative overflow-hidden py-16 md:py-24 text-center">
         <div className="pointer-events-none absolute inset-0 overflow-hidden select-none opacity-20">
-          <img src="/logo.jpg" alt="" className="absolute top-8 left-[5%] w-[200px] h-[200px] rounded-full object-cover grayscale opacity-[0.03] pointer-events-none" />
-          <img src="/logo.jpg" alt="" className="absolute bottom-0 right-[5%] w-[150px] h-[150px] rounded-full object-cover grayscale opacity-[0.03] pointer-events-none" />
+          <img src="/logo.png" alt="" className="absolute top-8 left-[5%] w-[200px] h-[200px] rounded-full object-cover grayscale opacity-[0.03] pointer-events-none" />
+          <img src="/logo.png" alt="" className="absolute bottom-0 right-[5%] w-[150px] h-[150px] rounded-full object-cover grayscale opacity-[0.03] pointer-events-none" />
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-medium mb-6">
