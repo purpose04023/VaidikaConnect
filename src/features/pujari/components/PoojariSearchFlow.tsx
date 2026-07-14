@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
+import type { Pujari } from "@/lib/data";
 import { 
   MapPin, 
   Navigation, 
@@ -109,7 +110,13 @@ const mockPoojaris: Poojari[] = [
   }
 ];
 
-export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
+export default function PoojariSearchFlow({ 
+  pujaris, 
+  pujaId 
+}: { 
+  pujaris?: Pujari[]; 
+  pujaId?: string | number;
+}) {
   const { language } = useLanguage();
   const { toast } = useToast();
 
@@ -119,10 +126,38 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
   const [centerCoords, setCenterCoords] = useState({ lat: 16.3067, lng: 80.4367 }); // Default Guntur
 
   // Selection states
-  const [selectedPoojariId, setSelectedPoojariId] = useState<number | null>(null);
+  const [selectedPoojariId, setSelectedPoojariId] = useState<string | number | null>(null);
   
   // Card Expansion states per Pujari
-  const [activeActions, setActiveActions] = useState<Record<number, "call" | "chat" | "book" | null>>({});
+  const [activeActions, setActiveActions] = useState<Record<string | number, "call" | "chat" | "book" | null>>({});
+
+  // Sync center coords when pujaris load
+  useEffect(() => {
+    if (pujaris && pujaris.length > 0) {
+      setCenterCoords({ lat: pujaris[0].location.lat, lng: pujaris[0].location.lng });
+    }
+  }, [pujaris]);
+
+  // Map dynamic Pujari objects to Poojari objects
+  const activePoojaris = useMemo(() => {
+    if (pujaris && pujaris.length > 0) {
+      return pujaris.map(p => ({
+        id: p.id,
+        name: p.name,
+        nameEn: p.name,
+        lat: p.location.lat,
+        lng: p.location.lng,
+        availableTimings: p.availableTimings || "Morning Slot, Evening Slot",
+        rating: p.rating,
+        experience: p.experience,
+        phone: p.phone,
+        photo: p.photo,
+        basePrice: p.basePrice,
+        specialties: p.qualifications
+      }));
+    }
+    return mockPoojaris;
+  }, [pujaris]);
 
   // Trigger GPS Geolocation
   const handleGetDeviceLocation = () => {
@@ -190,7 +225,7 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
   };
 
   // Toggle card actions
-  const toggleAction = (poojariId: number, actionType: "call" | "chat" | "book") => {
+  const toggleAction = (poojariId: string | number, actionType: "call" | "chat" | "book") => {
     setActiveActions(prev => {
       const current = prev[poojariId];
       if (current === actionType) {
@@ -202,19 +237,19 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
     if (actionType === "book") {
       toast({
         title: language === "te" ? "📅 పూజారి సంప్రదింపు వివరాలు!" : "📅 Pujari Contact Details!",
-        description: language === "te" ? "వివరాలు విస్తరించబడ్డాయి. సమయాల కొరకు పూజారితో మాట్లాడండి." : "Contact details expanded. Discuss timings directly with Pujari."
+        description: language === "te" ? "వివరాలు విస్తరించబద్ధాయి. సమయాల కొరకు పూజారితో మాట్లాడండి." : "Contact details expanded. Discuss timings directly with Pujari."
       });
     }
   };
 
   const mapPoojarisList = useMemo(() => {
-    return mockPoojaris.map(p => ({
+    return activePoojaris.map(p => ({
       id: p.id,
       name: language === "te" ? p.name : p.nameEn,
       lat: p.lat,
       lng: p.lng
     }));
-  }, [language]);
+  }, [activePoojaris, language]);
 
   return (
     <div className="w-full space-y-6">
@@ -279,13 +314,13 @@ export default function PoojariSearchFlow({ pujaName }: { pujaName?: string }) {
               {language === "te" ? "సమీపంలోని పండితులు" : "Available Regional Pujaris"}
             </h3>
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2 py-0.5 rounded-full">
-              {mockPoojaris.length} Verified
+              {activePoojaris.length} Verified
             </span>
           </div>
 
           <ScrollArea className="flex-1 pr-2">
             <div className="flex flex-col gap-4 pb-8">
-              {mockPoojaris.map((poojari) => {
+              {activePoojaris.map((poojari) => {
                 const isActive = selectedPoojariId === poojari.id;
                 const activeAction = activeActions[poojari.id] || null;
 

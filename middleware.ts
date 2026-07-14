@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { isAdminEmail } from '@/lib/admin';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -46,9 +47,7 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/login';
       return NextResponse.redirect(url);
     }
-    const adminEmail1 = 'sudhee.sripada@gmail.com';
-    const adminEmail2 = 'purpose04023@gmail.com';
-    if (user.email !== adminEmail1 && user.email !== adminEmail2) {
+    if (!isAdminEmail(user.email)) {
       const url = request.nextUrl.clone();
       url.pathname = '/';
       return NextResponse.redirect(url);

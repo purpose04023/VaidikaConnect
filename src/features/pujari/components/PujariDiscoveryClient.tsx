@@ -29,7 +29,7 @@ export function PujariDiscoveryClient({
       </Card>
 
       {/* GPS-powered regional poojari search flow component */}
-      <PoojariSearchFlow />
+      <PoojariSearchFlow pujaris={pujaris} pujaId={pujaId} />
     </div>
   );
 }

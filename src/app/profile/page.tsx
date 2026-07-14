@@ -53,7 +53,7 @@ export default function ProfilePage() {
       let userOrders: any[] = [];
       try {
         const { data: ordersData, error: ordersError } = await supabase
-          .from("custom_ritual_orders")
+          .from("custom_pooja_requests")
           .select("*")
           .eq("user_id", userId)
           .order("created_at", { ascending: false });
@@ -61,12 +61,12 @@ export default function ProfilePage() {
         if (ordersError) throw ordersError;
         userOrders = ordersData || [];
       } catch (err) {
-        console.warn("custom_ritual_orders table missing. Loading orders from client cache.");
+        console.warn("custom_pooja_requests table missing. Loading orders from client cache.");
       }
 
       // Merge mock orders from localStorage
       try {
-        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+        const localOrders = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
         const userLocalOrders = localOrders.filter((o: any) => o.user_id === userId);
         
         userLocalOrders.forEach((lo: any) => {
@@ -94,13 +94,17 @@ export default function ProfilePage() {
     try {
       let isDbUpdateSuccess = false;
       try {
-        const { error } = await supabase
-          .from("custom_ritual_orders")
-          .update({ status: "completed" })
-          .eq("id", orderId);
+        const response = await fetch("/api/custom-pooja-request/status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ id: orderId, status: "completed" })
+        });
         
-        if (error) throw error;
-        isDbUpdateSuccess = true;
+        if (response.ok) {
+          isDbUpdateSuccess = true;
+        }
       } catch (dbErr) {
         console.warn("Could not update order status in Supabase. Attempting localStorage update.");
       }
@@ -108,11 +112,11 @@ export default function ProfilePage() {
       // If database update failed or skipped, try updating client-side cache
       let updatedLocal = false;
       try {
-        const localOrders = JSON.parse(localStorage.getItem("mock_custom_orders") || "[]");
+        const localOrders = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
         const idx = localOrders.findIndex((o: any) => o.id === orderId);
         if (idx !== -1) {
           localOrders[idx].status = "completed";
-          localStorage.setItem("mock_custom_orders", JSON.stringify(localOrders));
+          localStorage.setItem("mock_custom_pooja_requests", JSON.stringify(localOrders));
           updatedLocal = true;
         }
       } catch (localErr) {
@@ -211,7 +215,7 @@ export default function ProfilePage() {
           ) : (
             <div className="space-y-4">
               {orders.map((order) => {
-                const isPending = order.status === "pending_review";
+                const isPending = order.status === "pending_review" || order.status === "new" || order.status === "wait";
                 const isAssigned = order.status === "price_assigned";
                 const isCompleted = order.status === "completed";
 
@@ -221,7 +225,7 @@ export default function ProfilePage() {
                       <div>
                         <span className="text-xs text-muted-foreground">Request ID: {order.id.slice(0, 8)}...</span>
                         <h3 className="font-bold text-foreground text-lg leading-snug mt-0.5">
-                          {order.interpreted_deity} {order.ritual_archetype}
+                          {order.pooja_description.substring(0, 45)}{order.pooja_description.length > 45 ? "..." : ""}
                         </h3>
                       </div>
                       
@@ -232,7 +236,7 @@ export default function ProfilePage() {
                     
                     <CardContent className="p-5 space-y-4 text-sm text-muted-foreground">
                       <p className="italic text-foreground bg-secondary/20 p-3 rounded-lg border border-border/40">
-                        "{order.raw_user_input}"
+                        "{order.pooja_description}"
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -246,16 +250,9 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex items-start gap-2 sm:col-span-2">
                           <MapPin className="h-4 w-4 text-primary mt-0.5" />
-                          <span>Address ({order.location_type}): {order.location_address || "Online"}</span>
+                          <span>Location: {order.location || "Online"}</span>
                         </div>
                       </div>
-
-                      {order.generated_materials && order.generated_materials.length > 0 && (
-                        <div className="border-t pt-3 mt-3">
-                          <span className="text-xs font-semibold text-foreground">Required Materials:</span>
-                          <p className="text-xs mt-1 leading-relaxed">{order.generated_materials.join(", ")}</p>
-                        </div>
-                      )}
                     </CardContent>
 
                     <CardFooter className="bg-muted/5 border-t py-4 px-5 flex items-center justify-between flex-wrap gap-4">

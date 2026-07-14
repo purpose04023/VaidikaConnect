@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { sendWhatsAppNotification } from "@/lib/whatsapp";
+import { sendWhatsAppNotification, formatPricingMessage } from "@/lib/whatsapp";
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, status } = await req.json();
+    const { id, status, price } = await req.json();
 
     if (!id || !status) {
       return NextResponse.json(
@@ -43,10 +43,15 @@ export async function POST(req: NextRequest) {
         poojaDescription = request.pooja_description;
         preferredDate = request.preferred_date;
 
-        // 2. Update status in database
+        // 2. Update status and total_amount in database
+        const updatePayload: any = { status };
+        if (price !== undefined) {
+          updatePayload.total_amount = price;
+        }
+
         const { error: updateError } = await supabaseAdmin
           .from("custom_pooja_requests")
-          .update({ status })
+          .update(updatePayload)
           .eq("id", id);
 
         if (updateError) throw updateError;
@@ -67,6 +72,28 @@ export async function POST(req: NextRequest) {
         await sendWhatsAppNotification(phone, message);
       } catch (whatsappErr) {
         console.error("[STATUS UPDATE] WhatsApp alert failed:", whatsappErr);
+      }
+    }
+
+    // 4. Trigger WhatsApp notification if status is price_assigned
+    if (status === "price_assigned" && price !== undefined) {
+      try {
+        console.log(`[STATUS UPDATE] Status is price_assigned. Triggering WhatsApp quote alert to ${phone}...`);
+        const host = req.headers.get("host") || "localhost:9002";
+        const protocol = host.startsWith("localhost") ? "http" : "https";
+        const bookingLink = `${protocol}://${host}/profile`;
+        
+        const message = formatPricingMessage(
+          name,
+          poojaDescription,
+          "Pooja",
+          preferredDate,
+          parseFloat(price),
+          bookingLink
+        );
+        await sendWhatsAppNotification(phone, message);
+      } catch (whatsappErr) {
+        console.error("[STATUS UPDATE] WhatsApp quote alert failed:", whatsappErr);
       }
     }
 

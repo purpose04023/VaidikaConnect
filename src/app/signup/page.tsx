@@ -17,7 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { ADMIN_EMAIL, isAdminEmail } from '@/lib/admin';
+import { ADMIN_EMAILS, isAdminEmail } from '@/lib/admin';
 import { createClient } from '@/utils/supabase/client';
 
 const formSchema = z.object({
@@ -53,7 +53,7 @@ export default function SignupPage() {
       toast({
         variant: 'destructive',
         title: 'Reserved admin account',
-        description: `${ADMIN_EMAIL} is the only admin account and cannot be created from public signup.`,
+        description: `This is a reserved admin account and cannot be created from public signup.`,
       });
       return;
     }

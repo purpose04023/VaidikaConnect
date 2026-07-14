@@ -16,8 +16,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { BadgeCheck, Check, Contact, FilePlus, Pencil, Plus, RotateCcw, Trash2, UserPlus, X, Loader2, BookOpen, Settings, Landmark, Map, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { ADMIN_EMAILS, isAdminEmail } from "@/lib/admin";
 import { useUser } from "@/hooks/use-auth";
-import { ADMIN_EMAIL, isAdminEmail } from "@/lib/admin";
 import { ManagedImage } from "@/components/common/ManagedImage";
 import { useToast } from "@/hooks/use-toast";
 import { compressImage } from "@/lib/utils";
@@ -411,7 +411,7 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Sign in with the admin account {ADMIN_EMAIL} to manage pujas, pujaris, contact content, and join requests.
+              Sign in with an authorized admin account ({ADMIN_EMAILS.join(", ")}) to manage pujas, pujaris, contact content, and join requests.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild><Link href="/login">Login</Link></Button>
@@ -694,6 +694,9 @@ export default function AdminPage() {
                         <div className="text-foreground font-semibold text-sm">{order.name}</div>
                         <div className="text-xs">Phone: <strong className="text-foreground">{order.phone}</strong></div>
                         <div className="text-xs">Budget: <strong className="text-foreground">{order.budget}</strong></div>
+                        {order.total_amount && (
+                          <div className="text-xs">Assigned Price: <strong className="text-primary font-bold">₹{parseFloat(order.total_amount).toLocaleString()}</strong></div>
+                        )}
                       </div>
                       <div className="space-y-1">
                         <span className="text-xs text-muted-foreground block font-medium">Timing & Location:</span>
@@ -711,54 +714,124 @@ export default function AdminPage() {
                     )}
                   </CardContent>
 
-                  <CardFooter className="bg-muted/5 border-t py-4 px-5 flex items-center justify-end flex-wrap gap-3">
-                    <div className="flex flex-wrap gap-2">
-                      {order.status !== 'new' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={updatingOrderId === order.id}
-                          onClick={() => handleUpdateStatus(order.id, 'new')}
-                          className="border-blue-500/30 text-blue-500 hover:bg-blue-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
-                        >
-                          {updatingOrderId === order.id ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <span>Revert to New</span>
-                          )}
-                        </Button>
-                      )}
+                  <CardFooter className="bg-muted/5 border-t py-4 px-5 flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2 items-center w-full justify-between">
+                      <div className="flex gap-2">
+                        {order.status !== 'new' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={updatingOrderId === order.id}
+                            onClick={() => handleUpdateStatus(order.id, 'new')}
+                            className="border-blue-500/30 text-blue-500 hover:bg-blue-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
+                          >
+                            {updatingOrderId === order.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <span>Revert to New</span>
+                            )}
+                          </Button>
+                        )}
 
-                      {order.status !== 'wait' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={updatingOrderId === order.id}
-                          onClick={() => handleUpdateStatus(order.id, 'wait')}
-                          className="border-amber-500/30 text-amber-500 hover:bg-amber-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
-                        >
-                          {updatingOrderId === order.id ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <span>Mark as Wait</span>
-                          )}
-                        </Button>
-                      )}
+                        {order.status !== 'wait' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={updatingOrderId === order.id}
+                            onClick={() => handleUpdateStatus(order.id, 'wait')}
+                            className="border-amber-500/30 text-amber-500 hover:bg-amber-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
+                          >
+                            {updatingOrderId === order.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <span>Mark as Wait</span>
+                            )}
+                          </Button>
+                        )}
+
+                        {order.status !== 'completed' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={updatingOrderId === order.id}
+                            onClick={() => handleUpdateStatus(order.id, 'completed')}
+                            className="border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
+                          >
+                            {updatingOrderId === order.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <span>Mark as Completed</span>
+                            )}
+                          </Button>
+                        )}
+                      </div>
 
                       {order.status !== 'completed' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={updatingOrderId === order.id}
-                          onClick={() => handleUpdateStatus(order.id, 'completed')}
-                          className="border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 h-9 px-4 rounded-xl text-xs font-semibold"
-                        >
-                          {updatingOrderId === order.id ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <span>Mark as Completed</span>
-                          )}
-                        </Button>
+                        <div className="flex items-center gap-2 border-t pt-3 w-full sm:w-auto sm:border-t-0 sm:pt-0 sm:pl-3 sm:border-l">
+                          <Input
+                            type="number"
+                            placeholder="Price (₹)"
+                            className="w-24 h-9 rounded-xl text-xs"
+                            id={`price-input-${order.id}`}
+                            defaultValue={order.total_amount || ""}
+                          />
+                          <Button
+                            variant="default"
+                            size="sm"
+                            disabled={updatingOrderId === order.id}
+                            onClick={async () => {
+                              const inputEl = document.getElementById(`price-input-${order.id}`) as HTMLInputElement;
+                              const val = inputEl?.value;
+                              if (!val || isNaN(parseFloat(val))) {
+                                toast({
+                                  variant: "destructive",
+                                  title: "Invalid Price",
+                                  description: "Please enter a valid numeric price."
+                                });
+                                return;
+                              }
+                              setUpdatingOrderId(order.id);
+                              try {
+                                const response = await fetch("/api/custom-pooja-request/status", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ id: order.id, status: 'price_assigned', price: parseFloat(val) })
+                                });
+                                if (!response.ok) throw new Error("Failed to assign price");
+                                
+                                // Sync with localStorage
+                                try {
+                                  const localRequests = JSON.parse(localStorage.getItem("mock_custom_pooja_requests") || "[]");
+                                  const idx = localRequests.findIndex((o: any) => o.id === order.id);
+                                  if (idx !== -1) {
+                                    localRequests[idx].status = 'price_assigned';
+                                    localRequests[idx].total_amount = parseFloat(val);
+                                    localStorage.setItem("mock_custom_pooja_requests", JSON.stringify(localRequests));
+                                  }
+                                } catch (e) {
+                                  console.error("Local storage update error:", e);
+                                }
+                                
+                                toast({
+                                  title: "Price Assigned",
+                                  description: `Assigned price ₹${parseFloat(val).toLocaleString()} and notified user.`
+                                });
+                                await fetchCustomOrders();
+                              } catch (err: any) {
+                                toast({
+                                  variant: "destructive",
+                                  title: "Error",
+                                  description: err.message
+                                });
+                              } finally {
+                                setUpdatingOrderId(null);
+                              }
+                            }}
+                            className="bg-[#c9a84c] hover:bg-[#b0913f] text-black h-9 px-4 rounded-xl text-xs font-semibold"
+                          >
+                            Assign Price
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </CardFooter>

@@ -22,11 +22,11 @@ export function Footer() {
           . All rights reserved.
         </p>
 
-        {/* Right — decorative divider */}
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground/60">
-          <span className="h-px w-8 bg-border/60 inline-block" />
-          <span className="italic">Vaidika Dharma</span>
-          <span className="h-px w-8 bg-border/60 inline-block" />
+        {/* Right — Legal Links */}
+        <div className="flex items-center gap-4 text-xs text-muted-foreground/60">
+          <a href="/privacy" className="hover:text-amber-500 transition-colors">Privacy Policy</a>
+          <span className="h-3 w-px bg-border" />
+          <a href="/terms" className="hover:text-amber-500 transition-colors">Terms of Service</a>
         </div>
 
       </div>

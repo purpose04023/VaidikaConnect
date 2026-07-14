@@ -201,7 +201,7 @@ begin
   values (
     new.id,
     case
-      when new.email = 'sudhee.sripada@gmail.com' then 'admin'
+      when new.email in ('sudhee.sripada@gmail.com', 'purpose04023@gmail.com') then 'admin'
       else 'user'
     end,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1))

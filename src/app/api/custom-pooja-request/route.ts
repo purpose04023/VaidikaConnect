@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
+      userId,
       name,
       phone,
       poojaDescription,
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
         const { data, error: dbError } = await supabaseAdmin
           .from("custom_pooja_requests")
           .insert({
+            user_id: userId || null,
             name,
             phone,
             pooja_description: poojaDescription,

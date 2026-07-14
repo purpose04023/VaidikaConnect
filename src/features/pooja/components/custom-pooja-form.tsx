@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useContent } from "@/lib/content-store";
+import { useUser } from "@/hooks/use-auth";
 import { Loader2, Check } from "lucide-react";
 
 export function CustomPoojaForm() {
   const { contact } = useContent();
+  const { user } = useUser();
   const adminPhone = contact?.phone || "+91 98765 43210";
 
   // Form Field States
@@ -37,6 +39,7 @@ export function CustomPoojaForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          userId: user?.id || null,
           name,
           phone,
           poojaDescription,
@@ -57,6 +60,7 @@ export function CustomPoojaForm() {
       try {
         const mockReq = {
           id: "mock-uuid-" + Math.random().toString(36).substring(2, 11),
+          user_id: user?.id || null,
           name,
           phone,
           pooja_description: poojaDescription,

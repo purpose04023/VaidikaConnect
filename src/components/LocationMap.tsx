@@ -5,7 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 export interface MapPoojari {
-  id: number;
+  id: string | number;
   name: string;
   lat: number;
   lng: number;
@@ -15,8 +15,8 @@ interface LocationMapProps {
   pujaris: MapPoojari[];
   centerLat: number;
   centerLng: number;
-  selectedId: number | null;
-  onSelect: (id: number) => void;
+  selectedId: string | number | null;
+  onSelect: (id: string | number) => void;
 }
 
 export default function LocationMap({
@@ -28,7 +28,7 @@ export default function LocationMap({
 }: LocationMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<Record<number, L.Marker>>({});
+  const markersRef = useRef<Record<string | number, L.Marker>>({});
 
   const createIcon = (isSelected: boolean) => {
     const color = isSelected ? "f59e0b" : "6b7280"; // Amber-500 vs Gray-500
@@ -119,7 +119,7 @@ export default function LocationMap({
   // Handle marker style update when selection changes
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([id, marker]) => {
-      const isSelected = Number(id) === selectedId;
+      const isSelected = String(id) === String(selectedId);
       marker.setIcon(createIcon(isSelected));
       marker.setZIndexOffset(isSelected ? 1000 : 0);
       if (isSelected && mapInstanceRef.current) {
