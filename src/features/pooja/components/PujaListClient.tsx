@@ -14,6 +14,23 @@ import { ManagedImage } from "@/components/common/ManagedImage";
 import { useUser } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 
+const categoryIdMap: Record<string, string> = {
+  "Deeksha Pujas": "Deeksha_Poojalu",
+  "దీక్షా పూజలు": "Deeksha_Poojalu",
+  "Dosha Parihara Pujas": "Dosha_Parihara_Poojalu",
+  "దోష నివారణ పూజలు": "Dosha_Parihara_Poojalu",
+  "Homams": "Homams",
+  "హోమాలు": "Homams",
+  "Kalyanams": "Kalyanams",
+  "కల్యాణాలు": "Kalyanams",
+  "Nomulu": "Nomulu",
+  "నోములు": "Nomulu",
+  "Pujas": "Pujas",
+  "పూజలు": "Pujas",
+  "Vratas": "Vratas",
+  "వ్రతాలు": "Vratas"
+};
+
 export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[], variant?: "tabs" | "sections" }) {
   const { t, language } = useLanguage();
   const { user } = useUser();
@@ -60,19 +77,36 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
 
   // Effect to automatically scroll to the subcategory section when page loads in sections mode
   useEffect(() => {
-    if (targetCategoryName) {
-      const elementId = `category-${targetCategoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
-      
-      const timer = setTimeout(() => {
-        const element = document.getElementById(elementId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 300); // Small delay to ensure items have rendered
-      
-      return () => clearTimeout(timer);
-    }
-  }, [targetCategoryName]);
+    const handleScroll = () => {
+      const hash = window.location.hash.replace('#', '');
+      const sub = searchParams.get("subcategory");
+      const targetId = hash || sub;
+
+      if (targetId) {
+        const timer = setTimeout(() => {
+          let element = document.getElementById(targetId);
+          if (!element) {
+            // Check mapping
+            const mappedCat = Object.keys(categoryIdMap).find(
+              key => categoryIdMap[key] === targetId || key.toLowerCase().replace(/[^a-z0-9]+/g, '-') === targetId.toLowerCase()
+            );
+            if (mappedCat) {
+              const elementId = categoryIdMap[mappedCat];
+              element = document.getElementById(elementId);
+            }
+          }
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 300);
+        return () => clearTimeout(timer);
+      }
+    };
+
+    handleScroll();
+    window.addEventListener('hashchange', handleScroll);
+    return () => window.removeEventListener('hashchange', handleScroll);
+  }, [searchParams, targetCategoryName]);
 
   const handleFindPujaris = (puja: Puja) => {
     setLoadingPujaId(puja.id);
@@ -277,7 +311,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
                 
                 if (categoryPujas.length === 0) return null;
 
-                const categoryId = `category-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+                const categoryId = categoryIdMap[category] || `category-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
                 const customCategoryPuja: Puja = {
                   id: `custom-${category}`,

@@ -100,17 +100,18 @@ export function Header() {
             </SheetContent>
           </Sheet>
 
-          <Link href="/" className="mr-6 flex items-center space-x-2 group">
-            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm transition-transform group-hover:scale-105">
+          <Link href="/" className="mr-3 sm:mr-6 flex items-center group">
+            <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm transition-transform group-hover:scale-105">
               <img 
                 src="/logo.png" 
                 alt="VaidikaConnect Logo" 
                 className="h-full w-full object-cover rounded-full"
               />
             </div>
-            <span className="font-bold font-headline text-xl hidden sm:inline-block text-foreground">
-              {t('header.vaidikaconnect')}
-            </span>
+            <div className="flex flex-col text-left leading-none font-bold ml-1.5 font-headline select-none">
+              <span className="text-xs sm:text-base block text-primary tracking-wide">Vaidika</span>
+              <span className="text-[9px] sm:text-xs block text-foreground uppercase tracking-widest mt-0.5">Connect</span>
+            </div>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             <DropdownMenu>
