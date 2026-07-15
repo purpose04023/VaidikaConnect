@@ -47,11 +47,6 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/login';
       return NextResponse.redirect(url);
     }
-    if (!isAdminEmail(user.email)) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/';
-      return NextResponse.redirect(url);
-    }
   }
 
   return supabaseResponse;

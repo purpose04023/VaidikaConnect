@@ -179,6 +179,37 @@ export default function AdminPage() {
   const [customOrders, setCustomOrders] = useState<any[]>([]);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
+  // Acharya & Rare Rituals states
+  const [profile, setProfile] = useState<any>(null);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [quarantinedRituals, setQuarantinedRituals] = useState<any[]>([]);
+  const [loadingRituals, setLoadingRituals] = useState(false);
+  const [samagriInputs, setSamagriInputs] = useState<Record<string, string>>({});
+
+  const fetchQuarantinedRituals = async () => {
+    setLoadingRituals(true);
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("quarantined_rituals")
+        .select(`
+          *,
+          ritual_votes (
+            id,
+            acharya_id,
+            samagri
+          )
+        `);
+      if (!error && data) {
+        setQuarantinedRituals(data);
+      }
+    } catch (err) {
+      console.error("Error fetching quarantined rituals:", err);
+    } finally {
+      setLoadingRituals(false);
+    }
+  };
+
   const fetchCustomOrders = async () => {
     let orders: any[] = [];
     try {
@@ -215,10 +246,107 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    if (user && isAdminEmail(user?.email)) {
-      fetchCustomOrders();
+    if (user) {
+      const supabase = createClient();
+      supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            setProfile(data);
+          }
+          setIsProfileLoading(false);
+        });
+
+      if (isAdminEmail(user?.email)) {
+        fetchCustomOrders();
+      }
+      fetchQuarantinedRituals();
+    } else {
+      setIsProfileLoading(false);
     }
   }, [user]);
+
+  const handleVoteRitual = async (ritualId: string) => {
+    const samagriStr = samagriInputs[ritualId] || "";
+    const samagriList = samagriStr.split(",").map(s => s.trim()).filter(Boolean);
+
+    if (samagriList.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Samagri Required",
+        description: "Please specify at least one required item/samagri."
+      });
+      return;
+    }
+
+    try {
+      const supabase = createClient();
+      // Insert vote
+      const { error: voteError } = await supabase
+        .from("ritual_votes")
+        .insert({
+          quarantined_ritual_id: ritualId,
+          acharya_id: user?.id,
+          samagri: samagriList
+        });
+
+      if (voteError) throw voteError;
+
+      toast({
+        title: "Vote Registered!",
+        description: "Your approval and Samagri recommendations have been saved."
+      });
+
+      // Fetch all votes for this ritual to check if threshold met
+      const { data: votes, error: votesError } = await supabase
+        .from("ritual_votes")
+        .select("*")
+        .eq("quarantined_ritual_id", ritualId);
+
+      if (votesError) throw votesError;
+
+      if (votes && votes.length >= 2) {
+        // Find the quarantined ritual details
+        const ritual = quarantinedRituals.find(r => r.id === ritualId);
+        
+        // Combine samagri lists from all voters
+        const combinedSamagri = Array.from(new Set(votes.flatMap(v => v.samagri)));
+
+        // Insert into public_rituals
+        const { error: insertError } = await supabase
+          .from("public_rituals")
+          .insert({
+            name: ritual.name,
+            description: ritual.description,
+            samagri: combinedSamagri
+          });
+
+        if (insertError) throw insertError;
+
+        // Clean up quarantined ritual
+        await supabase
+          .from("quarantined_rituals")
+          .delete()
+          .eq("id", ritualId);
+
+        toast({
+          title: "Ritual Promoted!",
+          description: `"${ritual.name}" has been promoted to the Public Rituals database.`
+        });
+      }
+
+      fetchQuarantinedRituals();
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Voting Failed",
+        description: err.message || "Failed to record your vote."
+      });
+    }
+  };
 
   const handleUpdateStatus = async (orderId: string, newStatus: string) => {
     setUpdatingOrderId(orderId);
@@ -392,26 +520,29 @@ export default function AdminPage() {
     }
   };
 
-  if (isUserLoading) {
+  const isAdmin = user && isAdminEmail(user?.email);
+  const isAcharya = profile && profile.role === 'acharya';
+
+  if (isUserLoading || isProfileLoading) {
     return (
       <div className="container mx-auto px-4 py-10">
         <Card className="max-w-xl">
-          <CardContent className="p-6 text-muted-foreground">Checking admin access...</CardContent>
+          <CardContent className="p-6 text-muted-foreground">Checking portal access...</CardContent>
         </Card>
       </div>
     );
   }
 
-  if (!isAdminEmail(user?.email)) {
+  if (!isAdmin && !isAcharya) {
     return (
       <div className="container mx-auto px-4 py-10">
         <Card className="max-w-xl">
           <CardHeader>
-            <CardTitle>Admin Access Required</CardTitle>
+            <CardTitle>Portal Access Required</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Sign in with an authorized admin account ({ADMIN_EMAILS.join(", ")}) to manage pujas, pujaris, contact content, and join requests.
+              Sign in with an authorized admin or Acharya account to access portal management dashboards.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild><Link href="/login">Login</Link></Button>
@@ -637,17 +768,24 @@ export default function AdminPage() {
         </Button>
       </div>
 
-      <Tabs defaultValue="pujas" className="space-y-6">
+      <Tabs defaultValue={isAcharya ? "rare-rituals" : "pujas"} className="space-y-6">
         <TabsList className="h-auto flex flex-wrap justify-start">
-          <TabsTrigger value="pujas"><FilePlus className="mr-2 h-4 w-4" />Pujas</TabsTrigger>
-          <TabsTrigger value="pujaris"><BadgeCheck className="mr-2 h-4 w-4" />Pujaris</TabsTrigger>
-          <TabsTrigger value="custom-requests"><Sparkles className="mr-2 h-4 w-4 text-primary" />Custom Requests ({customOrders.length})</TabsTrigger>
-          <TabsTrigger value="regions"><Map className="mr-2 h-4 w-4" />Regions</TabsTrigger>
-          <TabsTrigger value="temples"><Landmark className="mr-2 h-4 w-4" />Temples</TabsTrigger>
-          <TabsTrigger value="deities"><BookOpen className="mr-2 h-4 w-4" />Deities</TabsTrigger>
-          <TabsTrigger value="requests"><UserPlus className="mr-2 h-4 w-4" />Requests ({requests.length})</TabsTrigger>
-          <TabsTrigger value="contact"><Contact className="mr-2 h-4 w-4" />Contact</TabsTrigger>
-          <TabsTrigger value="settings"><Settings className="mr-2 h-4 w-4" />Global Settings</TabsTrigger>
+          {isAdmin && (
+            <>
+              <TabsTrigger value="pujas"><FilePlus className="mr-2 h-4 w-4" />Pujas</TabsTrigger>
+              <TabsTrigger value="pujaris"><BadgeCheck className="mr-2 h-4 w-4" />Pujaris</TabsTrigger>
+              <TabsTrigger value="custom-requests"><Sparkles className="mr-2 h-4 w-4 text-primary" />Custom Requests ({customOrders.length})</TabsTrigger>
+              <TabsTrigger value="regions"><Map className="mr-2 h-4 w-4" />Regions</TabsTrigger>
+              <TabsTrigger value="temples"><Landmark className="mr-2 h-4 w-4" />Temples</TabsTrigger>
+              <TabsTrigger value="deities"><BookOpen className="mr-2 h-4 w-4" />Deities</TabsTrigger>
+              <TabsTrigger value="requests"><UserPlus className="mr-2 h-4 w-4" />Requests ({requests.length})</TabsTrigger>
+              <TabsTrigger value="contact"><Contact className="mr-2 h-4 w-4" />Contact</TabsTrigger>
+              <TabsTrigger value="settings"><Settings className="mr-2 h-4 w-4" />Global Settings</TabsTrigger>
+            </>
+          )}
+          {(isAdmin || isAcharya) && (
+            <TabsTrigger value="rare-rituals"><Sparkles className="mr-2 h-4 w-4 text-primary" />Rare Rituals ({quarantinedRituals.length})</TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="custom-requests" className="space-y-6">
@@ -1395,6 +1533,78 @@ export default function AdminPage() {
                   Save Global Settings
                 </Button>
               </fieldset>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="rare-rituals" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary font-bold">
+                Rare Ritual Approval Portal
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Acharya priests can verify quarantined rituals and provide mandatory Samagri lists. Two approval votes are required to publish.
+              </p>
+            </CardHeader>
+            <CardContent>
+              {loadingRituals ? (
+                <div className="flex items-center gap-2 p-4 justify-center">
+                  <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
+                  <span>Loading quarantined rituals...</span>
+                </div>
+              ) : quarantinedRituals.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground italic">
+                  No quarantined rare rituals pending approval.
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {quarantinedRituals.map((ritual) => {
+                    const hasVoted = ritual.ritual_votes?.some((v: any) => v.acharya_id === user?.id);
+                    const voteCount = ritual.ritual_votes?.length || 0;
+
+                    return (
+                      <div key={ritual.id} className="border p-5 rounded-2xl bg-card shadow-sm space-y-4 text-left">
+                        <div className="flex justify-between items-start gap-4">
+                          <div>
+                            <h3 className="font-headline text-lg font-bold text-foreground">{ritual.name}</h3>
+                            <p className="text-xs text-muted-foreground mt-0.5">Submitted on {new Date(ritual.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 font-bold border-amber-500/20">
+                            {voteCount} / 2 Votes
+                          </Badge>
+                        </div>
+
+                        <p className="text-sm text-muted-foreground leading-relaxed">{ritual.description}</p>
+
+                        <div className="space-y-2 border-t pt-4">
+                          <label htmlFor={`samagri-${ritual.id}`} className="text-xs font-bold text-muted-foreground uppercase font-sans">Recommended Samagri (Comma-separated)</label>
+                          <div className="flex flex-col sm:flex-row gap-3">
+                            <Input
+                              id={`samagri-${ritual.id}`}
+                              placeholder="e.g. Turmeric, Ghee, Sandalwood powder..."
+                              value={samagriInputs[ritual.id] || ""}
+                              onChange={(e) => setSamagriInputs(prev => ({ ...prev, [ritual.id]: e.target.value }))}
+                              className="flex-1 h-11"
+                              disabled={hasVoted}
+                            />
+                            <Button
+                              onClick={() => handleVoteRitual(ritual.id)}
+                              disabled={hasVoted}
+                              className="h-11 bg-primary text-white font-bold rounded-xl shadow px-6"
+                            >
+                              {hasVoted ? "Approved" : "Vote Approve"}
+                            </Button>
+                          </div>
+                          {hasVoted && (
+                            <p className="text-xs text-emerald-600 font-bold mt-1">✓ You have already approved this ritual request.</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

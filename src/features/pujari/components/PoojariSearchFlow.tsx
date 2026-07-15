@@ -11,10 +11,10 @@ import {
   Calendar, 
   Star, 
   Clock, 
-  ChevronRight, 
   Sparkles,
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  AlertTriangle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/context/language-context";
+import { useUser } from "@/hooks/use-auth";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { InvoicePanel } from "@/components/invoice-panel";
+import { FireHazardDisclaimer, NoMetaphysicalDisclaimer } from "@/components/disclaimers";
 
 // Dynamic import of Leaflet Map component with no SSR to prevent builds breaking
 const LocationMap = dynamic(() => import("@/components/LocationMap"), {
@@ -119,6 +123,7 @@ export default function PoojariSearchFlow({
 }) {
   const { language } = useLanguage();
   const { toast } = useToast();
+  const { user } = useUser();
 
   // Location search states
   const [locationQuery, setLocationQuery] = useState("");
@@ -130,6 +135,13 @@ export default function PoojariSearchFlow({
   
   // Card Expansion states per Pujari
   const [activeActions, setActiveActions] = useState<Record<string | number, "call" | "chat" | "book" | null>>({});
+
+  // Checkout modal states
+  const [checkoutPoojari, setCheckoutPoojari] = useState<Poojari | null>(null);
+  const [bookingDate, setBookingDate] = useState("");
+  const [bookingTime, setBookingTime] = useState("");
+  const [legalAgreed, setLegalAgreed] = useState(false);
+  const [isBookingInProgress, setIsBookingInProgress] = useState(false);
 
   // Sync center coords when pujaris load
   useEffect(() => {
@@ -200,7 +212,6 @@ export default function PoojariSearchFlow({
     e.preventDefault();
     if (!locationQuery.trim()) return;
 
-    // Simple parser for common locations or mock coords
     const queryLower = locationQuery.toLowerCase();
     if (queryLower.includes("guntur") || queryLower.includes("522")) {
       setCenterCoords({ lat: 16.3067, lng: 80.4367 });
@@ -215,7 +226,6 @@ export default function PoojariSearchFlow({
         description: "Displaying qualified poojaris around Vijayawada metropolitan area."
       });
     } else {
-      // Mock slight offset from Guntur
       setCenterCoords({ lat: 16.3150, lng: 80.4450 });
       toast({
         title: `📍 Location Searched: ${locationQuery}`,
@@ -233,12 +243,61 @@ export default function PoojariSearchFlow({
       }
       return { ...prev, [poojariId]: actionType };
     });
+  };
 
-    if (actionType === "book") {
+  const handleConfirmBooking = async () => {
+    if (!bookingDate || !bookingTime) {
       toast({
-        title: language === "te" ? "📅 పూజారి సంప్రదింపు వివరాలు!" : "📅 Pujari Contact Details!",
-        description: language === "te" ? "వివరాలు విస్తరించబద్ధాయి. సమయాల కొరకు పూజారితో మాట్లాడండి." : "Contact details expanded. Discuss timings directly with Pujari."
+        variant: "destructive",
+        title: "Missing Details",
+        description: "Please select both a date and time for the Muhurtham."
       });
+      return;
+    }
+    if (!legalAgreed) {
+      toast({
+        variant: "destructive",
+        title: "Agreement Required",
+        description: "You must review and agree to the legal terms before booking."
+      });
+      return;
+    }
+    if (!checkoutPoojari) return;
+
+    setIsBookingInProgress(true);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          purohitId: checkoutPoojari.id,
+          userId: user?.id || null,
+          muhurthamTime: `${bookingDate}T${bookingTime}:00Z`,
+          dakshina: checkoutPoojari.basePrice,
+          userName: user?.full_name || "Guest Devotee",
+          userPhone: user?.phone_whatsapp || "9876543210",
+          pujaName: pujaId ? `Puja #${pujaId}` : "Sacred Ritual"
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast({
+          title: "🎉 Booking Confirmed!",
+          description: "Your ceremony is successfully booked and Purohit details dispatched."
+        });
+        setCheckoutPoojari(null);
+      } else {
+        throw new Error(result.error || "Checkout failed");
+      }
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Booking Failed",
+        description: err.message || "Failed to finalize checkout."
+      });
+    } finally {
+      setIsBookingInProgress(false);
     }
   };
 
@@ -293,7 +352,7 @@ export default function PoojariSearchFlow({
       </Card>
 
       {/* Step 2: Two Column Map & List Layout */}
-      <div className="flex flex-col md:flex-row gap-6 h-[600px] min-h-[500px]">
+      <div className="flex flex-col md:flex-row gap-6 h-auto md:h-[600px] min-h-[500px]">
         
         {/* Left Column: Client Map */}
         <div className="w-full md:w-1/2 h-[350px] md:h-full relative rounded-2xl overflow-hidden border border-border/50 bg-background/5 p-1 shadow-md">
@@ -307,7 +366,7 @@ export default function PoojariSearchFlow({
         </div>
 
         {/* Right Column: Pujaris Scrollable List */}
-        <div className="w-full md:w-1/2 h-[calc(600px-350px)] md:h-full flex flex-col gap-4">
+        <div className="w-full md:w-1/2 h-[400px] md:h-full flex flex-col gap-4">
           <div className="flex justify-between items-center border-b border-border/40 pb-2 px-1">
             <h3 className="font-headline text-lg font-bold text-foreground flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
@@ -374,7 +433,7 @@ export default function PoojariSearchFlow({
                       </div>
                     </div>
 
-                    {/* Step 4: Card Action Buttons */}
+                    {/* Step 4: Card Action Buttons with Min 44x44px Touch Targets on Mobile */}
                     <div className="border-t border-border/20 px-4 py-3 bg-muted/10 flex flex-wrap gap-2 items-center justify-between">
                       
                       <div className="flex gap-2">
@@ -386,7 +445,7 @@ export default function PoojariSearchFlow({
                             e.stopPropagation();
                             toggleAction(poojari.id, "call");
                           }}
-                          className="h-8 text-xs rounded-lg gap-1 border-border/50"
+                          className="h-11 md:h-9 text-xs rounded-xl gap-1.5 border-border/50 font-bold px-4"
                         >
                           <Phone className="h-3.5 w-3.5" />
                           <span>{language === "te" ? "కాల్ చేయండి" : "Call Now"}</span>
@@ -400,29 +459,29 @@ export default function PoojariSearchFlow({
                             e.stopPropagation();
                             toggleAction(poojari.id, "chat");
                           }}
-                          className="h-8 text-xs rounded-lg gap-1 border-border/50 text-[#25d366] hover:text-[#25d366] hover:bg-[#25d366]/5"
+                          className="h-11 md:h-9 text-xs rounded-xl gap-1.5 border-border/50 text-[#25d366] hover:text-[#25d366] hover:bg-[#25d366]/5 font-bold px-4"
                         >
                           <MessageCircle className="h-3.5 w-3.5" />
                           <span>{language === "te" ? "చాట్" : "Chat"}</span>
                         </Button>
                       </div>
 
-                      {/* Book button */}
+                      {/* Book button -> Launches checkout flow modal */}
                       <Button 
                         size="sm" 
-                        variant={activeAction === "book" ? "default" : "outline"}
+                        variant="outline"
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleAction(poojari.id, "book");
+                          setCheckoutPoojari(poojari);
                         }}
-                        className="h-8 text-xs rounded-lg gap-1 border-border/50"
+                        className="h-11 md:h-9 text-xs rounded-xl gap-1.5 border-border/50 font-bold px-4"
                       >
                         <Calendar className="h-3.5 w-3.5 text-amber-500" />
                         <span>{language === "te" ? "బుక్ చేయండి" : "Book Now"}</span>
                       </Button>
                     </div>
 
-                    {/* Expanded availableTimings section with final action link */}
+                    {/* Expanded availableTimings section */}
                     {activeAction && (
                       <div className="border-t border-border/20 p-4 bg-muted/20 space-y-3 animate-in fade-in slide-in-from-top-1 duration-200">
                         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 border border-border/30 rounded-lg p-2.5">
@@ -433,9 +492,8 @@ export default function PoojariSearchFlow({
                           </div>
                         </div>
 
-                        {/* Rendering final action based on trigger */}
                         {activeAction === "call" && (
-                          <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 shadow-md">
+                          <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 shadow-md h-11 font-bold">
                             <a href={`tel:${poojari.phone}`}>
                               <Phone className="h-4 w-4 fill-white" />
                               <span>Dial Phone: {poojari.phone}</span>
@@ -444,7 +502,7 @@ export default function PoojariSearchFlow({
                         )}
 
                         {activeAction === "chat" && (
-                          <Button asChild className="w-full bg-[#25d366] hover:bg-[#20ba5a] text-white rounded-xl gap-2 shadow-md">
+                          <Button asChild className="w-full bg-[#25d366] hover:bg-[#20ba5a] text-white rounded-xl gap-2 shadow-md h-11 font-bold">
                             <a 
                               href={`https://wa.me/91${poojari.phone.replace(/[^0-9]/g, "")}`}
                               target="_blank"
@@ -455,42 +513,6 @@ export default function PoojariSearchFlow({
                             </a>
                           </Button>
                         )}
-
-                        {activeAction === "book" && (
-                          <div className="space-y-3">
-                            <p className="text-xs sm:text-sm font-semibold text-center text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 py-2.5 px-3 rounded-xl font-sans">
-                              {language === "te" 
-                                ? "సమయం మరియు పూజా రుసుము గురించి పూజారితో మాట్లాడండి" 
-                                : "Discuss the time slots and rates directly with Pujari"}
-                            </p>
-                            <div className="grid grid-cols-2 gap-3">
-                              <Button 
-                                asChild
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 shadow-md h-10 text-xs sm:text-sm font-bold"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <a href={`tel:${poojari.phone}`}>
-                                  <Phone className="h-4 w-4 fill-white" />
-                                  <span>{language === "te" ? "కాల్ చేయండి" : "Call Now"}</span>
-                                </a>
-                              </Button>
-                              <Button 
-                                asChild
-                                className="bg-[#25d366] hover:bg-[#20ba5a] text-white rounded-xl gap-2 shadow-md h-10 text-xs sm:text-sm font-bold"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <a 
-                                  href={`https://wa.me/91${poojari.phone.replace(/[^0-9]/g, "")}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  <MessageCircle className="h-4 w-4 fill-white" />
-                                  <span>{language === "te" ? "మెసేజ్ చేయండి" : "Message Now"}</span>
-                                </a>
-                              </Button>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     )}
                   </Card>
@@ -500,6 +522,118 @@ export default function PoojariSearchFlow({
           </ScrollArea>
         </div>
       </div>
+
+      {/* Checkout Drawer / Dialog Modal */}
+      {checkoutPoojari && (
+        <Dialog open={!!checkoutPoojari} onOpenChange={(open) => !open && setCheckoutPoojari(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-6">
+            <DialogHeader>
+              <DialogTitle className="font-headline text-2xl text-primary font-bold">
+                Confirm Ceremony Booking
+              </DialogTitle>
+              <DialogDescription>
+                Review details, select Muhurtham, and sign disclaimers.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 text-left mt-4">
+              <div className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
+                <div className="h-16 w-16 rounded-full overflow-hidden border bg-muted">
+                  <img src={checkoutPoojari.photo} alt={checkoutPoojari.nameEn} className="object-cover w-full h-full" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg">{language === "te" ? checkoutPoojari.name : checkoutPoojari.nameEn}</h4>
+                  <p className="text-sm text-muted-foreground">{checkoutPoojari.experience} Years of Vedic Experience</p>
+                </div>
+              </div>
+
+              {/* Step 1: Date & Time picker with Min 44px height */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-muted-foreground uppercase" htmlFor="book-date">Muhurtham Date</label>
+                  <Input
+                    id="book-date"
+                    type="date"
+                    value={bookingDate}
+                    onChange={(e) => setBookingDate(e.target.value)}
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-muted-foreground uppercase" htmlFor="book-time">Muhurtham Time</label>
+                  <Input
+                    id="book-time"
+                    type="time"
+                    value={bookingTime}
+                    onChange={(e) => setBookingTime(e.target.value)}
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              {/* Crisis Hard-Routing Alert inside Checkout if Muhurtham is within 2 hours */}
+              {(() => {
+                if (bookingDate && bookingTime) {
+                  const mTime = new Date(`${bookingDate}T${bookingTime}:00`);
+                  const diff = mTime.getTime() - Date.now();
+                  const CRISIS_WINDOW = 2 * 60 * 60 * 1000;
+                  if (diff > 0 && diff <= CRISIS_WINDOW) {
+                    return (
+                      <div className="border border-red-200 bg-red-50 dark:bg-red-950/20 p-4 rounded-2xl text-xs text-red-700 dark:text-red-300 flex items-start gap-2.5">
+                        <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5 animate-bounce" />
+                        <div>
+                          <strong> Muhurtham Crisis Alert</strong>: Your selected time is within 2 hours. This requires immediate human scheduling triage.
+                          Please call coordinator at <a href="tel:+919876543210" className="underline font-bold">+91 98765 43210</a>.
+                        </div>
+                      </div>
+                    );
+                  }
+                }
+                return null;
+              })()}
+
+              {/* Step 2: Invoice Breakdown */}
+              <InvoicePanel dakshina={checkoutPoojari.basePrice} />
+
+              {/* Step 3: Liability & Metaphysical Outcomes Disclaimers */}
+              <div className="space-y-3">
+                <FireHazardDisclaimer />
+                <NoMetaphysicalDisclaimer />
+              </div>
+
+              {/* Step 4: Legal Consent Control Checkbox with Min 44x44px Touch Target */}
+              <div className="flex items-start gap-3 bg-muted/10 p-4 rounded-2xl border">
+                <input
+                  id="agree-checkbox"
+                  type="checkbox"
+                  checked={legalAgreed}
+                  onChange={(e) => setLegalAgreed(e.target.checked)}
+                  className="h-6 w-6 rounded border-gray-300 text-amber-600 focus:ring-amber-500 mt-1 cursor-pointer shrink-0"
+                />
+                <label htmlFor="agree-checkbox" className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none pl-1">
+                  I agree to the <a href="/legal/terms-of-service.md" target="_blank" className="text-amber-600 underline font-bold">Terms of Service</a> (including the Pure Agent GST model), 
+                  <a href="/legal/privacy-policy.md" target="_blank" className="text-amber-600 underline font-bold">Privacy Policy</a>, and 
+                  <a href="/legal/liability-waiver.md" target="_blank" className="text-amber-600 underline font-bold">Liability Waiver</a>.
+                </label>
+              </div>
+
+              {/* Action Button */}
+              <Button
+                onClick={handleConfirmBooking}
+                disabled={isBookingInProgress}
+                className="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-bold shadow-md text-base"
+              >
+                {isBookingInProgress ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <CheckCircle2 className="mr-2 h-5 w-5" />
+                )}
+                Confirm & Pay Booking
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
