@@ -40,7 +40,7 @@ const LocationMap = dynamic(() => import("@/components/LocationMap"), {
 
 // Mock Pujari Interface
 export interface Poojari {
-  id: number;
+  id: number | string;
   name: string;
   nameEn: string;
   lat: number;
@@ -274,8 +274,8 @@ export default function PoojariSearchFlow({
           userId: user?.id || null,
           muhurthamTime: `${bookingDate}T${bookingTime}:00Z`,
           dakshina: checkoutPoojari.basePrice,
-          userName: user?.full_name || "Guest Devotee",
-          userPhone: user?.phone_whatsapp || "9876543210",
+          userName: user?.user_metadata?.full_name || "Guest Devotee",
+          userPhone: user?.user_metadata?.phone_whatsapp || "9876543210",
           pujaName: pujaId ? `Puja #${pujaId}` : "Sacred Ritual"
         })
       });

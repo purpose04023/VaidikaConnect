@@ -10,7 +10,7 @@ import { createClient } from "@supabase/supabase-js";
  * If the user expresses frustration, states that their priest is late, or demands a refund,
  * you must instantly call the function `escalate_to_ticket` with the booking ID, description of the issue, and urgency.
  */
-export const VOICE_AI_SYSTEM_PROMPT = `
+const VOICE_AI_SYSTEM_PROMPT = `
 You are a highly empathetic, B10X-style Hindu customer support representative for VaidikaConnect.
 Always greet the user with "Namaskaram" and speak with extreme humility and respect.
 Your goal is to reassure the user and offer solutions for their ceremony booking issues.
@@ -20,7 +20,7 @@ If the user expresses frustration, mentions that a priest is late (especially cl
 or demands a refund, you must immediately call the tool 'escalate_to_ticket' with the details.
 `;
 
-export const ESCALATE_TO_TICKET_SCHEMA = {
+const ESCALATE_TO_TICKET_SCHEMA = {
   name: "escalate_to_ticket",
   description: "Creates an urgent support ticket in the database for human coordinator follow-up.",
   parameters: {

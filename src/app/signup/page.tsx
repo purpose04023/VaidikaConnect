@@ -64,21 +64,19 @@ export default function SignupPage() {
         password: values.password,
         options: {
           data: {
-            full_name: `${values.firstName} ${values.lastName}`
+            full_name: `${values.firstName} ${values.lastName}`,
+            phone_whatsapp: values.whatsappNumber
           }
         }
       });
       if (error) throw error;
       
-      if (user) {
-        const { error: profileError } = await supabase.from('profiles').upsert({
-          id: user.id,
-          role: 'user',
-          full_name: `${values.firstName} ${values.lastName}`,
-          phone_whatsapp: values.whatsappNumber
-        });
-        if (profileError) throw profileError;
-      }
+      // Auto-login since database trigger auto-confirmed the user
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+      if (signInError) throw signInError;
 
       router.push('/');
       toast({

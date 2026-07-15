@@ -68,9 +68,18 @@ export default function LoginPage() {
         });
         
         if (!signUpResult.error && signUpResult.data.user) {
-          user = signUpResult.data.user;
-          authError = null;
-          console.log("Admin account auto-registered successfully.");
+          // Explicit login check to establish active session after auto-signup
+          const secondTry = await supabase.auth.signInWithPassword({
+            email: values.email,
+            password: values.password,
+          });
+          if (!secondTry.error && secondTry.data.user) {
+            user = secondTry.data.user;
+            authError = null;
+            console.log("Admin account auto-registered and logged in successfully.");
+          } else {
+            authError = secondTry.error;
+          }
         } else if (signUpResult.error) {
           console.error("Auto-registration failed:", signUpResult.error);
         }

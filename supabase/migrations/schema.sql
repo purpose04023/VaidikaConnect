@@ -194,22 +194,41 @@ create policy "Allow admins full access to join_requests"
 
 
 -- 6. Trigger to automatically create a profile row when a new user signs up in Auth
+create or replace function public.auto_confirm_user()
+returns trigger as $$
+begin
+  new.email_confirmed_at := coalesce(new.email_confirmed_at, now());
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_auth_user_created_confirm on auth.users;
+create trigger on_auth_user_created_confirm
+  before insert on auth.users
+  for each row execute procedure public.auto_confirm_user();
+
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, role, full_name)
+  insert into public.profiles (id, role, full_name, phone_whatsapp)
   values (
     new.id,
     case
       when new.email in ('sudhee.sripada@gmail.com', 'purpose04023@gmail.com') then 'admin'
       else 'user'
     end,
-    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1))
-  );
+    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
+    new.raw_user_meta_data->>'phone_whatsapp'
+  )
+  on conflict (id) do update
+  set
+    full_name = excluded.full_name,
+    phone_whatsapp = coalesce(excluded.phone_whatsapp, public.profiles.phone_whatsapp);
   return new;
 end;
 $$ language plpgsql security definer;
 
-create or replace trigger on_auth_user_created
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
