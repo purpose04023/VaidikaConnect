@@ -210,7 +210,7 @@ create trigger on_auth_user_created_confirm
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, role, full_name, phone_whatsapp)
+  insert into public.profiles (id, role, full_name, email, phone_whatsapp)
   values (
     new.id,
     case
@@ -218,11 +218,13 @@ begin
       else 'user'
     end,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
+    new.email,
     new.raw_user_meta_data->>'phone_whatsapp'
   )
   on conflict (id) do update
   set
     full_name = excluded.full_name,
+    email = excluded.email,
     phone_whatsapp = coalesce(excluded.phone_whatsapp, public.profiles.phone_whatsapp);
   return new;
 end;

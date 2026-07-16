@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -32,6 +33,13 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const supabase = createClient();
+
+  // Mode states: 'login' | 'forgot-password' | 'enter-otp'
+  const [mode, setMode] = useState<'login' | 'forgot-password' | 'enter-otp'>('login');
+  const [resetEmail, setResetEmail] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -160,55 +168,238 @@ export default function LoginPage() {
     }
   }
 
+  // Forgot password flow - Send recovery email
+  const handleSendResetEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast({
+        variant: 'destructive',
+        title: 'Email required',
+        description: 'Please enter your email address.',
+      });
+      return;
+    }
+
+    setIsResetting(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: window.location.origin + '/login',
+      });
+      if (error) throw error;
+
+      toast({
+        title: 'Verification Code Sent',
+        description: 'Please check your email for the recovery code/OTP.',
+      });
+      setMode('enter-otp');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Error sending code',
+        description: error.message || 'Could not send recovery code.',
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
+  // Forgot password flow - Verify OTP and update password
+  const handleVerifyOtpAndReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otpCode || !newPassword) {
+      toast({
+        variant: 'destructive',
+        title: 'Required fields missing',
+        description: 'Please enter both the OTP code and your new password.',
+      });
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid password',
+        description: 'Password must be at least 6 characters.',
+      });
+      return;
+    }
+
+    setIsResetting(true);
+    try {
+      // Verify OTP
+      const { error } = await supabase.auth.verifyOtp({
+        email: resetEmail,
+        token: otpCode,
+        type: 'recovery',
+      });
+      if (error) throw error;
+
+      // Update password (user is automatically logged in after verifying recovery OTP)
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (updateError) throw updateError;
+
+      toast({
+        title: 'Password Updated',
+        description: 'Your password has been successfully updated.',
+      });
+      setMode('login');
+      router.push('/');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Reset failed',
+        description: error.message || 'Could not reset password. Please check the code.',
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   return (
     <div className="container flex min-h-[calc(100vh-56px)] items-center justify-center py-12">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="you@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </form>
-          </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
-              Sign up
-            </Link>
-          </div>
-        </CardContent>
+        {mode === 'login' && (
+          <>
+            <CardHeader className="text-center">
+              <CardTitle>Welcome Back</CardTitle>
+              <CardDescription>Enter your credentials to access your account</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="you@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex justify-between items-center">
+                          <FormLabel>Password</FormLabel>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setResetEmail(form.getValues('email'));
+                              setMode('forgot-password');
+                            }}
+                            className="text-xs text-primary underline hover:text-primary/80"
+                          >
+                            Forgot Password?
+                          </button>
+                        </div>
+                        <FormControl>
+                          <Input type="password" placeholder="••••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full">
+                    Login
+                  </Button>
+                </form>
+              </Form>
+              <div className="mt-4 text-center text-sm">
+                Don&apos;t have an account?{' '}
+                <Link href="/signup" className="underline">
+                  Sign up
+                </Link>
+              </div>
+            </CardContent>
+          </>
+        )}
+
+        {mode === 'forgot-password' && (
+          <>
+            <CardHeader className="text-center">
+              <CardTitle>Forgot Password</CardTitle>
+              <CardDescription>Enter your email address to receive a recovery code/OTP</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <form onSubmit={handleSendResetEmail} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Email Address</label>
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isResetting}>
+                  {isResetting ? 'Sending Code...' : 'Send Verification Code'}
+                </Button>
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setMode('login')}
+                    className="text-sm text-primary underline"
+                  >
+                    Back to Login
+                  </button>
+                </div>
+              </form>
+            </CardContent>
+          </>
+        )}
+
+        {mode === 'enter-otp' && (
+          <>
+            <CardHeader className="text-center">
+              <CardTitle>Reset Password</CardTitle>
+              <CardDescription>Enter the recovery code/OTP sent to your email and your new password</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <form onSubmit={handleVerifyOtpAndReset} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Recovery OTP / Code</label>
+                  <Input
+                    type="text"
+                    placeholder="Enter 6-digit code"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">New Password</label>
+                  <Input
+                    type="password"
+                    placeholder="Min 6 characters"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isResetting}>
+                  {isResetting ? 'Resetting Password...' : 'Reset Password & Login'}
+                </Button>
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setMode('login')}
+                    className="text-sm text-primary underline"
+                  >
+                    Back to Login
+                  </button>
+                </div>
+              </form>
+            </CardContent>
+          </>
+        )}
       </Card>
     </div>
   );

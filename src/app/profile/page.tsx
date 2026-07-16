@@ -17,6 +17,7 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isConfirmingOrderId, setIsConfirmingOrderId] = useState<string | null>(null);
 
@@ -80,8 +81,24 @@ export default function ProfilePage() {
       } catch (localErr) {
         console.error("Failed to load mock orders from localStorage:", localErr);
       }
-
       setOrders(userOrders);
+
+      // 3. Fetch standard bookings history
+      let userBookings: any[] = [];
+      try {
+        const { data: bookingsData, error: bookingsError } = await supabase
+          .from("bookings")
+          .select("*")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false });
+
+        if (bookingsError) throw bookingsError;
+        userBookings = bookingsData || [];
+      } catch (err) {
+        console.warn("bookings table missing or fetch failed. using fallback.");
+      }
+      setBookings(userBookings);
+
       setIsLoadingData(false);
     }
     fetchData();
@@ -171,7 +188,7 @@ export default function ProfilePage() {
   return (
     <div className="container mx-auto px-4 py-10 max-w-4xl">
       <h1 className="font-headline text-4xl font-bold text-primary mb-2">My Profile & Bookings</h1>
-      <p className="text-muted-foreground mb-8">Manage your custom pooja requests and confirm bookings.</p>
+      <p className="text-muted-foreground mb-8">Manage your custom pooja requests and view booking history.</p>
 
       <div className="grid gap-8 md:grid-cols-[280px_1fr]">
         {/* Left Side: Profile Info Card */}
@@ -286,6 +303,75 @@ export default function ProfilePage() {
                           )}
                         </Button>
                       )}
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Program Booking History block */}
+          <h2 className="text-2xl font-bold flex items-center gap-2 pt-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            Program Booking History
+          </h2>
+
+          {bookings.length === 0 ? (
+            <Card className="text-center p-8 bg-muted/10 border-dashed">
+              <CardContent className="space-y-4 pt-4">
+                <p className="text-muted-foreground">You haven't booked any standard programs yet.</p>
+                <Button asChild variant="outline">
+                  <Link href="/find-pujari">Explore & Book Programs</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {bookings.map((booking) => {
+                const dateObj = new Date(booking.muhurtham_time);
+                const formattedDate = dateObj.toLocaleDateString();
+                const formattedTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                return (
+                  <Card key={booking.id} className="overflow-hidden border-border bg-card shadow-md">
+                    <CardHeader className="bg-muted/10 border-b py-3 px-5 flex flex-row items-center justify-between flex-wrap gap-2">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Booking ID: {booking.id.slice(0, 8)}...</span>
+                        <h3 className="font-bold text-foreground text-lg leading-snug mt-0.5">
+                          {booking.puja_name || "Sacred Ritual"}
+                        </h3>
+                      </div>
+                      <Badge variant="secondary" className="bg-green-500/10 text-green-500 border-green-500/30 capitalize">
+                        {booking.status || "Confirmed"}
+                      </Badge>
+                    </CardHeader>
+                    
+                    <CardContent className="p-5 space-y-4 text-sm text-muted-foreground">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-primary" />
+                          <span>Muhurtham Date: {formattedDate}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-primary" />
+                          <span>Time: {formattedTime}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <ShoppingBag className="h-4 w-4 text-primary" />
+                          <span>Dakshina: ₹{parseFloat(booking.dakshina).toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">Convenience Fee: ₹{parseFloat(booking.convenience_fee).toLocaleString()}</Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+
+                    <CardFooter className="bg-muted/5 border-t py-3 px-5">
+                      <Button asChild className="w-full bg-primary hover:bg-primary/95 text-white font-bold rounded-xl">
+                        <Link href={booking.program_id ? `/find-pujari?puja=${booking.program_id}` : '/find-pujari'}>
+                          Book Again
+                        </Link>
+                      </Button>
                     </CardFooter>
                   </Card>
                 );

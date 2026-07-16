@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
       dakshina,
       userName,
       userPhone,
-      pujaName
+      pujaName,
+      programId
     } = body;
 
     // Validate inputs
@@ -71,7 +72,9 @@ export async function POST(req: NextRequest) {
             muhurtham_time: muhurthamTime,
             status: "confirmed", // Automatically confirm on successful checkout
             dakshina: billing.priest_dakshina,
-            convenience_fee: billing.platform_fee
+            convenience_fee: billing.platform_fee,
+            program_id: programId || null,
+            puja_name: pujaName || null
           })
           .select()
           .single();

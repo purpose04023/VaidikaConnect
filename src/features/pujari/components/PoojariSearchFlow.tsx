@@ -276,7 +276,8 @@ export default function PoojariSearchFlow({
           dakshina: checkoutPoojari.basePrice,
           userName: user?.user_metadata?.full_name || "Guest Devotee",
           userPhone: user?.user_metadata?.phone_whatsapp || "9876543210",
-          pujaName: pujaId ? `Puja #${pujaId}` : "Sacred Ritual"
+          pujaName: pujaId ? `Puja #${pujaId}` : "Sacred Ritual",
+          programId: pujaId || null
         })
       });
 

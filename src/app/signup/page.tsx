@@ -26,7 +26,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
-  whatsappNumber: z.string().min(10, { message: 'WhatsApp number must be at least 10 digits.' }),
+  whatsappNumber: z.string().regex(/^\d{10}$/, { message: 'WhatsApp number must be exactly 10 digits and contain only numbers.' }),
   password: z.string().min(6, {
     message: 'Password must be at least 6 characters.',
   }),
@@ -59,6 +59,22 @@ export default function SignupPage() {
     }
 
     try {
+      // Check if email already exists in customer database
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', values.email)
+        .maybeSingle();
+
+      if (existingProfile) {
+        toast({
+          variant: 'destructive',
+          title: 'Account already exists',
+          description: 'This email is already registered. Please login instead.',
+        });
+        return;
+      }
+
       const { data: { user }, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
