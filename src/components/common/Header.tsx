@@ -108,9 +108,9 @@ export function Header() {
                 className="h-full w-full object-cover rounded-full"
               />
             </div>
-            <div className="hidden sm:flex flex-col text-left leading-none font-bold ml-1.5 font-headline select-none shrink-0">
-              <span className="text-xs sm:text-base block text-primary tracking-wide">Vaidika</span>
-              <span className="text-[9px] sm:text-xs block text-foreground uppercase tracking-widest mt-0.5">Connect</span>
+            <div className="flex flex-col text-left leading-none font-bold ml-1.5 font-headline select-none shrink-0">
+              <span className="text-[11px] sm:text-base block text-primary tracking-wide">Vaidika</span>
+              <span className="text-[8px] sm:text-xs block text-foreground uppercase tracking-widest mt-0.5">Connect</span>
             </div>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">

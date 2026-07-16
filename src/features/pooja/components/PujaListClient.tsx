@@ -159,7 +159,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
         className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col group cursor-pointer border border-border/50 rounded-2xl bg-card"
       >
         {isCustom ? (
-          <div className="block flex-grow flex flex-col">
+          <div className="flex flex-col flex-grow w-full h-full">
             <CardHeader className="p-0 overflow-hidden">
               <ManagedImage
                   src="/logo.png"
@@ -188,7 +188,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
           </div>
         ) : (
           <>
-            <Link href={`/programs/${pujaSlug}`} className="block flex-grow flex flex-col">
+            <Link href={`/programs/${pujaSlug}`} className="flex flex-col flex-grow w-full h-full">
               <CardHeader className="p-0 overflow-hidden">
                 <ManagedImage
                     src={puja.image}
@@ -200,7 +200,7 @@ export function PujaListClient({ pujas, variant = "sections" }: { pujas: Puja[],
                 />
               </CardHeader>
               <CardContent className="p-6 flex-grow flex flex-col text-left space-y-2">
-                <CardTitle className="font-headline text-2xl mb-1 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.name : puja.name_en}</CardTitle>
+                <CardTitle className="font-headline text-2xl mb-1 group-hover:text-primary transition-colors duration-200 break-words whitespace-normal leading-relaxed text-foreground">{language === 'te' ? puja.name : puja.name_en}</CardTitle>
                 <p className="text-muted-foreground line-clamp-3 text-sm break-words whitespace-normal leading-relaxed">{language === 'te' ? puja.description_te : puja.description}</p>
               </CardContent>
             </Link>
