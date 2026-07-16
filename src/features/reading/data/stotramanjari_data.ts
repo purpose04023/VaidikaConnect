@@ -6638,7 +6638,7 @@ export const categoriesList: Category[] = [
     "id": "venkateshwara",
     "nameEn": "Venkateshwara",
     "nameTe": "వేంకటేశ్వర స్తోత్రాణి",
-    "iconUrl": "https://api.iconify.design/noto:temple.svg",
+    "iconUrl": "/images/deities/lord_venkateswara.png",
     "slugs": [
       "sri-venkateswara-suprabhatam",
       "sri-venkateswara-stotram",
@@ -6836,7 +6836,7 @@ export const categoriesList: Category[] = [
     "id": "durga",
     "nameEn": "Durga",
     "nameTe": "దుర్గా స్తోత్రాణి",
-    "iconUrl": "https://api.iconify.design/noto:lion.svg",
+    "iconUrl": "/images/deities/goddess_durga.png",
     "slugs": [
       "sree-lalitha-sahasra-nama-stotram",
       "soundarya-lahari",
@@ -6998,7 +6998,7 @@ export const categoriesList: Category[] = [
     "id": "ganesha",
     "nameEn": "Ganesha",
     "nameTe": "గణేశ స్తోత్రాణి",
-    "iconUrl": "https://api.iconify.design/noto:elephant.svg",
+    "iconUrl": "/images/deities/lord_ganesha.png",
     "slugs": [
       "ganapati-prarthana-ghanapatham",
       "sree-maha-ganesha-pancharatnam",
@@ -7045,7 +7045,7 @@ export const categoriesList: Category[] = [
     "id": "hanuman",
     "nameEn": "Hanuman",
     "nameTe": "హనుమాన్ స్తోత్రాణి",
-    "iconUrl": "https://api.iconify.design/noto:monkey-face.svg",
+    "iconUrl": "/images/deities/lord_hanuman.png",
     "slugs": [
       "hanuman-chalisa",
       "anjaneya-dandakam",

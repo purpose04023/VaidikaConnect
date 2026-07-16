@@ -195,8 +195,15 @@ export default function ProfilePage() {
         <div className="space-y-4">
           <Card>
             <CardHeader className="text-center pb-4">
-              <div className="w-20 h-20 bg-primary/15 text-primary rounded-full mx-auto flex items-center justify-center text-3xl font-bold mb-3 border border-primary/25">
-                {profile?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+              <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-3 overflow-hidden bg-gray-200 dark:bg-slate-700">
+                {profile?.photo ? (
+                  <img src={profile.photo} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <svg viewBox="0 0 32 32" className="w-full h-full">
+                    <circle cx="16" cy="12" r="4.5" stroke="#FF9933" strokeWidth="2.5" fill="none" />
+                    <path d="M 8 25 C 8 20, 24 20, 24 25" stroke="#FF9933" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                  </svg>
+                )}
               </div>
               <CardTitle className="text-lg font-bold">{profile?.full_name || "Devotee"}</CardTitle>
               <CardDescription className="truncate text-xs">{user.email}</CardDescription>

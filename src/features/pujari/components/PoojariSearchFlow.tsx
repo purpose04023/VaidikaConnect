@@ -14,7 +14,8 @@ import {
   Sparkles,
   Loader2,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -183,28 +184,39 @@ export default function PoojariSearchFlow({
     }
 
     setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setCenterCoords({ lat: latitude, lng: longitude });
-        setLocationQuery(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
-        setIsLocating(false);
-        toast({
-          title: "📍 Location Detected!",
-          description: `Coordinates mapped: ${latitude.toFixed(4)}° N, ${longitude.toFixed(4)}° E.`
-        });
-      },
-      (error) => {
-        console.error("GPS fetch failed:", error);
-        setIsLocating(false);
-        toast({
-          variant: "destructive",
-          title: "GPS Access Denied",
-          description: "Could not fetch your coordinates. Please enter Guntur or pincode manually."
-        });
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
+    
+    const geoSuccess = (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords;
+      setCenterCoords({ lat: latitude, lng: longitude });
+      setLocationQuery(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+      setIsLocating(false);
+      toast({
+        title: "📍 Location Detected!",
+        description: `Coordinates mapped: ${latitude.toFixed(4)}° N, ${longitude.toFixed(4)}° E.`
+      });
+    };
+
+    const geoError = (error: GeolocationPositionError) => {
+      console.warn("High accuracy GPS fetch failed, retrying with low accuracy:", error);
+      navigator.geolocation.getCurrentPosition(
+        geoSuccess,
+        (finalError) => {
+          console.error("GPS fetch failed completely:", finalError);
+          setIsLocating(false);
+          toast({
+            variant: "destructive",
+            title: "GPS Access Denied",
+            description: "Could not fetch your coordinates. Please enter Guntur or pincode manually."
+          });
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+      );
+    };
+
+    navigator.geolocation.getCurrentPosition(geoSuccess, geoError, {
+      enableHighAccuracy: true,
+      timeout: 4000
+    });
   };
 
   // Location search manual submit
@@ -394,12 +406,8 @@ export default function PoojariSearchFlow({
                   >
                     <div className="p-4 sm:p-5 flex gap-4 items-start">
                       {/* Avatar Photo */}
-                      <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border border-border/60 shadow-sm shrink-0 bg-muted">
-                        <img 
-                          src={poojari.photo} 
-                          alt={poojari.nameEn} 
-                          className="object-cover w-full h-full"
-                        />
+                      <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border border-border/60 shadow-sm shrink-0 bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                        <User className="h-8 w-8 sm:h-10 sm:w-10" />
                       </div>
 
                       {/* Info body */}
@@ -539,8 +547,8 @@ export default function PoojariSearchFlow({
 
             <div className="space-y-6 text-left mt-4">
               <div className="flex gap-4 items-center bg-muted/20 p-4 rounded-2xl border">
-                <div className="h-16 w-16 rounded-full overflow-hidden border bg-muted">
-                  <img src={checkoutPoojari.photo} alt={checkoutPoojari.nameEn} className="object-cover w-full h-full" />
+                <div className="h-16 w-16 rounded-full overflow-hidden border bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
+                  <User className="h-8 w-8" />
                 </div>
                 <div>
                   <h4 className="font-bold text-lg">{language === "te" ? checkoutPoojari.name : checkoutPoojari.nameEn}</h4>

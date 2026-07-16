@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BadgeCheck, Briefcase, Calendar, Languages, MessageCircle, Phone, Star } from "lucide-react";
+import { BadgeCheck, Briefcase, Calendar, Languages, MessageCircle, Phone, Star, User } from "lucide-react";
 import { ManagedImage } from "@/components/common/ManagedImage";
 
 export function PujariProfileClient({
@@ -46,15 +46,8 @@ export function PujariProfileClient({
           <CardContent className="p-0">
             <div className="grid grid-cols-1 md:grid-cols-3">
               <div className="md:col-span-1 p-6 flex flex-col items-center text-center bg-background/50">
-                <div className="relative w-48 h-48 mb-4">
-                  <ManagedImage
-                    src={pujari.photo}
-                    alt={pujari.name}
-                    fill
-                    className="rounded-full object-cover border-4 border-primary shadow-lg"
-                    data-ai-hint={pujari.photoHint}
-                    priority
-                  />
+                <div className="relative w-48 h-48 mb-4 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 border-4 border-primary shadow-lg">
+                  <User className="w-24 h-24" />
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <h1 className="font-headline text-3xl text-primary">{pujari.name}</h1>

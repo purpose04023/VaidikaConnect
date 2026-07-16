@@ -167,9 +167,15 @@ export function Header() {
               <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <Avatar>
-                    <AvatarImage src={user.user_metadata?.avatar_url || `https://picsum.photos/seed/${user.id}/100/100`} data-ai-hint="user avatar" />
-                    <AvatarFallback>{user.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                  <Avatar className="h-8 w-8 flex items-center justify-center rounded-full overflow-hidden">
+                    {user.user_metadata?.avatar_url ? (
+                      <AvatarImage src={user.user_metadata.avatar_url} data-ai-hint="user avatar" />
+                    ) : (
+                      <svg viewBox="0 0 32 32" className="w-full h-full bg-gray-200 dark:bg-slate-700">
+                        <circle cx="16" cy="12" r="4.5" stroke="#FF9933" strokeWidth="2.5" fill="none" />
+                        <path d="M 8 25 C 8 20, 24 20, 24 25" stroke="#FF9933" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                      </svg>
+                    )}
                   </Avatar>
                   <span className="sr-only">{t('header.user_avatar')}</span>
                 </Button>

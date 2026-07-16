@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Pujari } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BadgeCheck, Star, MessageCircle } from 'lucide-react';
+import { BadgeCheck, Star, MessageCircle, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast"
@@ -33,14 +33,8 @@ export function PujariCard({ pujari, isSelected, onSelect }: PujariCardProps) {
       onClick={() => onSelect(pujari.id)}
     >
       <CardContent className="p-4 flex gap-4">
-        <div className="relative w-24 h-24 shrink-0">
-          <ManagedImage
-            src={pujari.photo}
-            alt={pujari.name}
-            fill
-            className="rounded-full object-cover border-2 border-accent"
-            data-ai-hint={pujari.photoHint}
-          />
+        <div className="relative w-24 h-24 shrink-0 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 border-2 border-accent">
+          <User className="w-12 h-12" />
         </div>
         <div className="flex-grow">
           <div className="flex flex-wrap items-center gap-2">

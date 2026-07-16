@@ -188,8 +188,25 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const refreshContent = useCallback(async () => {
     setIsLoading(true);
     try {
-      // 0a. Fetch regions
-      const { data: dbRegions } = await supabase.from("regions").select("*");
+      // Fetch all tables concurrently to eliminate sequential network latency
+      const [
+        regionsRes,
+        templesRes,
+        pujasRes,
+        pujarisRes,
+        deitiesRes,
+        settingsRes
+      ] = await Promise.all([
+        supabase.from("regions").select("*").then(r => r, err => ({ data: null, error: err })),
+        supabase.from("temples").select("*").then(r => r, err => ({ data: null, error: err })),
+        supabase.from("programs").select("*").then(r => r, err => ({ data: null, error: err })),
+        supabase.from("profiles").select("*").eq("role", "poojari").then(r => r, err => ({ data: null, error: err })),
+        supabase.from("stotrams").select("*").then(r => r, err => ({ data: null, error: err })),
+        supabase.from("global_settings").select("*").then(r => r, err => ({ data: null, error: err }))
+      ]);
+
+      // Process regions
+      const dbRegions = regionsRes.data;
       const regionsList: Region[] = (dbRegions || []).map((r) => ({
         id: r.id,
         name: r.name,
@@ -198,8 +215,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         regionsList.push({ id: "region-ap", name: "Andhra Pradesh" }, { id: "region-ts", name: "Telangana" });
       }
 
-      // 0b. Fetch temples
-      const { data: dbTemples } = await supabase.from("temples").select("*");
+      // Process temples
+      const dbTemples = templesRes.data;
       const templesList: Temple[] = (dbTemples || []).map((t) => ({
         id: t.id,
         name: t.name,
@@ -214,35 +231,32 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
       // Seed data if empty (since this is a new feature)
       if (templesList.length === 0 && dbTemples !== null) {
-        // We might not have admin rights, but we can seed if RLS allows or we use defaults.
-        // For now, we will just use the hardcoded defaults if DB is completely empty.
         templesList.push(...defaultTemples);
       }
 
-      // 1. Fetch programs
-      const { data: dbPujas } = await supabase.from("programs").select("*");
-      const pujasList: Puja[] = (dbPujas || []).map((p) => ({
-        id: p.id,
-        name: p.title_te || p.title,
-        name_en: p.title,
-        description: p.description || "",
-        description_te: p.description_te || "",
-        image: p.image_url || fallbackPhoto,
-        imageHint: p.image_hint || "ritual",
-        category: p.category as any,
-        category_en: p.category_en as any,
-        program_type: p.program_type as any,
-        categories: p.categories || [],
-        required_items: p.required_items || [],
-        sloka_tags: p.sloka_tags || [],
-        pdf_url: p.pdf_url || "",
-      }));
+      // Process programs (filter out any rows with empty/blank titles to prevent blank cards rendering)
+      const dbPujas = pujasRes.data;
+      const pujasList: Puja[] = (dbPujas || [])
+        .filter((p) => (p.title && p.title.trim() !== "") || (p.title_te && p.title_te.trim() !== ""))
+        .map((p) => ({
+          id: p.id,
+          name: p.title_te || p.title,
+          name_en: p.title,
+          description: p.description || "",
+          description_te: p.description_te || "",
+          image: p.image_url || fallbackPhoto,
+          imageHint: p.image_hint || "ritual",
+          category: p.category as any,
+          category_en: p.category_en as any,
+          program_type: p.program_type as any,
+          categories: p.categories || [],
+          required_items: p.required_items || [],
+          sloka_tags: p.sloka_tags || [],
+          pdf_url: p.pdf_url || "",
+        }));
 
-      // 2. Fetch profiles where role = 'poojari'
-      const { data: dbPujaris } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("role", "poojari");
+      // Process pujaris
+      const dbPujaris = pujarisRes.data;
       const pujarisList: Pujari[] = (dbPujaris || []).map((p) => ({
         id: p.id,
         name: p.full_name,
@@ -268,8 +282,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         reviews: p.reviews || [],
       }));
 
-      // 3. Fetch stotrams
-      const { data: dbDeities } = await supabase.from("stotrams").select("*");
+      // Process stotrams
+      const dbDeities = deitiesRes.data;
       const deitiesList: Deity[] = (dbDeities || []).map((d) => ({
         id: d.id,
         name: d.name_te || d.deity_name,
@@ -282,8 +296,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         readingSlug: d.reading_slug || "",
       }));
 
-      // 4. Fetch global settings
-      const { data: dbSettings } = await supabase.from("global_settings").select("*");
+      // Process settings
+      const dbSettings = settingsRes.data;
       let parsedSettings = defaultSettings;
       let parsedContact = defaultContact;
 

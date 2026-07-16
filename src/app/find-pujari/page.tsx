@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { getPujaris, getPujaById } from "@/lib/data";
-import { recommendPujari } from "@/features/pujari/services/pujari-recommendation";
 import { PujariDiscoveryClient } from "@/features/pujari/components/PujariDiscoveryClient";
 
 export default async function FindPujariPage({
@@ -20,20 +19,6 @@ export default async function FindPujariPage({
 
   const eligiblePujaris = allPujaris.filter(pujari => pujari.pujas.includes(pujaId));
 
-  const recommendationInput = {
-    userPreferences: `User is looking for a pujari for ${puja?.name || 'a puja'}. Key considerations are experience and high ratings.`,
-    similarUserProfiles: 'Similar users often value pujaris who are fluent in English and have experience with family-oriented ceremonies. They also prefer transparent pricing.'
-  };
-
-  let recommendation = "Browse the available verified pujaris below and choose the profile that best fits your ceremony needs.";
-
-  try {
-    const recommendationResult = await recommendPujari(recommendationInput);
-    recommendation = recommendationResult.pujariRecommendations;
-  } catch (error) {
-    console.warn("Pujari recommendation unavailable, using fallback copy.", error);
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="font-headline text-3xl text-center mb-2">
@@ -45,7 +30,6 @@ export default async function FindPujariPage({
       <Suspense fallback={<div className="text-center">Loading Pujaris...</div>}>
         <PujariDiscoveryClient 
           pujaris={eligiblePujaris} 
-          recommendation={recommendation}
           pujaId={pujaId}
         />
       </Suspense>

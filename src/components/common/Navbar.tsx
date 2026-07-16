@@ -220,23 +220,7 @@ export default function Navbar() {
                       <p className="text-[11px] text-muted-foreground">{language === "te" ? "దర్శనం & ప్రత్యేక టికెట్లు" : "Darshan & special entry tickets"}</p>
                     </div>
                   </Link>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#b89045] border-b pb-1 border-white/5 pt-2">
-                    {language === "te" ? "ప్రయాణం & వసతులు" : "Travel & Stays"}
-                  </p>
-                  <Link href="/pilgrimage/accommodations" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
-                    <Hotel className="h-5 w-5 text-[#c8a261] shrink-0" />
-                    <div>
-                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "వసతి గృహాల బుకింగ్" : "Haritha Hotel & Stays"}</p>
-                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "వైజాగ్, అరకు రూమ్ బుకింగ్" : "Vizag resorts & cottages"}</p>
-                    </div>
-                  </Link>
-                  <Link href="/pilgrimage/sightseeing" className="flex items-center gap-3 rounded-xl p-2 transition-all duration-200 hover:bg-muted hover:text-primary">
-                    <Compass className="h-5 w-5 text-[#d4af37] shrink-0" />
-                    <div>
-                      <p className="font-semibold text-sm leading-tight">{language === "te" ? "దర్శనీయ ప్రదేశాలు" : "Local Sightseeing"}</p>
-                      <p className="text-[11px] text-muted-foreground">{language === "te" ? "ఆలయాల చుట్టుపక్కల విహార యాత్రలు" : "Beaches, hill parks & history"}</p>
-                    </div>
-                  </Link>
+                  {/* Removed 'ప్రయాణం & వసతులు' (Travel & Stays) block per user request */}
                 </div>
               </div>
             </div>
