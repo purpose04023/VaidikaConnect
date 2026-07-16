@@ -59,7 +59,7 @@ export function Header() {
             <SheetContent side="left" className="w-[240px] sm:w-[300px]">
               <div className="flex flex-col space-y-6 pt-4">
                 <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                  <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm">
+                  <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-background flex items-center justify-center p-0.5 border border-border shadow-sm">
                     <img 
                       src="/logo.png" 
                       alt="VaidikaConnect Logo" 
@@ -101,7 +101,7 @@ export function Header() {
           </Sheet>
 
           <Link href="/" className="mr-3 sm:mr-6 flex items-center group shrink-0">
-            <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-0.5 border border-border shadow-sm transition-transform group-hover:scale-105">
+            <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-background flex items-center justify-center p-0.5 border border-border shadow-sm transition-transform group-hover:scale-105">
               <img 
                 src="/logo.png" 
                 alt="VaidikaConnect Logo" 

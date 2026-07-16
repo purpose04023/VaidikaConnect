@@ -19,7 +19,7 @@ export function Footer() {
           {/* Column 1: Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-full bg-white dark:bg-stone-900 border p-1 shadow-sm transition-transform group-hover:scale-105">
+              <div className="w-10 h-10 rounded-full bg-white dark:bg-background border p-1 shadow-sm transition-transform group-hover:scale-105">
                 <img src="/logo.png" alt="VaidikaConnect Logo" className="w-full h-full rounded-full object-cover" />
               </div>
               <div className="flex flex-col text-left leading-none font-bold font-headline select-none">

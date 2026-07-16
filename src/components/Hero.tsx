@@ -51,7 +51,7 @@ export function Hero({
              
               {/* Balanced Heading with Logo (Sized perfectly for laptops/desktops) */}
               <div className="flex items-center gap-4 md:gap-6">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center p-1 border border-border shadow-md">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0 rounded-full bg-white dark:bg-background flex items-center justify-center p-1 border border-border shadow-md">
                   <img src="/logo.png" alt="VaidikaConnect Logo" className="w-full h-full object-cover rounded-full" />
                 </div>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl tracking-tighter font-extrabold text-foreground leading-[1.1] break-words whitespace-normal font-sans">
