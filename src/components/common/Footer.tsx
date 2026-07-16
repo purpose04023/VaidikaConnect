@@ -5,8 +5,32 @@ import Image from "next/image";
 import { useLanguage } from "@/context/language-context";
 import {
   Sparkles, Heart, Landmark, ShieldCheck, Mail, Phone,
-  BookOpen, MapPin, Instagram, Youtube, Twitter, Facebook
+  BookOpen, MapPin
 } from "lucide-react";
+
+// Inline SVG social icons (lucide-react removed brand icons)
+const IconInstagram = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+    <circle cx="12" cy="12" r="4"/>
+    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+  </svg>
+);
+const IconYoutube = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+    <path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C6.8 19 12 19 12 19s4.2 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.7V9.3l5.4 2.7-5.4 2.7z"/>
+  </svg>
+);
+const IconX = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
+const IconFacebook = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+    <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+  </svg>
+);
 
 export function Footer() {
   const { language } = useLanguage();
@@ -43,22 +67,22 @@ export function Footer() {
               <a href="https://instagram.com/vaidikaconnect" target="_blank" rel="noopener noreferrer"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="Instagram">
-                <Instagram className="h-4 w-4" />
+                <IconInstagram />
               </a>
               <a href="https://youtube.com/@vaidikaconnect" target="_blank" rel="noopener noreferrer"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="YouTube">
-                <Youtube className="h-4 w-4" />
+                <IconYoutube />
               </a>
               <a href="https://twitter.com/vaidikaconnect" target="_blank" rel="noopener noreferrer"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="Twitter/X">
-                <Twitter className="h-4 w-4" />
+                <IconX />
               </a>
               <a href="https://facebook.com/vaidikaconnect" target="_blank" rel="noopener noreferrer"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="Facebook">
-                <Facebook className="h-4 w-4" />
+                <IconFacebook />
               </a>
             </div>
           </div>
