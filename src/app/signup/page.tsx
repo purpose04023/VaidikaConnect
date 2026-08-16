@@ -30,6 +30,11 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: 'Password must be at least 6 characters.',
   }),
+  // DPDP Act §7 — explicit consent for each purpose
+  consentPrivacy: z.boolean().refine((v) => v === true, {
+    message: 'You must accept the Privacy Notice and Terms to continue.',
+  }),
+  consentMarketing: z.boolean().optional(),
 });
 
 export default function SignupPage() {
@@ -45,6 +50,8 @@ export default function SignupPage() {
       email: '',
       whatsappNumber: '',
       password: '',
+      consentPrivacy: false,   // unticked by default — DPDP §7(a)
+      consentMarketing: false, // unticked by default — optional
     },
   });
 
@@ -81,7 +88,12 @@ export default function SignupPage() {
         options: {
           data: {
             full_name: `${values.firstName} ${values.lastName}`,
-            phone_whatsapp: values.whatsappNumber
+            phone_whatsapp: values.whatsappNumber,
+            // DPDP Act §7 — store consent record at time of signup
+            consent_privacy_accepted: true,
+            consent_privacy_ts: new Date().toISOString(),
+            consent_marketing: values.consentMarketing ?? false,
+            consent_marketing_ts: new Date().toISOString(),
           }
         }
       });
@@ -183,6 +195,56 @@ export default function SignupPage() {
                       <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* DPDP §7 — per-purpose consent checkboxes, unticked by default */}
+              <FormField
+                control={form.control}
+                name="consentPrivacy"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-2 space-y-0">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        id="consentPrivacy"
+                        checked={field.value}
+                        onChange={field.onChange}
+                        className="mt-0.5 h-4 w-4 accent-amber-600 cursor-pointer"
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel htmlFor="consentPrivacy" className="font-normal text-sm cursor-pointer">
+                        I have read and agree to the{' '}
+                        <a href="/privacy" target="_blank" className="underline text-primary">Privacy Notice</a>
+                        {' '}and{' '}
+                        <a href="/terms" target="_blank" className="underline text-primary">Terms of Service</a>.
+                        {' '}<span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="consentMarketing"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-2 space-y-0">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        id="consentMarketing"
+                        checked={field.value ?? false}
+                        onChange={field.onChange}
+                        className="mt-0.5 h-4 w-4 accent-amber-600 cursor-pointer"
+                      />
+                    </FormControl>
+                    <div className="leading-none">
+                      <FormLabel htmlFor="consentMarketing" className="font-normal text-sm cursor-pointer">
+                        (Optional) I agree to receive updates, offers, and auspicious reminders by WhatsApp/email. I can opt out anytime.
+                      </FormLabel>
+                    </div>
                   </FormItem>
                 )}
               />

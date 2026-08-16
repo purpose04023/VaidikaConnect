@@ -17,7 +17,8 @@ export default function TermsOfServicePage() {
           Terms of Service
         </h1>
         <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-          Last Updated: July 13, 2026. Please read these terms carefully before scheduling ceremonies.
+        Last Updated: August 2026. Please read these terms carefully before scheduling ceremonies.
+        LAWYER-REVIEW-REQUIRED — final legal copy must be approved by qualified Indian counsel.
         </p>
       </div>
 
@@ -124,8 +125,55 @@ export default function TermsOfServicePage() {
           </p>
         </section>
 
+
+        {/* DPDP Act clause */}
+        <section className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-3">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <ShieldAlert className="h-5 w-5 text-amber-500" />
+            8. Data Protection (DPDP Act 2023)
+          </h2>
+          <p>
+            VaidikaConnect processes your personal data as a <strong>Data Fiduciary</strong> under
+            India&apos;s <strong>Digital Personal Data Protection Act, 2023</strong>. By registering
+            or using the platform you acknowledge the following:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>
+              Your personal data (name, email, WhatsApp number, ceremony details, location) is
+              processed <strong>only for the purposes disclosed</strong> in our{" "}
+              <a href="/privacy" className="underline text-primary">Privacy Notice</a>.
+            </li>
+            <li>
+              You may access, correct, or request erasure of your data at any time via our{" "}
+              <a href="/data-rights" className="underline text-primary">Data Rights Request</a> page.
+            </li>
+            <li>
+              Consent given at registration for non-essential purposes (e.g., marketing
+              communications) may be <strong>withdrawn at any time</strong> without affecting
+              the lawfulness of prior processing.
+            </li>
+            <li>
+              Grievances regarding personal data processing must be directed to our
+              Grievance Officer at{" "}
+              <a href="mailto:privacy@vaidikaconnect.com" className="underline text-primary">
+                privacy@vaidikaconnect.com
+              </a>{" "}
+              — we will respond within 30 days.
+            </li>
+            <li className="text-sm text-muted-foreground/80">
+              ⚠️ LAWYER-REVIEW-REQUIRED — cross-border transfer clauses (§16 DPDP),
+              data-localisation obligations, and any sector-specific requirements must
+              be verified by legal counsel before go-live.
+            </li>
+          </ul>
+        </section>
+
         <div className="text-center text-xs text-muted-foreground pt-6">
-          For help or clarification on these terms, please connect with us at legal@vaidikaconnect.com.
+          For help or clarification on these terms, please connect with us at{' '}
+          <a href="mailto:legal@vaidikaconnect.com" className="underline">legal@vaidikaconnect.com</a>.
+          For data-privacy matters:{' '}
+          <a href="mailto:privacy@vaidikaconnect.com" className="underline">privacy@vaidikaconnect.com</a>
+          {' '}(Grievance Officer — responds within 72 hours).
         </div>
       </div>
     </div>

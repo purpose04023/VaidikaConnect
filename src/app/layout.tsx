@@ -8,8 +8,10 @@ import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/context/language-context';
 import { ContentProvider } from '@/lib/content-store';
 import { ComplaintBot } from '@/components/common/ComplaintBot';
-import Script from 'next/script';
-import { Analytics } from '@vercel/analytics/react';
+import { ConsentBanner } from '@/components/ConsentBanner';
+// Analytics is rendered conditionally in a client wrapper below (consent-gated).
+// LAWYER-REVIEW-REQUIRED: if Vercel Analytics is confirmed "legitimate interest"
+// under final DPDP Rules, it can be rendered unconditionally here again.
 
 export const metadata: Metadata = {
   title: 'VaidikaConnect',
@@ -32,12 +34,17 @@ export default function RootLayout({
             <Toaster />
             <Footer />
             <ComplaintBot />
-            <Analytics />
+            {/* Consent banner — shown on first visit, gates Analytics */}
+            <ConsentBanner />
+            {/*
+              Analytics is currently DISABLED pending DPDP consent confirmation.
+              To re-enable once consent is granted, use the useAnalyticsConsent()
+              hook in a client-side wrapper and conditionally render <Analytics />.
+              LAWYER-REVIEW-REQUIRED before enabling.
+            */}
           </ContentProvider>
         </LanguageProvider>
       </body>
     </html>
   );
 }
-
-

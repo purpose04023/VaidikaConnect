@@ -138,6 +138,10 @@ export function Footer() {
                 <ShieldCheck className="h-3.5 w-3.5 text-amber-500/70 shrink-0" />
                 <Link href="/contact">{language === "te" ? "మమ్మల్ని సంప్రదించండి" : "Contact Us"}</Link>
               </li>
+              <li className="flex items-center gap-2 hover:text-primary transition-colors">
+                <ShieldCheck className="h-3.5 w-3.5 text-amber-500/70 shrink-0" />
+                <Link href="/data-rights">{language === "te" ? "డేటా హక్కుల అభ్యర్థన" : "Data Rights Request"}</Link>
+              </li>
             </ul>
 
             <div className="pt-3 space-y-2 text-xs text-muted-foreground">
@@ -146,6 +150,12 @@ export function Footer() {
               </p>
               <p className="leading-relaxed">Andhra Pradesh, India</p>
               <p className="text-[10px] italic opacity-70">MSME / GST Registered</p>
+              <p className="pt-1">
+                <span className="font-semibold text-foreground/70">Grievance Officer:</span>{" "}
+                <a href="mailto:privacy@vaidikaconnect.com" className="hover:text-primary transition-colors underline">
+                  privacy@vaidikaconnect.com
+                </a>
+              </p>
             </div>
           </div>
 
