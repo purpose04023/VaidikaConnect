@@ -355,12 +355,6 @@ export default function Navbar() {
                   <Link href="/pilgrimage/darshan" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
                     - {language === "te" ? "ఆలయాల దర్శనాలు బుకింగ్" : "Temple Darshans"}
                   </Link>
-                  <Link href="/pilgrimage/accommodations" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
-                    - {language === "te" ? "వసతి గృహాల బుకింగ్ (హరిత హోటల్స్)" : "Accommodation Bookings"}
-                  </Link>
-                  <Link href="/pilgrimage/sightseeing" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-primary">
-                    - {language === "te" ? "చుట్టుపక్కల చూడదగ్గ ప్రదేశాలు" : "Sightseeing Destinations"}
-                  </Link>
                 </div>
               )}
             </div>

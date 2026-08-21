@@ -41,6 +41,8 @@ export function ManagedImage({
     );
   }
 
+  const isSvg = typeof src === "string" && (src.endsWith(".svg") || src.includes(".svg?"));
+
   return (
     <Image
       src={src}
@@ -49,6 +51,7 @@ export function ManagedImage({
       height={height}
       fill={fill}
       priority={priority}
+      unoptimized={isSvg}
       className={className}
       data-ai-hint={dataAiHint}
     />
