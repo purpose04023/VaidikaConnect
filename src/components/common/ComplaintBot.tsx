@@ -26,7 +26,7 @@ export function ComplaintBot() {
   if (isPermanentlyClosed) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-24 right-4 z-50 sm:bottom-6 sm:right-6">
       {/* Chat Window */}
       {isOpen && (
         <div className="absolute bottom-20 right-0 w-80 glass-card border-amber-500/30 p-6 shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-300">
@@ -34,7 +34,7 @@ export function ComplaintBot() {
             <h3 className="font-bold text-foreground text-lg">Support & Feedback</h3>
             <button 
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-full hover:bg-muted transition-colors"
+              className="min-h-11 min-w-11 p-1 rounded-full hover:bg-muted transition-colors inline-flex items-center justify-center"
             >
               <X className="h-4 w-4 text-muted-foreground" />
             </button>

@@ -49,7 +49,7 @@ export function Header() {
           {/* Mobile Navigation Hamburger */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="mr-2 md:hidden">
+              <Button variant="ghost" size="icon" className="mr-2 min-h-11 min-w-11 md:hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
@@ -61,7 +61,7 @@ export function Header() {
                 <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
                   <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-background flex items-center justify-center p-0.5 border border-border shadow-sm">
                     <img 
-                      src="/logo.png" 
+                      src="/logo-mark.png"
                       alt="VaidikaConnect Logo" 
                       className="h-full w-full object-cover rounded-full"
                     />
@@ -103,7 +103,7 @@ export function Header() {
           <Link href="/" className="mr-3 sm:mr-6 flex items-center group shrink-0">
             <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 overflow-hidden rounded-full bg-white dark:bg-background flex items-center justify-center p-0.5 border border-border shadow-sm transition-transform group-hover:scale-105">
               <img 
-                src="/logo.png" 
+                src="/logo-mark.png"
                 alt="VaidikaConnect Logo" 
                 className="h-full w-full object-cover rounded-full"
               />
@@ -144,8 +144,8 @@ export function Header() {
         <div className="flex flex-1 items-center justify-end space-x-2">
            <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Globe className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="min-h-11 min-w-11">
+                <Globe className="h-4 w-4" />
                 <span className="sr-only">{t('header.select_language')}</span>
               </Button>
             </DropdownMenuTrigger>
@@ -166,7 +166,7 @@ export function Header() {
           ) : user ? (
               <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="min-h-11 min-w-11">
                   <Avatar className="h-8 w-8 flex items-center justify-center rounded-full overflow-hidden">
                     {user.user_metadata?.avatar_url ? (
                       <AvatarImage src={user.user_metadata.avatar_url} data-ai-hint="user avatar" />

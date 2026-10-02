@@ -48,7 +48,7 @@ export function Footer() {
           <div className="space-y-5 md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 group w-fit">
               <div className="w-10 h-10 rounded-full bg-white dark:bg-background border border-amber-500/20 p-1 shadow-sm transition-transform group-hover:scale-105 shrink-0">
-                <img src="/logo.png" alt="VaidikaConnect Logo" className="w-full h-full rounded-full object-cover" />
+                <img src="/logo-mark.png" alt="VaidikaConnect Logo" className="w-full h-full rounded-full object-cover" />
               </div>
               <div className="flex flex-col text-left leading-none font-bold font-headline select-none">
                 <span className="text-sm block text-primary tracking-wide">Vaidika</span>
@@ -63,24 +63,24 @@ export function Footer() {
             </p>
 
             {/* Social Icons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <a href="https://instagram.com/vaidikaconnect" target="_blank" rel="noopener noreferrer"
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="Instagram">
                 <IconInstagram />
               </a>
               <a href="https://youtube.com/@vaidikaconnect" target="_blank" rel="noopener noreferrer"
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="YouTube">
                 <IconYoutube />
               </a>
               <a href="https://twitter.com/vaidikaconnect" target="_blank" rel="noopener noreferrer"
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="Twitter/X">
                 <IconX />
               </a>
               <a href="https://facebook.com/vaidikaconnect" target="_blank" rel="noopener noreferrer"
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 transition-colors"
                 aria-label="Facebook">
                 <IconFacebook />
               </a>
