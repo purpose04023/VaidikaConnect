@@ -5,6 +5,7 @@ create table if not exists public.profiles (
   id uuid primary key,
   role text not null check (role in ('user', 'poojari', 'admin')),
   full_name text not null,
+  email text,
   phone_call text,
   phone_whatsapp text,
   experience_years int default 0,

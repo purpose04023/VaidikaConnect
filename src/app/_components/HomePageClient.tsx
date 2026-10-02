@@ -4,10 +4,9 @@ import type { Puja, Pujari } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Search, Users, CheckCircle, HelpCircle } from 'lucide-react';
+import { ArrowRight, Search, Users, CheckCircle } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useLanguage } from '@/context/language-context';
-import { useUser } from '@/hooks/use-auth';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useContent } from '@/lib/content-store';
@@ -24,7 +23,6 @@ const HomePujariMap = dynamic(
 
 export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPujas: Puja[] }) {
   const { t, language } = useLanguage();
-  const { user, isUserLoading } = useUser();
   const content = useContent();
   const displayPujas = content.pujas.length ? content.pujas : allPujas;
   const displayPujaris = content.pujaris.length ? content.pujaris : pujaris;
@@ -123,25 +121,13 @@ export function HomePageClient({ pujaris, allPujas }: { pujaris: Pujari[], allPu
       <section className="w-full py-16 md:py-24">
         <div className="container mx-auto px-4">
           <h2 className="font-headline text-3xl md:text-4xl font-bold mb-4">{t('home.map_title')}</h2>
-          <p className="text-muted-foreground mb-12 max-w-2xl mx-auto">{t('home.map_desc')}</p>
+          <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">{t('home.map_desc')}</p>
+          <p className="text-xs text-muted-foreground mb-8">Browse the network first. Sign in when you are ready to contact a pujari or request a booking.</p>
           <div className="relative h-[500px] w-full rounded-lg overflow-hidden border shadow-lg">
             <HomePujariMap pujaris={displayPujaris} />
-            {!user && !isUserLoading && (
-              <div className="absolute inset-0 bg-background/60 backdrop-blur-md z-10 flex flex-col items-center justify-center text-center p-6">
-                <HelpCircle className="h-12 w-12 text-amber-500 mb-4 animate-bounce" />
-                <h3 className="text-2xl font-bold text-foreground mb-2">Map Access Restricted</h3>
-                <p className="text-muted-foreground mb-6 max-w-sm">
-                  Please login to your account to view our qualified Pujari network on the map.
-                </p>
-                <Button asChild className="divine-button rounded-full px-8 py-6 text-lg font-bold shadow-xl">
-                  <Link href="/login">Login to View Map</Link>
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </section>
     </div>
   );
 }
-

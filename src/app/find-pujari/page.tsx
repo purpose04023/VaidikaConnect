@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getPujaris, getPujaById } from "@/lib/data";
+import { getLivePujaris, getLivePujaById } from "@/lib/server-data";
 import { PujariDiscoveryClient } from "@/features/pujari/components/PujariDiscoveryClient";
 
 export default async function FindPujariPage({
@@ -14,8 +14,8 @@ export default async function FindPujariPage({
     return <div className="text-center py-10">Please select a puja first.</div>;
   }
 
-  const allPujaris = await getPujaris();
-  const puja = await getPujaById(pujaId);
+  const allPujaris = await getLivePujaris();
+  const puja = await getLivePujaById(pujaId);
 
   const eligiblePujaris = allPujaris.filter(pujari => pujari.pujas.includes(pujaId));
 

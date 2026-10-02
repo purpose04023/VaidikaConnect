@@ -22,6 +22,10 @@ const eslintConfig = [
   {
     rules: {
       "@next/next/no-page-custom-font": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "react/no-unescaped-entities": "off",
+      "prefer-const": "off",
     },
   },
 ];

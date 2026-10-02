@@ -36,6 +36,13 @@ export function getTithiName(date: Date): string {
   return TITHI_NAMES[getTithi(date) - 1];
 }
 
+/** Compatibility contract: return the human-readable tithi for a Gregorian date. */
+export function get_tithi_for_date(date: Date | string): string {
+  const parsed = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(parsed.getTime())) throw new Error("Invalid date");
+  return getTithiName(parsed);
+}
+
 /** Finds the next calendar date (from `after`) whose tithi matches `targetTithi`. */
 export function nextDateForTithi(targetTithi: number, after: Date = new Date()): Date {
   const start = new Date(after);

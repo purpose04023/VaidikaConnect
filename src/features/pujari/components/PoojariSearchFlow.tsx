@@ -15,7 +15,8 @@ import {
   Loader2,
   CheckCircle2,
   AlertTriangle,
-  User
+  User,
+  Users
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,6 +129,7 @@ export default function PoojariSearchFlow({
 
   // Location search states
   const [locationQuery, setLocationQuery] = useState("");
+  const [participantCount, setParticipantCount] = useState(2);
   const [isLocating, setIsLocating] = useState(false);
   const [centerCoords, setCenterCoords] = useState({ lat: 16.3067, lng: 80.4367 }); // Default Guntur
 
@@ -171,6 +173,11 @@ export default function PoojariSearchFlow({
     }
     return mockPoojaris;
   }, [pujaris]);
+
+  const eligiblePoojaris = useMemo(
+    () => activePoojaris.filter((poojari) => participantCount <= (pujaris?.find((p) => p.id === poojari.id)?.maxParticipants ?? 150)),
+    [activePoojaris, participantCount, pujaris],
+  );
 
   // Trigger GPS Geolocation
   const handleGetDeviceLocation = () => {
@@ -315,13 +322,13 @@ export default function PoojariSearchFlow({
   };
 
   const mapPoojarisList = useMemo(() => {
-    return activePoojaris.map(p => ({
+    return eligiblePoojaris.map(p => ({
       id: p.id,
       name: language === "te" ? p.name : p.nameEn,
       lat: p.lat,
       lng: p.lng
     }));
-  }, [activePoojaris, language]);
+  }, [eligiblePoojaris, language]);
 
   return (
     <div className="w-full space-y-6">
@@ -338,7 +345,21 @@ export default function PoojariSearchFlow({
               className="pl-10 h-12 bg-background border-border/60 rounded-xl focus-visible:ring-amber-500/30 text-sm"
             />
           </div>
-          
+
+          <div className="w-full md:w-44 relative">
+            <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#c8a261]" />
+            <Input
+              aria-label="Number of participants"
+              type="number"
+              min={1}
+              max={500}
+              value={participantCount}
+              onChange={(e) => setParticipantCount(Math.max(1, Number(e.target.value) || 1))}
+              className="pl-10 h-12 bg-background border-border/60 rounded-xl focus-visible:ring-amber-500/30 text-sm"
+            />
+            <span className="absolute left-10 -top-2 px-1 bg-card text-[10px] text-muted-foreground">Participants</span>
+          </div>
+
           <div className="flex gap-2">
             <Button type="submit" className="h-12 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold">
               {language === "te" ? "శోధించండి" : "Search"}
@@ -386,13 +407,19 @@ export default function PoojariSearchFlow({
               {language === "te" ? "సమీపంలోని పండితులు" : "Available Regional Pujaris"}
             </h3>
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2 py-0.5 rounded-full">
-              {activePoojaris.length} Verified
+              {eligiblePoojaris.length} Verified
             </span>
           </div>
 
           <ScrollArea className="flex-1 pr-2">
             <div className="flex flex-col gap-4 pb-8">
-              {activePoojaris.map((poojari) => {
+              {eligiblePoojaris.length === 0 ? (
+                <Card className="p-6 text-center border-dashed">
+                  <Users className="mx-auto h-8 w-8 text-amber-500 mb-3" />
+                  <p className="font-semibold">No pujari currently supports {participantCount} participants in this catalog.</p>
+                  <p className="text-sm text-muted-foreground mt-1">Try a smaller gathering or submit a custom request for coordinator assistance.</p>
+                </Card>
+              ) : eligiblePoojaris.map((poojari) => {
                 const isActive = selectedPoojariId === poojari.id;
                 const activeAction = activeActions[poojari.id] || null;
 
